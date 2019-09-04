@@ -5,7 +5,8 @@
     "pages/userCenter/main",
     "pages/counter/main",
     "pages/wallet/main",
-    "pages/address/main"
+    "pages/address/main",
+    "pages/login.main"
   ],
   "window": {
     "backgroundTextStyle": "light",
