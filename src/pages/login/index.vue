@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <img src alt="头像" />
+    <img src="http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg" alt="头像" />
     <div class="form">
       <img src="/static/images/u110.svg" />
       <input type="text" placeholder="账号" />
@@ -31,7 +31,7 @@ export default {
     display: block;
     width: 80px;
     height: 80px;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
     border: 1px solid rgb(26, 188, 156);
   }
 
