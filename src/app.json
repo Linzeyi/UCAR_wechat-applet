@@ -3,7 +3,9 @@
     "pages/index/main",
     "pages/classification/main",
     "pages/userCenter/main",
-    "pages/counter/main"
+    "pages/counter/main",
+    "pages/wallet/main",
+    "pages/address/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
