@@ -3,7 +3,8 @@
     "pages/index/main",
     "pages/classification/main",
     "pages/userCenter/main",
-    "pages/counter/main"
+    "pages/counter/main",
+    "pages/login.main"
   ],
   "window": {
     "backgroundTextStyle": "light",

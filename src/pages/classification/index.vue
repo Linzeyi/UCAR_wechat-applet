@@ -1,13 +1,15 @@
 <template>
-  <div class="classification-wrap">
-    分类
+  <div>
+    <button @click="navToLogin">登录页</button>
   </div>
 </template>
 
 <script>
 export default {
-  created () {
-
+  methods: {
+    navToLogin() {
+      mpvue.navigateTo({ url: '/pages/login/main' })
+    }
   }
 }
 </script>
