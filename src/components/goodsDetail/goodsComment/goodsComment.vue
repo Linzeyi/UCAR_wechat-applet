@@ -22,6 +22,29 @@
         </div>
       </div>
     </div>
+    <div class="comment-list-wrap">
+      <div class="option-panel">
+        <p>
+          <span class="left">轻点评分</span>
+          <span class="right">
+            <span class="my-score" v-if="myScore >= 0">{{myScore}}分</span>
+            <span class="star" v-for="(item, index) in 5" :key="index" :class="{'stared': index <= myScore}" @click="selectScore(index)">
+              <i class="iconfont icon-star">&#xe623;</i>
+              <i class="iconfont icon-stared">&#xe624;</i>
+            </span>
+          </span>
+        </p>
+      </div>
+      <div class="comment-panel" v-if="showCommentOption">
+        <textarea v-model="myComment" placeholder="请输入您的评论内容..." :auto-height="true"></textarea>
+        <div class="option-panel">
+          <button class="sendComment-btn" type="primary" @click="handlerComment">发布评论</button>
+        </div>
+      </div>
+      <div class="to-comment-panel" v-else>
+        <span @click="showCommentOption = true"><i class="iconfont icon-edit">&#xe609;</i> 攥写评论</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -55,7 +78,37 @@ export default {
           score: 1,
           num: 10
         }
-      ]
+      ],
+      myScore: -1,
+      myComment: '',
+      showCommentOption: false
+    }
+  },
+  methods: {
+    selectScore (index) {
+      this.myScore = index
+      this.showCommentOption = true
+    },
+    handlerComment () {
+      if (this.myComment === '') {
+        wx.showToast({
+          title: '评论内容为空',
+          icon: 'none',
+          duration: 2000
+        })
+      } else if (this.myScore < 0) {
+        wx.showToast({
+          title: '未选择评分',
+          icon: 'none',
+          duration: 2000
+        })
+      } else {
+        wx.showToast({
+          title: '成功发表评论',
+          icon: 'success',
+          duration: 2000
+        })
+      }
     }
   }
 
@@ -127,6 +180,68 @@ export default {
         }
         .default-font {
           text-align: right;
+        }
+      }
+    }
+  }
+  .comment-list-wrap {
+    .option-panel {
+      font-size: 14px;
+      color: #777;
+      height: 40px;
+      line-height: 40px;
+      span {
+        display: inline-block;
+        vertical-align: top;
+        height: 100%;
+        &.right {
+          float: right;
+        }
+        .my-score {
+          margin-right: 5px;
+        }
+        .star {
+          .icon-star {
+            display: inline;
+          }
+          .icon-stared {
+            display: none;
+          }
+          &.stared {
+            .icon-star {
+              display: none;
+            }
+            .icon-stared {
+              display: inline;
+            }
+          }
+        }
+      }
+    }
+    .to-comment-panel {
+      padding: 0 0 10px 0;
+      border-bottom: 1px solid #ddd;
+      span {
+        color: #0079FE;
+        font-size: 14px;
+        i.iconfont {
+          font-size: 14px;
+        }
+      }
+    }
+    .comment-panel {
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+      width: 100%;
+      textarea {
+        font-size: 14px;
+        width: 100%;
+        margin-bottom: 15px;
+      }
+      .option-panel {
+        padding: 10px 0 0;
+        .sendComment-btn {
+          border-radius: 2px;
         }
       }
     }
