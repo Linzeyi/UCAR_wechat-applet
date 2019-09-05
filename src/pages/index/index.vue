@@ -1,10 +1,10 @@
 <template>
-  <div @click="clickHandle">
+  <div>
     <com-swiper :imgList="imgList"></com-swiper>
     <div class="weui-panel weui-panel_access goodsList-panel">
       <div class="weui-panel__hd">
         <span class="panel-title">热门推荐</span>
-        <span class="more-btn">
+        <span class="more-btn" @click="switchTab('/pages/classification/main')">
           <i class="iconfont icon-more">&#xe601;</i> 更多
         </span>
       </div>
@@ -119,18 +119,21 @@ export default {
   },
 
   methods: {
-    routeTo (type) {
-      switch (type) {
-        case 'switchTab': // switchTab方法由于跳转tabBar的页面
-          mpvue.switchTab({ url: '/pages/userCenter/main' })
-          break
-        case 'redirectTo': // redirectTo方法由于跳转次级页面（关闭当前页，导航栏没有返回键，不显示tabBar）
-          mpvue.redirectTo({ url: '/pages/counter/main' })
-          break
-        case 'navigateTo': // navigateTo方法由于跳转次级页面（保留当前页，不显示tabBar）
-          mpvue.navigateTo({ url: '/pages/counter/main' })
-          break
-      }
+    // routeTo (type) {
+    //   switch (type) {
+    //     case 'switchTab': // switchTab方法由于跳转tabBar的页面
+    //       mpvue.switchTab({ url: '/pages/userCenter/main' })
+    //       break
+    //     case 'redirectTo': // redirectTo方法由于跳转次级页面（关闭当前页，导航栏没有返回键，不显示tabBar）
+    //       mpvue.redirectTo({ url: '/pages/counter/main' })
+    //       break
+    //     case 'navigateTo': // navigateTo方法由于跳转次级页面（保留当前页，不显示tabBar）
+    //       mpvue.navigateTo({ url: '/pages/counter/main' })
+    //       break
+    //   }
+    // }
+    switchTab (url) {
+      mpvue.switchTab({ url })
     }
   },
 
