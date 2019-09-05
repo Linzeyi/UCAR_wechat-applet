@@ -7,8 +7,14 @@
       <img src="/static/images/u109.svg" />
       <input type="text" placeholder="密码" />
     </div>
+    <div class="forget">
+      <span>忘记密码</span>
+    </div>
     <div class="login">
       <span>登录</span>
+    </div>
+    <div class="create">
+      <span>创建账号</span>
     </div>
   </div>
 </template>
@@ -39,7 +45,6 @@ export default {
     width: 80%;
     transform: scale(1);
     opacity: 0.5;
-    margin-bottom: 20px;
 
     input {
       margin-bottom: 20px;
@@ -54,18 +59,32 @@ export default {
     }
   }
 
+  .forget {
+    width: 100%;
+    color: rgb(26, 188, 156);
+    text-align: right;
+    margin-bottom: 60px;
+    margin-right: 10px;
+  }
+
+
   .login {
     width: 70%;
     height: 35px;
     border-radius: 10px;
     background-color: rgb(26, 188, 156);
     text-align: center;
+    margin-bottom: 10px;
 
     span {
       vertical-align: middle;
       color: white;
       font-size: 1.2em;
     }
+  }
+
+  .create {
+    color: rgb(26, 188, 156);
   }
 }
 </style>
