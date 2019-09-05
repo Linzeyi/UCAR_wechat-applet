@@ -2,13 +2,17 @@
   <div class="wrap">
     <img src="http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg" alt="头像" />
     <div class="form">
-      <img src="/static/images/u110.svg" />
-      <input type="text" placeholder="账号" />
-      <img src="/static/images/u109.svg" />
-      <input type="text" placeholder="密码" />
-    </div>
-    <div class="forget">
-      <span>忘记密码</span>
+      <div class="opacity">
+        <img src="/static/images/u110.svg" />
+        <input type="text" placeholder="账号" />
+      </div>
+      <div class="opacity">
+        <img src="/static/images/u109.svg" />
+        <input type="text" placeholder="密码" />
+      </div>
+      <div class="forget">
+        <span>忘记密码</span>
+      </div>
     </div>
     <div class="login">
       <span>登录</span>
@@ -44,29 +48,28 @@ export default {
   .form {
     width: 80%;
     transform: scale(1);
-    opacity: 0.5;
-
-    input {
-      margin-bottom: 20px;
-      text-align: center;
-      border-bottom: 1rpx solid rgb(228, 228, 228);
-    }
-
-    img {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  .forget {
-    width: 100%;
-    color: rgb(26, 188, 156);
-    text-align: right;
     margin-bottom: 60px;
-    margin-right: 10px;
-  }
 
+    .opacity {
+      opacity: 0.5;
+      & > input {
+        margin-bottom: 20px;
+        text-align: center;
+        border-bottom: 1rpx solid rgb(228, 228, 228);
+      }
+
+      & > img {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+      }
+    }
+    .forget {
+      width: 100%;
+      color: rgb(26, 188, 156);
+      text-align: right;
+    }
+  }
 
   .login {
     width: 70%;

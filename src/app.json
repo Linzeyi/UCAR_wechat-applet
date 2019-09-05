@@ -6,7 +6,8 @@
     "pages/counter/main",
     "pages/wallet/main",
     "pages/address/main",
-    "pages/login/main"
+    "pages/login/main",
+    "pages/register/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
