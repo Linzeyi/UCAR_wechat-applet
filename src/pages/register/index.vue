@@ -20,8 +20,7 @@
       <div class="aggrement">
         <input type="checkbox">
         <p>
-          已阅读并同意《
-          <span>用户服务协议</span>》
+          已阅读并同意《<span>用户服务协议</span>》
         </p>
       </div>
     </div>
@@ -85,8 +84,13 @@ export default {
 
     .aggrement {
       text-align: center;
+      input {
+        display: inline-block;
+        vertical-align: middle;
+      }
       p {
         display: inline-block;
+        vertical-align: middle;
         span {
           color: rgb(26, 188, 156);
         }
