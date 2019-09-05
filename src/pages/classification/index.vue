@@ -3,6 +3,7 @@
     <button @click="navToLogin('/pages/login/main')">登录页</button>
     <button @click="navToLogin('/pages/register/main')">注册页</button>
     <button @click="navToLogin('/pages/findPassword/main')">找回密码页</button>
+    <button @click="navToLogin('/pages/personalSettings/main')">个人设置页</button>
   </div>
 </template>
 
@@ -11,6 +12,9 @@ export default {
   methods: {
     navToLogin(url) {
       mpvue.navigateTo({url})
+    },
+    redirectTo(url) {
+      mpvue.redirectTo({url})
     }
   }
 }
