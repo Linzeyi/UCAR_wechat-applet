@@ -16,8 +16,11 @@
         <p><span>销量：</span>{{goods.sales}}</p>
       </div>
       <div class="panel num-panel">
-        <num-picker :max="goods.stock" :num.sync="num"></num-picker>
-        <button class="shop-btn" type="warn" size="mini">加入购物车</button>
+        <p>
+          <span>数量：</span>
+          <num-picker :max="goods.stock" :num.sync="num"></num-picker>
+          <button class="shop-btn" type="warn" size="mini">加入购物车</button>
+        </p>
       </div>
     </div>
   </div>
@@ -32,14 +35,15 @@ export default {
       type: Object,
       default () {
         return {
-          title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
+          title: '未定义',
           store: {
-            name: '米其林4S店'
+            name: '无'
           },
-          price: 80,
-          discountPrice: 64,
-          stock: 199,
-          sales: 2422
+          text: '',
+          price: 0,
+          discountPrice: 0,
+          stock: 0,
+          sales: 0
         }
       }
     },
@@ -88,6 +92,10 @@ export default {
     }
     &.num-panel {
       padding-top: 10px;
+      span {
+        line-height: 30px;
+        vertical-align: top;
+      }
       .shop-btn {
         border-radius: 4px;
         margin-left: 10px;
