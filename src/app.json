@@ -6,7 +6,11 @@
     "pages/counter/main",
     "pages/wallet/main",
     "pages/address/main",
-    "pages/login.main"
+    "pages/login/main",
+    "pages/register/main",
+    "pages/goodsDetail/main",
+    "pages/findPassword/main"
+
   ],
   "window": {
     "backgroundTextStyle": "light",

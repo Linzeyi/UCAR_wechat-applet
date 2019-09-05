@@ -1,14 +1,16 @@
 <template>
   <div>
-    <button @click="navToLogin">登录页</button>
+    <button @click="navToLogin('/pages/login/main')">登录页</button>
+    <button @click="navToLogin('/pages/register/main')">注册页</button>
+    <button @click="navToLogin('/pages/findPassword/main')">找回密码页</button>
   </div>
 </template>
 
 <script>
 export default {
   methods: {
-    navToLogin() {
-      mpvue.navigateTo({ url: '/pages/login/main' })
+    navToLogin(url) {
+      mpvue.navigateTo({url})
     }
   }
 }
