@@ -9,7 +9,10 @@
         </div>
         <div>
           <img src="/static/images/u163.svg" />
-          <span>发送验证码</span>
+          <span :class="{captcha: !captchaActive}" @click.stop="captchaClick">
+            <span v-if="captchaActive === false">发送验证码</span>
+            <span v-else>倒计时{{countDown}}</span>
+          </span>
           <input type="text" placeholder="短信验证码" />
         </div>
         <div>
@@ -18,9 +21,10 @@
         </div>
       </div>
       <div class="aggrement">
-        <input type="checkbox">
+        <input type="checkbox" />
         <p>
-          已阅读并同意《<span>用户服务协议</span>》
+          已阅读并同意《
+          <span>用户服务协议</span>》
         </p>
       </div>
     </div>
@@ -31,13 +35,31 @@
 </template>
 
 <script>
-import mpCheckbox from 'mpvue-weui/src/checkbox'
 export default {
-  created() {},
-  components: {
-    mpCheckbox
+  data() {
+    return {
+      captchaActive: false,
+      countDown: 60,
+      timer: null
+    };
+  },
+  methods: {
+    captchaClick() {
+      this.captchaActive = true;
+      this.start()
+    },
+    start() {
+      this.timer = setInterval(() => {
+        this.countDown -= 1;
+        if (this.countDown === 0) {
+          clearInterval(this.timer)
+          this.countDown = 60
+          this.captchaActive = false
+        }
+      }, 1000);
+    }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -62,7 +84,11 @@ export default {
     transform: scale(1);
 
     .opacity {
-      opacity: 0.5;
+      opacity: 0.6;
+
+      .captcha {
+        color: rgb(26, 188, 156);
+      }
     }
 
     .opacity > div > input {
@@ -80,6 +106,7 @@ export default {
     .opacity > div > span {
       position: fixed;
       right: 0px;
+      z-index: 3;
     }
 
     .aggrement {

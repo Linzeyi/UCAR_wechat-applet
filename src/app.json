@@ -9,7 +9,8 @@
     "pages/login/main",
     "pages/register/main",
     "pages/goodsDetail/main",
-    "pages/findPassword/main"
+    "pages/findPassword/main",
+    "pages/personalSettings/main"
 
   ],
   "window": {
