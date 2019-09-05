@@ -38,7 +38,7 @@
           <p>{{ orderNum }}条<i class="iconfont">&#xe601;</i></p>
         </span>
       </div>
-      <div class="weui-cell">
+      <div class="weui-cell" @click="routeTo('address')">
         <div class="weui-cell__hd">
           <i class="iconfont">&#xe605;</i>
         </div>
@@ -81,17 +81,21 @@ export default {
 
   },
   computed: {
+    // 电话号码加密
     encodePhone () {
       var str = this.phone.slice(0, 3) + '****' + this.phone.slice(7)
       return str
     }
   },
   methods: {
-    // 跳转充值页面
+    // 跳转页面
     routeTo (type) {
       switch (type) {
         case 'wallet':
           mpvue.navigateTo({ url: '/pages/wallet/main' })
+          break
+        case 'address':
+          mpvue.navigateTo({ url: '/pages/address/main' })
           break
       }
     }
@@ -143,6 +147,7 @@ export default {
   }
 }
 .weui-cells {
+  box-shadow: 0 3px 3px rgb(223, 223, 223), 0 -0.8px 4px rgb(223, 223, 223);
   p {
     padding: 5px 0;
   }
