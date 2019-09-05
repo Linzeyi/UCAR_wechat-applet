@@ -37,12 +37,34 @@
       </div>
       <div class="comment-panel" v-if="showCommentOption">
         <textarea v-model="myComment" placeholder="请输入您的评论内容..." :auto-height="true"></textarea>
-        <div class="option-panel">
+        <div class="btn-panel">
           <button class="sendComment-btn" type="primary" @click="handlerComment">发布评论</button>
         </div>
       </div>
       <div class="to-comment-panel" v-else>
         <span @click="showCommentOption = true"><i class="iconfont icon-edit">&#xe609;</i> 攥写评论</span>
+      </div>
+      <div class="comment-list">
+        <div class="list-panel">
+          <div class="top-panel">
+            <p>
+              <span class="title">但司空见惯</span>
+              <span class="date">2019-09-05</span>
+            </p>
+            <p>
+              <span class="star-box">
+                <span class="star" v-for="(item, index) in 5" :key="index" :class="{'stared': index <= 4}">
+                  <i class="iconfont icon-star">&#xe623;</i>
+                  <i class="iconfont icon-stared">&#xe624;</i>
+                </span>
+              </span>
+              <span class="sender">sasf</span>
+            </p>
+          </div>
+          <div class="content-panel">
+            <text>卡萨和高科技</text>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -116,6 +138,22 @@ export default {
 </script>
 
 <style lang="less">
+.star {
+  .icon-star {
+    display: inline;
+  }
+  .icon-stared {
+    display: none;
+  }
+  &.stared {
+    .icon-star {
+      display: none;
+    }
+    .icon-stared {
+      display: inline;
+    }
+  }
+}
 .comment-wrap {
   .statistics-wrap {
     padding-bottom: 10px;
@@ -200,22 +238,6 @@ export default {
         .my-score {
           margin-right: 5px;
         }
-        .star {
-          .icon-star {
-            display: inline;
-          }
-          .icon-stared {
-            display: none;
-          }
-          &.stared {
-            .icon-star {
-              display: none;
-            }
-            .icon-stared {
-              display: inline;
-            }
-          }
-        }
       }
     }
     .to-comment-panel {
@@ -238,10 +260,47 @@ export default {
         width: 100%;
         margin-bottom: 15px;
       }
-      .option-panel {
+      .btn-panel {
         padding: 10px 0 0;
         .sendComment-btn {
           border-radius: 2px;
+        }
+      }
+    }
+    .comment-list {
+      padding: 10px 0;
+      .list-panel {
+        padding: 15px;
+        border-radius: 6px;
+        background-color: #eee;
+        margin-bottom: 10px;
+        &:last-child {
+          margin: 0;
+        }
+        .top-panel {
+          p {
+            font-size: 12px;
+            line-height: 34rpx;
+            color: #555;
+            .star {
+              .iconfont {
+                font-size: 20rpx;
+                &.icon-stared {
+                  color: tomato;
+                }
+              }
+            }
+            .date, .sender {
+              color: #aaa;
+              float: right;
+            }
+          }
+          margin-bottom: 5px;
+        }
+        .content-panel {
+          text {
+            font-size: 12px;
+          }
         }
       }
     }
