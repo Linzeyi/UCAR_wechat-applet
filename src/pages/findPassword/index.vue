@@ -9,7 +9,7 @@
         </div>
         <div>
           <img src="/static/images/u163.svg" />
-          <span>发送验证码</span>
+          <count-down></count-down>
           <input type="text" placeholder="短信验证码" />
         </div>
         <div>
@@ -25,11 +25,10 @@
 </template>
 
 <script>
-import mpCheckbox from 'mpvue-weui/src/checkbox'
+import CountDown from '@/components/countDown/CountDown';
 export default {
-  created() {},
   components: {
-    mpCheckbox
+    CountDown
   }
 }
 </script>
@@ -69,11 +68,6 @@ export default {
       position: fixed;
       width: 20px;
       height: 20px;
-    }
-
-    .opacity > div > span {
-      position: fixed;
-      right: 0px;
     }
   }
 

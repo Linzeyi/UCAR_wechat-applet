@@ -9,10 +9,7 @@
         </div>
         <div>
           <img src="/static/images/u163.svg" />
-          <span :class="{captcha: !captchaActive}" @click.stop="captchaClick">
-            <span v-if="captchaActive === false">发送验证码</span>
-            <span v-else>倒计时{{countDown}}</span>
-          </span>
+          <count-down></count-down>
           <input type="text" placeholder="短信验证码" />
         </div>
         <div>
@@ -35,29 +32,10 @@
 </template>
 
 <script>
+import CountDown from '@/components/countDown/CountDown';
 export default {
-  data() {
-    return {
-      captchaActive: false,
-      countDown: 60,
-      timer: null
-    };
-  },
-  methods: {
-    captchaClick() {
-      this.captchaActive = true;
-      this.start()
-    },
-    start() {
-      this.timer = setInterval(() => {
-        this.countDown -= 1;
-        if (this.countDown === 0) {
-          clearInterval(this.timer)
-          this.countDown = 60
-          this.captchaActive = false
-        }
-      }, 1000);
-    }
+  components: {
+    CountDown
   }
 };
 </script>
@@ -85,10 +63,6 @@ export default {
 
     .opacity {
       opacity: 0.6;
-
-      .captcha {
-        color: rgb(26, 188, 156);
-      }
     }
 
     .opacity > div > input {
@@ -102,13 +76,6 @@ export default {
       width: 20px;
       height: 20px;
     }
-
-    .opacity > div > span {
-      position: fixed;
-      right: 0px;
-      z-index: 3;
-    }
-
     .aggrement {
       text-align: center;
       input {
