@@ -1,6 +1,6 @@
 <template>
   <div class="weui-grids goods-grids">
-    <a v-for="(item, index) in goodsList" :key="index" href="javascripts:;" class="weui-grid">
+    <a v-for="(item, index) in goodsList" :key="index" :href="'/pages/goodsDetail/main?id=' + item.id" class="weui-grid">
       <div class="weui-grid__img">
         <img :src="item.src" :alt="item.name">
       </div>

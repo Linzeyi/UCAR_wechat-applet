@@ -7,7 +7,8 @@
     "pages/wallet/main",
     "pages/address/main",
     "pages/login/main",
-    "pages/register/main"
+    "pages/register/main",
+    "pages/goodsDetail/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
