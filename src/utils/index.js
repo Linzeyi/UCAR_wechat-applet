@@ -14,11 +14,20 @@ export function formatTime (date) {
 
   const t1 = [year, month, day].map(formatNumber).join('/')
   const t2 = [hour, minute, second].map(formatNumber).join(':')
-
   return `${t1} ${t2}`
+}
+
+export function getYMDTime (date) {
+  return formatTime(date).split(' ')[0]
+}
+
+export function getHMSTime (date) {
+  return formatTime(date).split(' ')[1]
 }
 
 export default {
   formatNumber,
-  formatTime
+  formatTime,
+  getYMDTime,
+  getHMSTime
 }

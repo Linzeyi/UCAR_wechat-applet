@@ -28,7 +28,7 @@
           <span class="left">轻点评分</span>
           <span class="right">
             <span class="my-score" v-if="myScore >= 0">{{myScore}}分</span>
-            <span class="star" v-for="(item, index) in 5" :key="index" :class="{'stared': index <= myScore}" @click="selectScore(index)">
+            <span class="star" v-for="(item, index) in 5" :key="index" :class="{'stared': index + 1 <= myScore}" @click="selectScore(index)">
               <i class="iconfont icon-star">&#xe623;</i>
               <i class="iconfont icon-stared">&#xe624;</i>
             </span>
@@ -36,7 +36,7 @@
         </p>
       </div>
       <div class="comment-panel" v-if="showCommentOption">
-        <textarea v-model="myComment" placeholder="请输入您的评论内容..." :auto-height="true"></textarea>
+        <textarea v-model="myComment" placeholder="请输入您的评论内容..." auto-height></textarea>
         <div class="btn-panel">
           <button class="sendComment-btn" type="primary" @click="handlerComment">发布评论</button>
         </div>
@@ -45,24 +45,22 @@
         <span @click="showCommentOption = true"><i class="iconfont icon-edit">&#xe609;</i> 攥写评论</span>
       </div>
       <div class="comment-list">
-        <div class="list-panel">
+        <div class="list-panel" v-for="(item, index) in commentList" :key="index">
           <div class="top-panel">
             <p>
-              <span class="title">但司空见惯</span>
-              <span class="date">2019-09-05</span>
+              <span class="title">{{item.title}}</span>
+              <span class="date">{{item.sendTime}}</span>
             </p>
             <p>
-              <span class="star-box">
-                <span class="star" v-for="(item, index) in 5" :key="index" :class="{'stared': index <= 4}">
-                  <i class="iconfont icon-star">&#xe623;</i>
-                  <i class="iconfont icon-stared">&#xe624;</i>
-                </span>
+              <span class="star" v-for="(starItem, starIndex) in 5" :key="starIndex" :class="{'stared': starIndex + 1 <= item.score}">
+                <i class="iconfont icon-star">&#xe623;</i>
+                <i class="iconfont icon-stared">&#xe624;</i>
               </span>
-              <span class="sender">sasf</span>
+              <span class="sender">{{item.sender.name}}</span>
             </p>
           </div>
           <div class="content-panel">
-            <text>卡萨和高科技</text>
+            <text>{{item.content}}</text>
           </div>
         </div>
       </div>
@@ -101,14 +99,44 @@ export default {
           num: 10
         }
       ],
+      commentList: [
+        {
+          title: '口角是非科技时艾弗森',
+          content: '伤口恢复上课接电话跟接口，萨和苏高，是大国来说都很高科技阿花克里塞蒂格好，是大国和雕塑高忽低过！阿空加后付款时光，萨的感觉很健康啊？？？',
+          sender: {
+            name: 'ads噶'
+          },
+          sendTime: this.Utils.getYMDTime(new Date()),
+          score: 4
+        },
+        {
+          title: '阿是尚方宝剑',
+          content: '伤阿双方山高水低噶蛋糕是224，阿双方萨方式1范德萨发蛋糕。啊2442看看是否就是会计法。',
+          sender: {
+            name: 'qtwr'
+          },
+          sendTime: this.Utils.getYMDTime(new Date()),
+          score: 2
+        }
+      ],
       myScore: -1,
       myComment: '',
       showCommentOption: false
     }
   },
+  computed: {
+  },
+  onUnload () {
+    this.init()
+  },
   methods: {
+    init () {
+      this.myScore = -1
+      this.myComment = ''
+      this.showCommentOption = false
+    },
     selectScore (index) {
-      this.myScore = index
+      this.myScore = index + 1
       this.showCommentOption = true
     },
     handlerComment () {
