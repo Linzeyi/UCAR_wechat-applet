@@ -7,18 +7,17 @@
     <div class="form">
       <div class="form-item">
         <span>用户Id</span>
-        <input type="text" @focus="toogleInput(0)" disabled/>
-        <i class="iconfont" v-show="inputActive[0]">&#xe65c;</i>
+        <input type="text" disabled />
       </div>
       <div class="form-item">
         <span>昵称</span>
-        <input type="text" placeholder="--" @focus="toogleInput(1)" v-model="name"/>
-        <i class="iconfont" v-show="inputActive[1]" @click="name=''">&#xe65c;</i>
+        <input type="text" placeholder="--" v-model="name" @focus="index = 0" @blur="index = null"/>
+        <i class="iconfont icon-cancel" v-show="showCancel[0]" @click="name = ''">&#xe65c;</i>
       </div>
       <div class="form-item">
         <span>邮箱</span>
-        <input type="text" placeholder="--" @focus="toogleInput(2)" v-model="email"/>
-        <i class="iconfont" v-show="inputActive[2]" @click="email=''">&#xe65c;</i>
+        <input type="text" placeholder="--" v-model="email" @focus="index = 1" @blur="index = null"/>
+        <i class="iconfont icon-cancel" v-show="showCancel[1]" @click="email = ''">&#xe65c;</i>
       </div>
       <div class="form-item">
         <span>性别</span>
@@ -43,9 +42,10 @@ export default {
   data() {
     return {
       avatar: '',
-      inputActive: [false, false, false],
+      showCancel: [false, false],
       name: '',
-      email: ''
+      email: '',
+      index: null
     };
   },
   methods: {
@@ -72,15 +72,39 @@ export default {
         }
       });
     },
-    toogleInput(index) {
-      this.inputActive = [false, false, false]
-      this.inputActive[index] = true
+    controlCancelShow() {
+      if (this.name === '' || this.index !== 0) {
+        this.showCancel[0] = false
+      } else {
+        this.showCancel[0] = true
+      }
+
+      if (this.email === '' || this.index !== 1) {
+        this.showCancel[1] = false
+      } else {
+        this.showCancel[1] = true
+      }
+    }
+  },
+  watch: {
+    name() {
+      this.controlCancelShow()
+    },
+    email() {
+      this.controlCancelShow()
+    },
+    index() {
+      this.controlCancelShow()
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
+.icon-cancel {
+  color: rgb(138, 138, 138);
+}
+
 .wrap {
   .head {
     margin: auto;
@@ -99,6 +123,7 @@ export default {
 
   .form {
     .form-item {
+      transform: scale(1);
       padding: 15px 35px;
       border-bottom: 2px solid rgb(228, 228, 228);
       display: flex;
