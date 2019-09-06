@@ -9,8 +9,10 @@
     "pages/login/main",
     "pages/register/main",
     "pages/goodsDetail/main",
-    "pages/findPassword/main"
-
+    "pages/findPassword/main",
+    "pages/addAddress/main",
+    "pages/modifyAddress/main",
+    "pages/message/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
