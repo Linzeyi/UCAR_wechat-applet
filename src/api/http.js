@@ -43,7 +43,8 @@ fly.interceptors.request.use(request => {
   })
 
   const queryData = { // 最终的请求体
-    q,
+    username: request.body.username,
+    password: request.body.password,
     sign,
     cid,
     uid

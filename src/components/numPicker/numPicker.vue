@@ -96,15 +96,18 @@ export default {
 </script>
 
 <style scoped lang="less">
+@wh: 60rpx;
 .num-picker {
   display: inline-block;
   height: 100%;
   vertical-align: top;
   .num-box {
     display: flex;
+    justify-content: center;
+    align-items: center;
     input {
-      width: 80rpx;
-      height: 60rpx;
+      width: 60rpx;
+      height: @wh;
       color: #777;
       flex-grow: 1;
       margin: 0 4px;
@@ -117,9 +120,9 @@ export default {
       border: 1px solid #ddd;
       border-radius: 4px;
       flex-grow: 1;
-      width: 60rpx;
-      height: 60rpx;
-      font-size: 36rpx;
+      width: @wh;
+      height: @wh;
+      font-size: 15px;
       line-height: 50rpx;
       text-align: center;
       &.disabled {

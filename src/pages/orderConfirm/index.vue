@@ -206,7 +206,6 @@ export default {
     .goods-box {
       .header {
         font-size: 12px;
-        color: #555;
         margin-bottom: 10px;
       }
       .flex-box {
@@ -236,7 +235,7 @@ export default {
             &.type {
             font-size: 10px;
               padding: 2px 4px;
-              background-color: #efefef;
+              background-color: #f6f6f6;
               border-radius: 4px;
               color: #999;
             }
@@ -262,17 +261,18 @@ export default {
       }
       .footer {
         padding-top: 10px;
-        font-size: 12px;
+        font-size: 13px;
         p {
-          font-size: 10px;
+          font-size: 11px;
           text-align: right;
           .num {
             color: #999;
           }
           .price {
-            color: orange;
+            color: #ff6421;
+            font-size: 13px;
             .logo {
-              font-size: 8px;
+              font-size: 9px;
               margin-right: 2px;
             }
           }
@@ -290,24 +290,26 @@ export default {
     text-align: right;
     font-size: 0px;
     p, .confirmOrder-btn {
-      height: 36px;
-      line-height: 36px;
+      height: 40px;
+      line-height: 40px;
     }
     p {
       vertical-align: top;
       display: inline-block;
       width: clac(100% - 100px);
-      font-size: 12px;
+      font-size: 13px;
+      line-height: 40px;
       .num {
-        font-size: 10px;
+        font-size: 11px;
         color: #999;
       }
       .total-price {
-        margin-left: 5px;
-        font-size: 13px;
-        color: orange;
+        margin-left: 6px;
+        font-size: 16px;
+        color: #ff6421;
+        line-height: 40px;
         .logo {
-          font-size: 10px;
+          font-size: 11px;
           margin-right: 4px;
         }
       }
@@ -316,9 +318,9 @@ export default {
       vertical-align: top;
       display: inline-block;
       width: 100px;
-      font-size: 12px;
+      font-size: 13px;
       background-color: orange;
-      border-radius: 10px;
+      border-radius: 4px;
       margin-left: 8px;
       color: #fff;
       border: none;

@@ -29,8 +29,12 @@
     <div class="tab-footer">
       <p class="total-price">
         商品金额：<span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-        <button type="default" @click="toShoppingCart">购物车</button>
-        <button class="toPay-btn" type="primary" @click="toPay">去结算</button>
+        <button class="toPay-btn" type="primary" @click="toPay">
+          <i class="iconfont icon-pay">&#xe643;</i>去结算
+          </button>
+        <button type="default" @click="toShoppingCart">
+          <i class="iconfont icon-shopping-cart">&#xe618;</i>购物车
+          </button>
       </p>
     </div>
   </div>
@@ -143,8 +147,9 @@ export default {
     }
   },
   mounted () {
-    this.$http.post('/test').then(res => {
-    })
+    // this.$http.post('/test', {username: 'linzeyi', password: '1241251'}).then(res => {
+    //   console.log(res)
+    // })
     this.goods.id = this.$root.$mp.query.goodsId
     wx.setNavigationBarTitle({
       title: this.goods.title
@@ -191,12 +196,11 @@ export default {
   }
   .tab-content {
     flex-grow: 1;
-    background-color: #fff;
-    height: calc(100% - 140px - 40px - 52px);
+    background-color: #eee;
+    height: calc(100% - 140px - 40px - 56px);
     swiper {
       height: 100%;
       swiper-item {
-        padding: 10px;
         box-sizing: border-box;
         height: 100%;
         overflow-y: auto;
@@ -206,26 +210,25 @@ export default {
 
   .tab-footer {
     background-color: #fff;
-    border-top: 1px solid #ddd;
     width: 100%;
     box-sizing: border-box;
-    padding: 8px 10px;
+    padding: 10px 15px;
     .total-price {
       height: 36px;
       line-height: 36px;
-      font-size: 12px;
+      font-size: 14px;
       .price {
-        color: orange;
-        font-size: 14px;
+        color: #ff6421;
+        font-size: 18px;
         .logo {
-          font-size: 10px;
+          font-size: 12px;
           margin-right: 3px;
         }
       }
       button {
         float: right;
         border: none;
-        font-size: 26rpx;
+        font-size: 14px;
         line-height: 36px;
         height: 36px;
         padding: 0 20px;
@@ -239,11 +242,12 @@ export default {
             background-color: #16a085;
           }
         }
-        &::after {
+        &::before, &::after {
           border: none
         }
-        &::before {
-          border: none;
+        .iconfont {
+          font-size: 14px;
+          margin-right: 6px;
         }
       }
     }
