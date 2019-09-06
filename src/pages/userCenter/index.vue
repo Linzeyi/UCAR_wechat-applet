@@ -61,6 +61,7 @@
         </span>
       </div>
     </div>
+    <button class="weui-btn" @click="routeTo('search')" style="margin-top: 20px;">搜索</button>
   </div>
 </template>
 
@@ -99,6 +100,9 @@ export default {
           break
         case 'message':
           mpvue.navigateTo({ url: '/pages/message/main' })
+          break
+        case 'search':
+          mpvue.navigateTo({ url: '/pages/search/main' })
           break
       }
     }
