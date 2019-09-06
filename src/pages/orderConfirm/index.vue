@@ -20,32 +20,45 @@
         </div>
       </div>
     </div>
-    <div class="order-panel goods-panel">
+    <div class="order-panel goods-panel" v-for="(item, index) in goodsList" :key="index">
       <div class="goods-box">
         <div class="header">
-          <span class="header-title">商品信息</span>
+          <span class="header-title">{{item.store.name}}</span>
         </div>
         <div class="info-box flex-box">
           <div class="left-box">
             <div class="img-box">
-              <img src="https://images.unsplash.com/photo-1530977875151-aae9742fde19?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=975&q=80" alt="商品图片">
+              <img :src="item.src" alt="商品图片">
             </div>
           </div>
           <div class="content-box">
-            <p class="title">{{goods.title}}</p>
+            <p class="title">{{item.title}}</p>
             <p class="type">
               <span class="type-title">
-                商品分类：
+                {{item.type.title}}:
               </span>
-              <span class="type-item">最大规格</span>
+              <span class="type-item">{{item.type.content}}；</span>
             </p>
           </div>
           <div class="right-box">
-            <p class="price"><span class="logo">¥</span>{{goods.discountPrice > 0 ? goods.discountPrice : goods.price}}</p>
-            <p class="num">x{{num}}</p>
+            <p class="price"><span class="logo">¥</span>{{item.price}}</p>
+            <p class="num">x{{item.num}}</p>
           </div>
         </div>
+        <div class="footer">
+          <p>
+            <span class="num">共{{item.num}}件</span>
+            小记：<span class="price"><span class="logo">¥</span>{{item.num * item.price}}</span>
+          </p>
+        </div>
       </div>
+    </div>
+    <div class="footer-panel">
+      <p>
+        <span class="num">共{{getTotalNum}}件，</span>
+        合计:<span class="total-price"><span class="logo">¥</span>{{getTotalPrice}}</span>
+      </p>
+      <button class="confirmOrder-btn" type="success">提交订单</button>
     </div>
   </div>
 </template>
@@ -54,33 +67,71 @@
 export default {
   data () {
     return {
-      goods: {
-        id: undefined,
-        title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-        store: {
-          name: '米其林4S店'
+      goodsList: [
+        {
+          id: undefined,
+          title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
+          src: 'https://images.unsplash.com/photo-1530977875151-aae9742fde19?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=975&q=80',
+          store: {
+            name: '米其林4S店'
+          },
+          type: {
+            title: '规格/型号',
+            content: '最大/2090'
+          },
+          price: 54,
+          stock: 199,
+          sales: 2422,
+          num: 3
         },
-        text: '<h1>车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器</h1><p>asfjah卡少暗示法护暗示法科技撒回复，sad 跟萨芬和感慨阿斯顿个， 阿拉善个</p><img src="https://images.unsplash.com/photo-1567494355252-047444d52a43?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80" /><p>asfjah卡少暗示法护暗示法科技撒回复，sad 跟萨芬和感慨阿斯顿个， 阿拉善个</p>',
-        price: 80,
-        discountPrice: 64,
-        stock: 199,
-        sales: 2422
-      },
-      num: 0
+        {
+          id: undefined,
+          title: '【二手9成新】苹果8Plus Apple iPhone8',
+          src: 'https://images.unsplash.com/photo-1530977875151-aae9742fde19?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=975&q=80',
+          store: {
+            name: '苹果旗舰店店'
+          },
+          type: {
+            title: '内存',
+            content: '64G'
+          },
+          price: 3162,
+          stock: 2422,
+          sales: 155,
+          num: 1
+        }
+      ]
     }
   },
   mounted () {
-    console.log(this.$root.$mp.query)
-    this.goods.id = this.$root.$mp.query.goodsId
-    this.num = this.$root.$mp.query.num
+    this.getGoodsList()
   },
   onUnload () {
     this.init()
   },
+  computed: {
+    getTotalNum () {
+      let num = 0
+      this.goodsList.map(item => {
+        num += item.num
+      })
+      return num
+    },
+    getTotalPrice () {
+      let price = 0
+      this.goodsList.map(item => {
+        price += item.num * item.price
+      })
+      return price
+    }
+  },
   methods: {
     init () {
-      this.goodsId = undefined
+      this.goodsList = []
       this.num = 0
+    },
+    getGoodsList () {
+      // this.goodsList = this.$store.getters['Order/goodsList']
     }
   }
 }
@@ -88,6 +139,8 @@ export default {
 
 <style lang="less" scoped>
 .orderConfirm-wrap {
+  height: 100%;
+  box-sizing: border-box;
   padding: 10px;
   background-color: #eee;
   .order-panel {
@@ -151,45 +204,126 @@ export default {
       }
     }
     .goods-box {
-      .left-box {
-        .img-box {
-          border-radius: 4px;
-          width: 60px;
-          height: 60px;
-          overflow: hidden;
-          text-align: center;
-          img {
-            margin: 0 auto;
-            width: 100%;
+      .header {
+        font-size: 12px;
+        color: #555;
+        margin-bottom: 10px;
+      }
+      .flex-box {
+        align-items: flex-start;
+        .left-box {
+          .img-box {
+            border-radius: 4px;
+            width: 60px;
+            height: 60px;
+            overflow: hidden;
+            text-align: center;
+            img {
+              margin: 0 auto;
+              width: 100%;
+            }
+          }
+        }
+        .content-box {
+          box-sizing: border-box;
+          padding: 2px 10px;
+          p {
+            font-size: 12px;
+            padding-bottom: 4px;
+            .title {
+              color: #333;
+            }
+            &.type {
+            font-size: 10px;
+              padding: 2px 4px;
+              background-color: #efefef;
+              border-radius: 4px;
+              color: #999;
+            }
+          }
+        }
+        .right-box {
+          padding-left: 5px;
+          text-align: right;
+          .price {
+            margin-top: 5px;
+            font-size: 12px;
+            line-height: 12px;
+            .logo {
+              font-size: 8px;
+              margin-right: 2px;
+            }
+          }
+          .num {
+            font-size: 10px;
+            color: #999;
           }
         }
       }
-      .content-box {
+      .footer {
+        padding-top: 10px;
+        font-size: 12px;
         p {
-          font-size: 12px;
-          padding-bottom: 4px;
-          .title {
-            color: #333;
+          font-size: 10px;
+          text-align: right;
+          .num {
+            color: #999;
           }
           .price {
-            padding: 2px;
-            background-color: #e8e8e8;
-            border-radius: 4px;
-            color: #aaa;
+            color: orange;
+            .logo {
+              font-size: 8px;
+              margin-right: 2px;
+            }
           }
         }
       }
-      .right-box {
-        .price {
-          font-size: 12px;
-          .logo {
-            font-size: 10px;
-          }
-        }
-        .num {
+    }
+  }
+  .footer-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5px 10px;
+    background-color: #fff;
+    text-align: right;
+    font-size: 0px;
+    p, .confirmOrder-btn {
+      height: 36px;
+      line-height: 36px;
+    }
+    p {
+      vertical-align: top;
+      display: inline-block;
+      width: clac(100% - 100px);
+      font-size: 12px;
+      .num {
+        font-size: 10px;
+        color: #999;
+      }
+      .total-price {
+        margin-left: 5px;
+        font-size: 13px;
+        color: orange;
+        .logo {
           font-size: 10px;
-          color: #ddd;
+          margin-right: 4px;
         }
+      }
+    }
+    .confirmOrder-btn {
+      vertical-align: top;
+      display: inline-block;
+      width: 100px;
+      font-size: 12px;
+      background-color: orange;
+      border-radius: 10px;
+      margin-left: 8px;
+      color: #fff;
+      border: none;
+      &::after, &::before {
+        border: none;
       }
     }
   }

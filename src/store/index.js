@@ -5,6 +5,7 @@ import Index from './modules/index/index'
 import Classification from './modules/classification/index'
 import UserCenter from './modules/userCenter/index'
 import GoodsDetail from './modules/goodsDetail/index'
+import Order from './modules/order/index'
 
 Vue.use(Vuex)
 
@@ -13,7 +14,8 @@ const store = new Vuex.Store({
     Index,
     Classification,
     UserCenter,
-    GoodsDetail
+    GoodsDetail,
+    Order
   }
 })
 

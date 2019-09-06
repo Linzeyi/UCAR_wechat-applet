@@ -7,7 +7,7 @@ export default {
     date: state => state.date // 调用写法 this.$store.getters['Index/date']
   },
   mutations: {
-    SET_DATE (state, date) { // 调用写法 this.$store.commit('Index/SET_DATE)
+    SET_DATE (state, date) { // 调用写法 this.$store.commit('Index/SET_DATE', date)
       state.date = date
     }
   },
