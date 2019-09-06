@@ -161,6 +161,9 @@ export default {
   }
 }
 .comment-wrap {
+  box-sizing: border-box;
+  padding: 10px 15px;
+  background-color: #fff;
   .statistics-wrap {
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;

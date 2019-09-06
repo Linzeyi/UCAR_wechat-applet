@@ -24,6 +24,9 @@ export default {
 <style lang="less" scoped>
 .text-wrap {
   width: 100%;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  background-color: #fff;
   /deep/ .wxParse {
     width: 100%;
     .h1 {
