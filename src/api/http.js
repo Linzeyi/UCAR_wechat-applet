@@ -1,5 +1,10 @@
 const Fly = require('flyio/dist/npm/wx')
 const config = require('./config')
+const { CryptoApi } = require('./crypto')
+const { SignApi } = require('./sign')
+const cid = config.Auth.cid
+const accountKey = config.Auth.accountKey
+const key = CryptoApi.getKeys(accountKey) // 密钥
 
 const log = function (msg) {
   console.log(msg)
@@ -17,6 +22,7 @@ const headers = {
   'Content-Type': 'application/x-www-form-urlencoded',
   'apiGroupCode': 'tranning'
 }
+
 Object.assign(fly.config, {
   headers: headers,
   baseURL: baseURL,
@@ -25,6 +31,32 @@ Object.assign(fly.config, {
 })
 
 fly.interceptors.request.use(request => {
+  // console.log(request)
+  const uid = null
+  const data = JSON.stringify(request.body) // 需要加密的请求数据，转成字符串
+  const q = SignApi.getQ(data, key) // 利用请求参数data和密钥key
+  const sign = SignApi.getSign({ // 利用cid、q、uid、accountKey生成签名
+    cid,
+    q,
+    uid,
+    accountKey
+  })
+
+  const queryData = { // 最终的请求体
+    username: request.body.username,
+    password: request.body.password,
+    sign,
+    cid,
+    uid
+  }
+  request.body = queryData // 放入请求体
+  console.log('请求体：', queryData)
+
+  // 以下为测试数据解密算法，接口正式对接后要将该区域代码转移到response拦截器里
+  const resultStr = CryptoApi.aesDecrypt(q, key) // 利用key对返回的数据进行解密，得到字符串数据
+  const result = JSON.parse(resultStr) // 将数据字符串转为对象
+  console.log('解密数据：', JSON.parse(result))
+
   return request
 })
 

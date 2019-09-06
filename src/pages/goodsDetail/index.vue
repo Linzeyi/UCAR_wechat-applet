@@ -26,20 +26,16 @@
         </swiper-item>
       </swiper>
     </div>
-    <div class="weui-footer">
-      <div class="weui-flex">
-        <div class="weui-flex__item">
-          <p class="total-price">
-            <span>商品金额：</span>¥{{getTotalPrice}}
-          </p>
-        </div>
-        <div class="weui-flex__item">
-          <button type="default" @click="toShoppingCart">购物车</button>
-        </div>
-        <div class="weui-flex__item">
-          <button class="toPay-btn" type="primary" @click="toPay">去结算</button>
-        </div>
-      </div>
+    <div class="tab-footer">
+      <p class="total-price">
+        商品金额：<span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
+        <button class="toPay-btn" type="primary" @click="toPay">
+          <i class="iconfont icon-pay">&#xe643;</i>去结算
+          </button>
+        <button type="default" @click="toShoppingCart">
+          <i class="iconfont icon-shopping-cart">&#xe618;</i>购物车
+          </button>
+      </p>
     </div>
   </div>
 </template>
@@ -138,12 +134,20 @@ export default {
           duration: 2000
         })
       } else {
-        mpvue.navigateTo({ url: '/pages/orderConfirm/main?goodsId=' + this.goods.id + '&num=' + this.num })
+        this.$store.commit('Order/SET_GOODSLIST', {
+          goodsList: [
+            {
+              id: this.goods.id,
+              num: this.num
+            }
+          ]
+        })
+        mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
       }
     }
   },
   mounted () {
-    // this.$http.get('/api').then(res => {
+    // this.$http.post('/test', {username: 'linzeyi', password: '1241251'}).then(res => {
     //   console.log(res)
     // })
     this.goods.id = this.$root.$mp.query.goodsId
@@ -183,7 +187,6 @@ export default {
       flex-grow: 1;
       font-size:28rpx;
       color: #aaa;
-      font-weight: 600;
       border-bottom: 1px solid #ddd;
       &.on {
         color: #1abc9c;
@@ -193,12 +196,11 @@ export default {
   }
   .tab-content {
     flex-grow: 1;
-    background-color: #fff;
-    height: calc(100% - 140px - 40px - 52px);
+    background-color: #eee;
+    height: calc(100% - 140px - 40px - 56px);
     swiper {
       height: 100%;
       swiper-item {
-        padding: 10px 20px;
         box-sizing: border-box;
         height: 100%;
         overflow-y: auto;
@@ -206,52 +208,46 @@ export default {
     }
   }
 
-  .weui-footer {
+  .tab-footer {
     background-color: #fff;
-    border-top: 1px solid #ddd;
     width: 100%;
-    height: 52px;
-    line-height: 52px;
-    .weui-flex {
-      height: 100%;
-      .weui-flex__item {
-        flex-grow: 1;
-        box-sizing: border-box;
-        font-size: 26rpx;
-        font-weight: 600;
-        &:first-child {
-          text-align: left;
-          padding: 0 20px;
-          border-right: 1px solid #ddd;
+    box-sizing: border-box;
+    padding: 10px 15px;
+    .total-price {
+      height: 36px;
+      line-height: 36px;
+      font-size: 14px;
+      .price {
+        color: #ff6421;
+        font-size: 18px;
+        .logo {
+          font-size: 12px;
+          margin-right: 3px;
         }
-        .total-price {
-          color: red;
-          span {
-            color: #666;
+      }
+      button {
+        float: right;
+        border: none;
+        font-size: 14px;
+        line-height: 36px;
+        height: 36px;
+        padding: 0 20px;
+        border-radius: 4px;
+        color: #666;
+        margin-left: 10px;
+        &.toPay-btn {
+          color: #fff;
+          background-color: #1abc9c;
+          &:active {
+            background-color: #16a085;
           }
         }
-        button {
-          border: none;
-          height: 100%;
-          width: 100%;
-          font-size: 26rpx;
-          line-height: 52px;
-          padding: 0;
-          border-radius: 0;
-          color: #666;
-          &.toPay-btn {
-            color: #fff;
-            background-color: #1abc9c;
-            &:active {
-              background-color: #16a085;
-            }
-          }
-          &::after {
-            border: none
-          }
-          &::before {
-            border: none;
-          }
+        &::before, &::after {
+          border: none
+        }
+        .iconfont {
+          font-size: 14px;
+          margin-right: 6px;
         }
       }
     }

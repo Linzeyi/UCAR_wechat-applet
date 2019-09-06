@@ -1,23 +1,20 @@
 <template>
-  <div>
-    <div class="title-box">
+  <div class="goodsInfo-wrap">
+    <div class="panel-box title-box">
+      <p class="price-panel"><span class="price"><span class="logo">¥</span>{{goods.price}}</span></p>
       <h2 class="goods-title">{{goods.title}}</h2>
       <p class="store"><span>商家：</span>{{goods.store.name}}</p>
     </div>
-    <div class="shop-box">
-      <div class="panel price-panel">
-        <p v-if="goods.discountPrice > 0"><span>优惠价：</span>¥{{goods.discountPrice}}</p>
-        <p v-else><span>价格：</span>¥{{goods.price}}</p>
+    <div class="panel-box shop-box">
+      <div class="panel">
+        <p><span class="panel-title">库存</span>{{goods.stock}}</p>
       </div>
       <div class="panel">
-        <p><span>库存：</span>{{goods.stock}}</p>
-      </div>
-      <div class="panel">
-        <p><span>销量：</span>{{goods.sales}}</p>
+        <p><span class="panel-title">销量</span>{{goods.sales}}</p>
       </div>
       <div class="panel num-panel">
         <p>
-          <span>数量：</span>
+          <span class="panel-title">数量</span>
           <num-picker :max="goods.stock" :num.sync="num"></num-picker>
           <button class="shop-btn" type="warn" size="mini">加入购物车</button>
         </p>
@@ -66,43 +63,61 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.title-box {
-  border-bottom: 1px solid #ddd;
-  .goods-title {
-    padding: 6px 0 8px 0;
+.goodsInfo-wrap {
+  background-color: #eee;
+  .panel-box {
+    background-color: #fff;
+    padding: 10px 15px;
+    margin-bottom: 10px;
   }
-  .store {
-    font-size: 24rpx;
-    margin-bottom: 14px;
-  }
-}
-.shop-box {
-  .panel {
-    padding: 4px 0;
-    font-size: 28rpx;
-    position: relative;
-    &:first-child {
-      padding-top: 28rpx;
-    }
-    &.price-panel {
-      color: red;
-      span {
-        color: #000;
+  .title-box {
+    // border-bottom: 1px solid #ddd;
+    .price-panel {
+      .price {
+        font-size: 22px;
+        color: #ff6421;
+        .logo {
+          font-size: 14px;
+          margin-right: 5px;
+        }
       }
     }
-    &.num-panel {
-      padding-top: 10px;
-      span {
-        line-height: 30px;
-        vertical-align: top;
+    .goods-title {
+      font-size: 14px;
+      padding: 0 0 8px 0;
+    }
+    .store {
+      font-size: 12px;
+    }
+  }
+  .shop-box {
+    .panel {
+      padding: 4px 0;
+      font-size: 12px;
+      position: relative;
+      .panel-title {
+        color: #aaa;
+        margin-right: 15px;
       }
-      .shop-btn {
-        border-radius: 4px;
-        margin-left: 10px;
-        height: 30px;
-        line-height: 30px;
-        float: right;
-        vertical-align: top;
+      &.num-panel {
+        padding-top: 10px;
+        span {
+          line-height: 30px;
+          vertical-align: top;
+        }
+        .shop-btn {
+          border-radius: 4px;
+          margin-left: 10px;
+          height: 30px;
+          line-height: 30px;
+          font-size: 12px;
+          float: right;
+          border: none;
+          vertical-align: top;
+          &::before, &::after {
+            border: none;
+          }
+        }
       }
     }
   }

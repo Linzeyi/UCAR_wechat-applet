@@ -27,9 +27,9 @@ export default {
 .search-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
-  padding: 0 10px;
+  padding: 0 13px;
   .search-bar {
-    border: 0.5px solid @baoWoBlack;
+    border: 0.1px solid @baoWoBlack;
     border-radius: 10px;
     background: rgb(243, 243, 243);
     .search-icon {
