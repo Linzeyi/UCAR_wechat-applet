@@ -1,6 +1,6 @@
 <template>
-  <span class="wrap" :class="{captcha: !captchaActive}" @click.stop="captchaClick">
-    <span v-if="captchaActive === false">发送验证码</span>
+  <span class="wrap" :class="{captcha: !captchaActive}">
+    <span v-if="captchaActive === false" @click.stop="captchaClick">发送验证码</span>
     <span v-else>倒计时{{countDown}}</span>
   </span>
 </template>

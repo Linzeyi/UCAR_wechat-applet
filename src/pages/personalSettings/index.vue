@@ -6,22 +6,25 @@
     </div>
     <div class="form">
       <div class="form-item">
-        <span>用户Id</span>
+        <span>用户ID</span>
         <input type="text" disabled />
       </div>
       <div class="form-item">
         <span>昵称</span>
-        <input type="text" placeholder="--" v-model="name" @focus="index = 0" @blur="index = null"/>
+        <input type="text" placeholder="--" v-model="name" @focus="index = 0" @blur="index = null" />
         <i class="iconfont icon-cancel" v-show="showCancel[0]" @click="name = ''">&#xe65c;</i>
       </div>
       <div class="form-item">
         <span>邮箱</span>
-        <input type="text" placeholder="--" v-model="email" @focus="index = 1" @blur="index = null"/>
+        <input type="text" placeholder="--" v-model="email" @focus="index = 1" @blur="index = null" />
         <i class="iconfont icon-cancel" v-show="showCancel[1]" @click="email = ''">&#xe65c;</i>
       </div>
       <div class="form-item">
         <span>性别</span>
-        <input type="text" placeholder="--" />
+        <div class="gender">
+          <span :class="{genderActive: isGenderActive}" @click="isGenderActive = !isGenderActive">男</span>
+          <span :class="{genderActive: !isGenderActive}" @click="isGenderActive = !isGenderActive">女</span>
+        </div>
       </div>
     </div>
     <div class="footer">
@@ -45,6 +48,7 @@ export default {
       showCancel: [false, false],
       name: '',
       email: '',
+      isGenderActive: true,
       index: null
     };
   },
@@ -74,27 +78,27 @@ export default {
     },
     controlCancelShow() {
       if (this.name === '' || this.index !== 0) {
-        this.showCancel[0] = false
+        this.showCancel[0] = false;
       } else {
-        this.showCancel[0] = true
+        this.showCancel[0] = true;
       }
 
       if (this.email === '' || this.index !== 1) {
-        this.showCancel[1] = false
+        this.showCancel[1] = false;
       } else {
-        this.showCancel[1] = true
+        this.showCancel[1] = true;
       }
     }
   },
   watch: {
     name() {
-      this.controlCancelShow()
+      this.controlCancelShow();
     },
     email() {
-      this.controlCancelShow()
+      this.controlCancelShow();
     },
     index() {
-      this.controlCancelShow()
+      this.controlCancelShow();
     }
   }
 };
@@ -105,6 +109,21 @@ export default {
   color: rgb(138, 138, 138);
 }
 
+.gender {
+  display: inline-block;
+  text-align: center;
+
+  > span {
+    height: 30px;
+    width: 40px;
+    display: inline-block;
+    border: 1px solid black;
+  }
+}
+
+.genderActive {
+  background-color: rgb(138,138,138);
+}
 .wrap {
   .head {
     margin: auto;
@@ -127,7 +146,12 @@ export default {
       padding: 15px 35px;
       border-bottom: 2px solid rgb(228, 228, 228);
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
+      align-items: center;
+
+      > span {
+        width: 80px;
+      }
 
       i {
         position: fixed;
