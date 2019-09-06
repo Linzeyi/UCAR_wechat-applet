@@ -117,6 +117,10 @@ export default {
   },
 
   methods: {
+    init () {
+      this.num = 0
+      this.currentTabKey = 0
+    },
     changeTabContent (e) {
       this.currentTabKey = e.mp.detail.current
     },
@@ -133,17 +137,22 @@ export default {
           icon: 'none',
           duration: 2000
         })
+      } else {
+        mpvue.navigateTo({ url: '/pages/orderConfirm/main?goodsId=' + this.goods.id + '&num=' + this.num })
       }
     }
   },
-
   mounted () {
     // this.$http.get('/api').then(res => {
     //   console.log(res)
     // })
+    this.goods.id = this.$root.$mp.query.goodsId
     wx.setNavigationBarTitle({
       title: this.goods.title
     })
+  },
+  onUnload () {
+    this.init()
   }
 }
 </script>
@@ -185,6 +194,7 @@ export default {
   .tab-content {
     flex-grow: 1;
     background-color: #fff;
+    height: calc(100% - 140px - 40px - 52px);
     swiper {
       height: 100%;
       swiper-item {
