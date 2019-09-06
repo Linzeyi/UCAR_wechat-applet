@@ -12,24 +12,6 @@
         <goods-grid-list :goodsList="goodsList"></goods-grid-list>
       </div>
     </div>
-
-    <div class="route-option">
-      <panel>
-        <button class="weui-btn weui-btn_primary" @click="routeTo('switchTab')">switchTab方法跳转，仅适用tabBar页面</button>
-      </panel>
-      <panel>
-        <button class="weui-btn weui-btn_primary" @click="routeTo('redirectTo')">redirectTo方法跳转，次级跳转，无法返回</button>
-        </panel>
-      <panel>
-        <button class="weui-btn weui-btn_primary" @click="routeTo('navigateTo')">navigateTo方法跳转，次级跳转，可返回</button>
-      </panel>
-      <panel>
-        <button class="weui-btn weui-btn_primary">
-          <a href="/pages/userCenter/main">a标签跳转，同navigateTo()</a>
-        </button>    
-      </panel>
-    </div>
-
   </div>
 </template>
 
@@ -65,46 +47,55 @@ export default {
       ],
       goodsList: [
         {
+          id: 1421,
           name: '商品一',
           src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
           price: 188
         },
         {
+          id: 21,
           name: '商品一',
           src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
           price: 188
         },
         {
+          id: 532,
           name: '商品一',
           src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
           price: 188
         },
         {
+          id: 152,
           name: '商品一',
           src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
           price: 188
         },
         {
+          id: 84,
           name: '商品一',
           src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
           price: 188
         },
         {
+          id: 762,
           name: '商品一',
           src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
           price: 188
         },
         {
+          id: 153,
           name: '商品一',
           src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
           price: 188
         },
         {
+          id: 943,
           name: '商品一',
           src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
           price: 188
         },
         {
+          id: 1136,
           name: '商品一',
           src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
           price: 188
@@ -125,10 +116,10 @@ export default {
     //       mpvue.switchTab({ url: '/pages/userCenter/main' })
     //       break
     //     case 'redirectTo': // redirectTo方法由于跳转次级页面（关闭当前页，导航栏没有返回键，不显示tabBar）
-    //       mpvue.redirectTo({ url: '/pages/counter/main' })
+    //       mpvue.redirectTo({ url: '/pages/goodsDetail/main' })
     //       break
     //     case 'navigateTo': // navigateTo方法由于跳转次级页面（保留当前页，不显示tabBar）
-    //       mpvue.navigateTo({ url: '/pages/counter/main' })
+    //       mpvue.navigateTo({ url: '/pages/goodsDetail/main' })
     //       break
     //   }
     // }
@@ -170,14 +161,5 @@ export default {
   .weui-panel__bd {
     padding-top: 10px;
   }
-}
-
-.route-option {
-  text-align: center;
-  padding: 1rem;
-}
-.route-option panel button {
-  margin-bottom: 0.4rem;
-  font-size: 14px;
 }
 </style>

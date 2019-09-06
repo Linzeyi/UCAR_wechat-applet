@@ -35,14 +35,8 @@
           </span>
         </p>
       </div>
-      <div class="comment-panel" v-if="showCommentOption">
-        <textarea v-model="myComment" placeholder="请输入您的评论内容..." auto-height></textarea>
-        <div class="btn-panel">
-          <button class="sendComment-btn" type="primary" @click="handlerComment">发布评论</button>
-        </div>
-      </div>
-      <div class="to-comment-panel" v-else>
-        <span @click="showCommentOption = true"><i class="iconfont icon-edit">&#xe609;</i> 攥写评论</span>
+      <div class="to-comment-panel">
+        <span @click="toEditComment()"><i class="iconfont icon-edit">&#xe609;</i> 攥写评论</span>
       </div>
       <div class="comment-list">
         <div class="list-panel" v-for="(item, index) in commentList" :key="index">
@@ -120,8 +114,7 @@ export default {
         }
       ],
       myScore: -1,
-      myComment: '',
-      showCommentOption: false
+      myComment: ''
     }
   },
   computed: {
@@ -133,32 +126,17 @@ export default {
     init () {
       this.myScore = -1
       this.myComment = ''
-      this.showCommentOption = false
     },
     selectScore (index) {
       this.myScore = index + 1
-      this.showCommentOption = true
+      wx.showToast({
+        title: '感谢评分',
+        icon: 'success',
+        duration: 2000
+      })
     },
-    handlerComment () {
-      if (this.myComment === '') {
-        wx.showToast({
-          title: '评论内容为空',
-          icon: 'none',
-          duration: 2000
-        })
-      } else if (this.myScore < 0) {
-        wx.showToast({
-          title: '未选择评分',
-          icon: 'none',
-          duration: 2000
-        })
-      } else {
-        wx.showToast({
-          title: '成功发表评论',
-          icon: 'success',
-          duration: 2000
-        })
-      }
+    toEditComment () {
+      mpvue.navigateTo({ url: '/pages/commentEditor/main?id=' + this.$root.$mp.query.id })
     }
   }
 
