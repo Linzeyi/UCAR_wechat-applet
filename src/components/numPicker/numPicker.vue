@@ -2,7 +2,7 @@
   <div class="num-picker">
     <div class="num-box">
       <span class="reduce" @click="reduce()" :class="{'disabled': num == 0}">-</span>
-      <input type="number" v-model="num" :input="checkNum" />
+      <input type="number" v-model="value" @input="checkNum" @blur="blurEvent" />
       <span class="plus" @click="plus()" :class="{'disabled': num == max}">+</span>
     </div>
   </div>
@@ -24,23 +24,71 @@ export default {
       }
     }
   },
+  data () {
+    return {
+      value: 0
+    }
+  },
   watch: {
-    num (val) {
-      this.$emit('update:num', val)
+    num () {
+      this.value = this.num
     }
   },
   methods: {
-    checkNum (val) {
-      console.log(val)
+    blurEvent () {
+      if (isNaN(this.value)) {
+        wx.showToast({
+          title: '非法字符',
+          icon: 'none',
+          duration: 2000
+        })
+        this.value = 0
+        this.$emit('update:num', 0)
+      }
+    },
+    checkNum (e) {
+      let val = e.target.value
+      let reg = new RegExp(/^[1-9]\d*$/)
+      if ((val === '' || val === 0 || reg.test(val)) && val <= this.max) {
+        this.$emit('update:num', parseInt(val))
+      } else {
+        this.value = 0
+        this.$emit('update:num', 0)
+        if (val > this.max) {
+          wx.showToast({
+            title: '数值不能超过上限' + this.max,
+            icon: 'none',
+            duration: 2000
+          })
+        } else {
+          wx.showToast({
+            title: '非法字符',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+      }
     },
     reduce () {
       if (this.num !== 0) {
-        this.num--
+        this.$emit('update:num', this.num - 1)
+      } else {
+        wx.showToast({
+          title: '数值不能小于0',
+          icon: 'none',
+          duration: 2000
+        })
       }
     },
     plus () {
       if (this.num !== this.max) {
-        this.num++
+        this.$emit('update:num', this.num + 1)
+      } else {
+        wx.showToast({
+          title: '数值不能超过上限' + this.max,
+          icon: 'none',
+          duration: 2000
+        })
       }
     }
   }

@@ -3,7 +3,6 @@
     "pages/index/main",
     "pages/classification/main",
     "pages/userCenter/main",
-    "pages/counter/main",
     "pages/wallet/main",
     "pages/address/main",
     "pages/login/main",
@@ -12,7 +11,11 @@
     "pages/findPassword/main",
     "pages/addAddress/main",
     "pages/modifyAddress/main",
-    "pages/message/main"
+    "pages/message/main",
+    "pages/personalSettings/main",
+    "pages/commentEditor/main",
+    "pages/orderConfirm/main"
+
   ],
   "window": {
     "backgroundTextStyle": "light",

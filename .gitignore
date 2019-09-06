@@ -11,9 +11,6 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
-<<<<<<< HEAD
-=======
 
 # 项目配置
 yarn.lock
->>>>>>> 8d795e65bacdd6b43c21d06a5f8e5d3e33f28383

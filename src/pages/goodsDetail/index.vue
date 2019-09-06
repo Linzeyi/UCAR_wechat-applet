@@ -2,19 +2,29 @@
   <div class="goodsDetail">
     <com-swiper :imgList="imgList"></com-swiper>
     <div class="tab-navbar">
-      <div class="tab-navbar-item" 
-        v-for="(item, index) in navbarList" 
-        :key="index" 
-        :class="{'on': item.on}"
-        @click="selectNavTab(item)"
-      >
-        {{item.name}}
+      <div class="flex-box">
+          <div class="tab-navbar-item" 
+            v-for="(item, index) in navbarList" 
+            :key="index" 
+            :class="{'on': currentTabKey == index}"
+            @click="selectNavTab(index)"
+          >
+            {{item.name}}
+          </div>
       </div>
     </div>
     <div class="tab-content">
-      <goods-info v-if="navbarList[0].on" :goods.sync="goods" :num.sync="num"></goods-info>
-      <goods-text v-if="navbarList[1].on" :goodsText.sync="goods.text"></goods-text>
-      <goods-comment v-if="navbarList[2].on" :goodsId="goods.id"></goods-comment>
+      <swiper :current="currentTabKey" @change="changeTabContent">
+        <swiper-item>
+          <goods-info :goods.sync="goods" :num.sync="num"></goods-info>
+        </swiper-item>
+        <swiper-item>
+          <goods-text :goodsText.sync="goods.text"></goods-text>
+        </swiper-item>
+        <swiper-item >
+          <goods-comment :goodsId="goods.id"></goods-comment>
+        </swiper-item>
+      </swiper>
     </div>
     <div class="weui-footer">
       <div class="weui-flex">
@@ -24,10 +34,10 @@
           </p>
         </div>
         <div class="weui-flex__item">
-          <button type="default">购物车</button>
+          <button type="default" @click="toShoppingCart">购物车</button>
         </div>
         <div class="weui-flex__item">
-          <button class="toPay-btn" type="primary">去结算</button>
+          <button class="toPay-btn" type="primary" @click="toPay">去结算</button>
         </div>
       </div>
     </div>
@@ -43,18 +53,19 @@ import goodsComment from '../../components/goodsDetail/goodsComment/goodsComment
 export default {
   data () {
     return {
+      currentTabKey: 0,
       navbarList: [
         {
-          name: '商品信息',
-          on: true
+          key: 'info',
+          name: '商品信息'
         },
         {
-          name: '详情',
-          on: false
+          key: 'text',
+          name: '详情'
         },
         {
-          name: '评论',
-          on: false
+          key: 'comment',
+          name: '评论'
         }
       ],
       imgList: [
@@ -95,7 +106,7 @@ export default {
 
   computed: {
     getTotalPrice () {
-      return (this.goods.discountPrice > 0 ? this.goods.discountPrice : this.goods.price) * this.num
+      return (this.goods.discountPrice > 0 ? this.goods.discountPrice : this.goods.price) * (this.num ? this.num : 0)
     }
   },
   components: {
@@ -106,24 +117,42 @@ export default {
   },
 
   methods: {
-    selectNavTab (item) {
-      for (let i = 0; i < this.navbarList.length; i++) {
-        if (item.name === this.navbarList[i].name) {
-          this.navbarList[i].on = true
-        } else {
-          this.navbarList[i].on = false
-        }
+    init () {
+      this.num = 0
+      this.currentTabKey = 0
+    },
+    changeTabContent (e) {
+      this.currentTabKey = e.mp.detail.current
+    },
+    selectNavTab (index) {
+      this.currentTabKey = index
+    },
+    toShoppingCart () {
+
+    },
+    toPay () {
+      if (this.num === 0) {
+        wx.showToast({
+          title: '商品数量不能为0',
+          icon: 'none',
+          duration: 2000
+        })
+      } else {
+        mpvue.navigateTo({ url: '/pages/orderConfirm/main?goodsId=' + this.goods.id + '&num=' + this.num })
       }
     }
   },
-
   mounted () {
     // this.$http.get('/api').then(res => {
     //   console.log(res)
     // })
+    this.goods.id = this.$root.$mp.query.goodsId
     wx.setNavigationBarTitle({
       title: this.goods.title
     })
+  },
+  onUnload () {
+    this.init()
   }
 }
 </script>
@@ -135,18 +164,24 @@ export default {
   flex-direction: column;
   .tab-navbar {
     background-color: #fff;
-    display: flex;
-    position: relative;
     border: none;
     align-items: center;
-    height: 37px;
+    height: 40px;
+    line-height: 40px;
+    .flex-box {
+      display: flex;
+      position: relative;
+      height: 40px;
+    }
     .tab-navbar-item {
       display: block;
-      padding:26rpx 0;
+      padding: 0;
+      box-sizing: border-box;
+      height: 40px;
+      line-height: 40px;
       text-align: center;
       flex-grow: 1;
       font-size:28rpx;
-      line-height:18rpx;
       color: #aaa;
       font-weight: 600;
       border-bottom: 1px solid #ddd;
@@ -158,27 +193,34 @@ export default {
   }
   .tab-content {
     flex-grow: 1;
-    padding: 10px 20px;
-    height: calc(100% - 140px - 37px - 44px);
-    overflow-y: auto;
     background-color: #fff;
+    height: calc(100% - 140px - 40px - 52px);
+    swiper {
+      height: 100%;
+      swiper-item {
+        padding: 10px 20px;
+        box-sizing: border-box;
+        height: 100%;
+        overflow-y: auto;
+      }
+    }
   }
 
   .weui-footer {
     background-color: #fff;
     border-top: 1px solid #ddd;
     width: 100%;
-    height: 44px;
-    line-height: 44px;
+    height: 52px;
+    line-height: 52px;
     .weui-flex {
       height: 100%;
       .weui-flex__item {
         flex-grow: 1;
         box-sizing: border-box;
         font-size: 26rpx;
+        font-weight: 600;
         &:first-child {
           text-align: left;
-          flex-grow: 1.5;
           padding: 0 20px;
           border-right: 1px solid #ddd;
         }
@@ -193,10 +235,12 @@ export default {
           height: 100%;
           width: 100%;
           font-size: 26rpx;
-          line-height: 44px;
+          line-height: 52px;
           padding: 0;
           border-radius: 0;
+          color: #666;
           &.toPay-btn {
+            color: #fff;
             background-color: #1abc9c;
             &:active {
               background-color: #16a085;
