@@ -26,20 +26,12 @@
         </swiper-item>
       </swiper>
     </div>
-    <div class="weui-footer">
-      <div class="weui-flex">
-        <div class="weui-flex__item">
-          <p class="total-price">
-            <span>商品金额：</span>¥{{getTotalPrice}}
-          </p>
-        </div>
-        <div class="weui-flex__item">
-          <button type="default" @click="toShoppingCart">购物车</button>
-        </div>
-        <div class="weui-flex__item">
-          <button class="toPay-btn" type="primary" @click="toPay">去结算</button>
-        </div>
-      </div>
+    <div class="tab-footer">
+      <p class="total-price">
+        商品金额：<span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
+        <button type="default" @click="toShoppingCart">购物车</button>
+        <button class="toPay-btn" type="primary" @click="toPay">去结算</button>
+      </p>
     </div>
   </div>
 </template>
@@ -138,14 +130,21 @@ export default {
           duration: 2000
         })
       } else {
-        mpvue.navigateTo({ url: '/pages/orderConfirm/main?goodsId=' + this.goods.id + '&num=' + this.num })
+        this.$store.commit('Order/SET_GOODSLIST', {
+          goodsList: [
+            {
+              id: this.goods.id,
+              num: this.num
+            }
+          ]
+        })
+        mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
       }
     }
   },
   mounted () {
-    // this.$http.get('/api').then(res => {
-    //   console.log(res)
-    // })
+    this.$http.post('/test').then(res => {
+    })
     this.goods.id = this.$root.$mp.query.goodsId
     wx.setNavigationBarTitle({
       title: this.goods.title
@@ -183,7 +182,6 @@ export default {
       flex-grow: 1;
       font-size:28rpx;
       color: #aaa;
-      font-weight: 600;
       border-bottom: 1px solid #ddd;
       &.on {
         color: #1abc9c;
@@ -198,7 +196,7 @@ export default {
     swiper {
       height: 100%;
       swiper-item {
-        padding: 10px 20px;
+        padding: 10px;
         box-sizing: border-box;
         height: 100%;
         overflow-y: auto;
@@ -206,52 +204,46 @@ export default {
     }
   }
 
-  .weui-footer {
+  .tab-footer {
     background-color: #fff;
     border-top: 1px solid #ddd;
     width: 100%;
-    height: 52px;
-    line-height: 52px;
-    .weui-flex {
-      height: 100%;
-      .weui-flex__item {
-        flex-grow: 1;
-        box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    .total-price {
+      height: 36px;
+      line-height: 36px;
+      font-size: 12px;
+      .price {
+        color: orange;
+        font-size: 14px;
+        .logo {
+          font-size: 10px;
+          margin-right: 3px;
+        }
+      }
+      button {
+        float: right;
+        border: none;
         font-size: 26rpx;
-        font-weight: 600;
-        &:first-child {
-          text-align: left;
-          padding: 0 20px;
-          border-right: 1px solid #ddd;
-        }
-        .total-price {
-          color: red;
-          span {
-            color: #666;
+        line-height: 36px;
+        height: 36px;
+        padding: 0 20px;
+        border-radius: 4px;
+        color: #666;
+        margin-left: 10px;
+        &.toPay-btn {
+          color: #fff;
+          background-color: #1abc9c;
+          &:active {
+            background-color: #16a085;
           }
         }
-        button {
+        &::after {
+          border: none
+        }
+        &::before {
           border: none;
-          height: 100%;
-          width: 100%;
-          font-size: 26rpx;
-          line-height: 52px;
-          padding: 0;
-          border-radius: 0;
-          color: #666;
-          &.toPay-btn {
-            color: #fff;
-            background-color: #1abc9c;
-            &:active {
-              background-color: #16a085;
-            }
-          }
-          &::after {
-            border: none
-          }
-          &::before {
-            border: none;
-          }
         }
       }
     }

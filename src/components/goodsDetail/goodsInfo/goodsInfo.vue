@@ -6,8 +6,8 @@
     </div>
     <div class="shop-box">
       <div class="panel price-panel">
-        <p v-if="goods.discountPrice > 0"><span>优惠价：</span>¥{{goods.discountPrice}}</p>
-        <p v-else><span>价格：</span>¥{{goods.price}}</p>
+        <p v-if="goods.discountPrice > 0">优惠价：<span class="price"><span class="logo">¥</span>{{goods.discountPrice}}</span></p>
+        <p v-else>价格：<span class="price"><span class="logo">¥</span>{{goods.price}}</span></p>
       </div>
       <div class="panel">
         <p><span>库存：</span>{{goods.stock}}</p>
@@ -85,9 +85,13 @@ export default {
       padding-top: 28rpx;
     }
     &.price-panel {
-      color: red;
-      span {
-        color: #000;
+      .price {
+        color: orangered;
+        font-size: 16px;
+        .logo {
+          font-size: 12px;
+          margin-right: 5px;
+        }
       }
     }
     &.num-panel {
@@ -102,7 +106,11 @@ export default {
         height: 30px;
         line-height: 30px;
         float: right;
+        border: none;
         vertical-align: top;
+        &::before, &::after {
+          border: none;
+        }
       }
     }
   }

@@ -49,7 +49,7 @@
           <i class="iconfont">&#xe601;</i>
         </span>
       </div>
-      <div class="weui-cell">
+      <div class="weui-cell" @click="routeTo('message')">
         <div class="weui-cell__hd">
           <i class="iconfont">&#xe6bb;</i>
         </div>
@@ -97,6 +97,9 @@ export default {
         case 'address':
           mpvue.navigateTo({ url: '/pages/address/main' })
           break
+        case 'message':
+          mpvue.navigateTo({ url: '/pages/message/main' })
+          break
       }
     }
   }
@@ -104,59 +107,65 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.user-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  .user-icon {
-    height: 80px;
-    width: 80px;
-    flex: 5;
-    padding: 0 5px;
-    border-radius: 15px;
-  }
-  .info {
-    flex: 3;
-    & > p {
-      font-size: 0.3rem;
+@baoWoBlack: rgb(51, 51, 51);
+@baoWoFont: 'PingFangSC-Light';
+.userCenter-wrap {
+  color: @baoWoBlack;
+  font-family: @baoWoFont;
+  .user-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .user-icon {
+      height: 80px;
+      width: 80px;
+      flex: 5;
+      padding: 0 5px;
+      border-radius: 50%;
     }
-    .user-name {
-      display: flex;
-      span {
-        border: 0.5px solid rgb(247, 97, 97);
-        border-radius:5px;
-        background-color: rgb(255, 171, 171);
-        padding: 0 8px;
-        margin-left: 18px;
-        font-size: 0.25rem;
-        align-self: center;
-        color: rgb(253, 77, 77);
-        line-height: inherit;
+    .info {
+      flex: 3;
+      & > p {
+        font-size: 0.3rem;
+      }
+      .user-name {
+        display: flex;
+        span {
+          border: 0.5px solid rgb(247, 97, 97);
+          border-radius:5px;
+          background-color: rgb(255, 171, 171);
+          padding: 0 8px;
+          margin-left: 18px;
+          font-size: 0.25rem;
+          align-self: center;
+          color: rgb(253, 77, 77);
+          line-height: inherit;
+        }
       }
     }
+    .setting {
+      font-size: 0.6rem;
+      flex: 0.7;
+    }
   }
-  .setting {
-    font-size: 0.6rem;
-    flex: 0.7;
+  .phone {
+    margin-left: 15px;
+    p {
+      font-size: 0.3rem;
+    }
   }
-}
-.phone {
-  margin-left: 15px;
-  p {
-    font-size: 0.3rem;
-  }
-}
-.weui-cells {
-  box-shadow: 0 3px 3px rgb(223, 223, 223), 0 -0.8px 4px rgb(223, 223, 223);
-  p {
-    padding: 5px 0;
-  }
-  .weui-cell__hd .iconfont {
-    font-size: 0.5rem;
-    margin-right: 9px;
-  }
-  .weui-cell__ft .iconfont {
-    font-size: 0.3rem;
+  .weui-cells {
+    box-shadow: 0 3px 3px rgb(223, 223, 223), 0 -0.8px 4px rgb(223, 223, 223);
+    p {
+      padding: 5px 0;
+    }
+    .weui-cell__hd .iconfont {
+      font-size: 0.5rem;
+      margin-right: 9px;
+    }
+    .weui-cell__ft .iconfont {
+      font-size: 0.3rem;
+    }
   }
 }
 </style>

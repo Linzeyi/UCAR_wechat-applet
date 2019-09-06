@@ -9,6 +9,9 @@
     "pages/register/main",
     "pages/goodsDetail/main",
     "pages/findPassword/main",
+    "pages/addAddress/main",
+    "pages/modifyAddress/main",
+    "pages/message/main",
     "pages/personalSettings/main",
     "pages/commentEditor/main",
     "pages/orderConfirm/main"
