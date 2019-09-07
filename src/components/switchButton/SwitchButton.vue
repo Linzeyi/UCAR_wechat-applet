@@ -1,7 +1,7 @@
 <template>
-  <div class="wrap">
+  <div class="wrap"  @click="checkboxActive = !checkboxActive">
     <input type="checkbox" class="offscreen" v-model="checkboxActive" />
-    <label :class="{checked: checkboxActive, switch: true}" @click="checkboxActive = !checkboxActive"></label>
+    <label :class="{checked: checkboxActive, switch: true}"></label>
   </div>
 </template>
 
@@ -19,7 +19,7 @@ export default {
 .wrap {
   position: fixed;
   right: 0;
-  height: 100%;
+  height: 20px;
   width: 40px;
   z-index: 3;
 }
@@ -52,7 +52,6 @@ export default {
   }
 }
 .offscreen {
-  position: absolute;
-  left: -9999px;
+  display: none;
 }
 </style>

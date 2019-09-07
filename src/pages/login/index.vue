@@ -8,7 +8,10 @@
       </div>
       <div class="opacity">
         <img src="/static/images/u109.svg" />
-        <input type="text" placeholder="密码" />
+        <span @click="inputType = !inputType">
+          <switch-button></switch-button>
+        </span>
+        <input :type="showPassword" placeholder="密码" />
       </div>
       <div class="forget">
         <span>忘记密码</span>
@@ -24,9 +27,26 @@
 </template>
 
 <script>
+import SwitchButton from '@/components/switchButton/SwitchButton';
 export default {
-  created() {}
-}
+  data() {
+    return {
+      inputType: false
+    };
+  },
+  computed: {
+    showPassword() {
+      if (this.inputType) {
+        return 'text';
+      } else {
+        return 'password';
+      }
+    }
+  },
+  components: {
+    SwitchButton
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -41,19 +61,20 @@ export default {
     display: block;
     width: 80px;
     height: 80px;
-    margin-bottom: 50px;
+    margin-bottom: 70px;
     border: 1px solid rgb(26, 188, 156);
+    border-radius: 50%;
   }
 
   .form {
     width: 80%;
     transform: scale(1);
-    margin-bottom: 60px;
+    margin-bottom: 90px;
 
     .opacity {
       opacity: 0.5;
       & > input {
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         text-align: center;
         border-bottom: 1rpx solid rgb(228, 228, 228);
       }

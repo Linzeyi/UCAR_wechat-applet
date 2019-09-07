@@ -14,7 +14,10 @@
         </div>
         <div>
           <img src="/static/images/u109.svg" />
-          <input type="text" placeholder="输入新的登录密码" />
+          <span @click="inputType = !inputType">
+            <switch-button></switch-button>
+          </span>
+          <input :type="showPassword" placeholder="输入新的登录密码" />
         </div>
       </div>
     </div>
@@ -26,11 +29,28 @@
 
 <script>
 import CountDown from '@/components/countDown/CountDown';
+import SwitchButton from '@/components/switchButton/SwitchButton';
+
 export default {
+  data() {
+    return {
+      inputType: false
+    };
+  },
+  computed: {
+    showPassword() {
+      if (this.inputType) {
+        return 'text';
+      } else {
+        return 'password';
+      }
+    }
+  },
   components: {
-    CountDown
+    CountDown,
+    SwitchButton
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -45,13 +65,13 @@ export default {
     display: block;
     width: 80px;
     height: 80px;
-    margin-bottom: 50px;
+    margin-bottom: 70px;
     border: 1px solid rgb(26, 188, 156);
   }
 
   .form {
     width: 85%;
-    margin-bottom: 70px;
+    margin-bottom: 90px;
     transform: scale(1);
 
     .opacity {
@@ -59,7 +79,7 @@ export default {
     }
 
     .opacity > div > input {
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       text-align: center;
       border-bottom: 1rpx solid rgb(228, 228, 228);
     }
