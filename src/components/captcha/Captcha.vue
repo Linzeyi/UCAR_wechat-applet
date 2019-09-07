@@ -1,7 +1,7 @@
 <template>
   <span class="wrap" :class="{captcha: !captchaActive}">
     <span v-if="captchaActive === false" @click.stop="captchaClick">发送验证码</span>
-    <span v-else>倒计时{{countDown}}</span>
+    <span v-else>倒计时{{captcha}}</span>
   </span>
 </template>
 
@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       captchaActive: false,
-      countDown: 60,
+      captcha: 60,
       timer: null
     };
   },
@@ -24,15 +24,15 @@ export default {
     },
     start() {
       this.timer = setInterval(() => {
-        this.countDown -= 1;
-        if (this.countDown === 0) {
+        this.captcha -= 1;
+        if (this.captcha === 0) {
           this.resetCaptcha();
         }
       }, 1000);
     },
     resetCaptcha() {
       this.captchaActive = false;
-      this.countDown = 60;
+      this.captcha = 60;
       if (this.timer) {
         clearInterval(this.timer);
       }

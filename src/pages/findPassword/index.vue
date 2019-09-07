@@ -9,7 +9,7 @@
         </div>
         <div>
           <img src="/static/images/u163.svg" />
-          <count-down></count-down>
+          <captcha></captcha>
           <input type="text" placeholder="短信验证码" />
         </div>
         <div>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import CountDown from '@/components/countDown/CountDown';
+import Captcha from '@/components/captcha/Captcha';
 import SwitchButton from '@/components/switchButton/SwitchButton';
 
 export default {
@@ -47,7 +47,7 @@ export default {
     }
   },
   components: {
-    CountDown,
+    Captcha,
     SwitchButton
   }
 };
