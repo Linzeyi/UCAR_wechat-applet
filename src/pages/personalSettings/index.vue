@@ -22,8 +22,8 @@
       <div class="form-item">
         <span>性别</span>
         <div class="gender">
-          <span :class="{genderActive: isGenderActive}" @click="isGenderActive = !isGenderActive">男</span>
-          <span :class="{genderActive: !isGenderActive}" @click="isGenderActive = !isGenderActive">女</span>
+          <div :class="{genderActive: isGenderActive}" @click="isGenderActive = !isGenderActive"><span>男</span></div>
+          <div :class="{genderActive: !isGenderActive}" @click="isGenderActive = !isGenderActive"><span>女</span></div>
         </div>
       </div>
     </div>
@@ -113,11 +113,14 @@ export default {
   display: inline-block;
   text-align: center;
 
-  > span {
+  > div {
     height: 30px;
     width: 40px;
     display: inline-block;
     border: 1px solid black;
+     > span {
+       line-height: 30px;
+     }
   }
 }
 
