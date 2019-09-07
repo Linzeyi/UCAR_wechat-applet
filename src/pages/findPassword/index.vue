@@ -67,6 +67,7 @@ export default {
     height: 80px;
     margin-bottom: 70px;
     border: 1px solid rgb(26, 188, 156);
+    border-radius: 50%;
   }
 
   .form {
