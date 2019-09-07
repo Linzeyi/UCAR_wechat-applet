@@ -1,5 +1,5 @@
 <template>
-  <div class="num-picker">
+  <div class="num-picker" :class="{'small': isSmall}">
     <div class="num-box">
       <span class="reduce" @click="reduce()" :class="{'disabled': num == 0}">-</span>
       <input type="number" v-model="value" @input="checkNum" @blur="blurEvent" />
@@ -11,6 +11,12 @@
 <script>
 export default {
   props: {
+    isSmall: {
+      type: Boolean,
+      default () {
+        return false
+      }
+    },
     max: {
       type: Number,
       default () {
@@ -28,6 +34,10 @@ export default {
     return {
       value: 0
     }
+  },
+  onLoad () {
+    console.log('数量选择器')
+    this.value = this.num
   },
   watch: {
     num () {
@@ -96,7 +106,8 @@ export default {
 </script>
 
 <style scoped lang="less">
-@wh: 60rpx;
+@wh: 30px;
+@swh: 24px;
 .num-picker {
   display: inline-block;
   height: 100%;
@@ -106,28 +117,68 @@ export default {
     justify-content: center;
     align-items: center;
     input {
-      width: 60rpx;
+      width: @wh;
       height: @wh;
       color: #777;
       flex-grow: 1;
-      margin: 0 4px;
-      border-radius: 4px;
       text-align: center;
+      box-sizing: border-box;
     }
     span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
       box-sizing: border-box;
       color: #777;
       border: 1px solid #ddd;
       border-radius: 4px;
-      flex-grow: 1;
       width: @wh;
       height: @wh;
-      font-size: 15px;
       line-height: 50rpx;
+      font-size: 16px;
       text-align: center;
       &.disabled {
         background-color: #eee;
         color: #aaa;
+      }
+    }
+  }
+  &.small {
+    .num-box {
+      box-sizing: border-box;
+      border-radius: 2px;
+      height: @swh;
+      border: 1px solid #ddd;
+      input {
+        font-size: 12px;
+        width: 25px;
+        margin: 0 5px;
+        display: inline-block;
+        line-height: @swh;
+        height: @swh;
+        border: none;
+        outline: none;
+        color: #777;
+        flex-grow: 1;
+        text-align: center;
+      }
+      span {
+        display: inline-block;
+        border-radius: 0;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        color: #888;
+        height: @swh;
+        width: @swh;
+        line-height: 47rpx;
+        &.reduce {
+          border-right: 1px solid #ddd;
+        }
+        &.plus {
+          border-left: 1px solid #ddd;
+        }
       }
     }
   }

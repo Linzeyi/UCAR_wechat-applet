@@ -15,8 +15,8 @@
     "pages/personalSettings/main",
     "pages/commentEditor/main",
     "pages/orderConfirm/main",
-    "pages/search/main"
-
+    "pages/search/main",
+    "pages/shoppingCart/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

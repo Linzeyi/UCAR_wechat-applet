@@ -33,7 +33,8 @@ export default {
       height: 50px;
       width: 100%;
       box-sizing: border-box;
-      border: 4px solid #ddd;
+      border: 2px solid #e6e6e6;
+      border-radius: 2px;
       margin: 0 auto 5px auto;
       overflow: hidden;
     }

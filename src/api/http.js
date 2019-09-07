@@ -20,7 +20,7 @@ let fly = new Fly()
 
 const headers = {
   'Content-Type': 'application/x-www-form-urlencoded',
-  'apiGroupCode': 'tranning'
+  'apigroupcode': 'tranning'
 }
 
 Object.assign(fly.config, {
@@ -33,8 +33,12 @@ Object.assign(fly.config, {
 fly.interceptors.request.use(request => {
   // console.log(request)
   const uid = null
-  const data = JSON.stringify(request.body) // 需要加密的请求数据，转成字符串
-  const q = SignApi.getQ(data, key) // 利用请求参数data和密钥key
+  console.log('accountKey:' + accountKey)
+  console.log('key:' + key)
+  const data = request.body ? JSON.stringify(request.body) : '' // 需要加密的请求数据，转成字符串
+  console.log('data:' + data)
+  const q = SignApi.getQ(data, accountKey) // 利用请求参数data和密钥key
+  console.log('q:' + q)
   const sign = SignApi.getSign({ // 利用cid、q、uid、accountKey生成签名
     cid,
     q,
@@ -45,17 +49,17 @@ fly.interceptors.request.use(request => {
   const queryData = { // 最终的请求体
     username: request.body.username,
     password: request.body.password,
+    uid,
     sign,
-    cid,
-    uid
+    cid
   }
   request.body = queryData // 放入请求体
   console.log('请求体：', queryData)
 
-  // 以下为测试数据解密算法，接口正式对接后要将该区域代码转移到response拦截器里
-  const resultStr = CryptoApi.aesDecrypt(q, key) // 利用key对返回的数据进行解密，得到字符串数据
-  const result = JSON.parse(resultStr) // 将数据字符串转为对象
-  console.log('解密数据：', JSON.parse(result))
+  // // 以下为测试数据解密算法，接口正式对接后要将该区域代码转移到response拦截器里
+  // const resultStr = CryptoApi.aesDecrypt(q, key) // 利用key对返回的数据进行解密，得到字符串数据
+  // const result = resultStr ? JSON.parse(resultStr) : '' // 将数据字符串转为对象
+  // console.log('解密数据：', result)
 
   return request
 })

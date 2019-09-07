@@ -15,11 +15,12 @@ const SignApi = {
     if (uid) {
       signArr.push(`uid=${uid}`);
     }
-
     return CryptoApi.md5Sign(`${signArr.join(';')}${accountKey}`)
   },
 
   getQ(body = {}, key) {
+    let data = '{\n' + '  "appVersion":"1"\n' + '}'
+    console.log(data)
     return CryptoApi.aesEncrypt(body || {}, key)
   }
 }

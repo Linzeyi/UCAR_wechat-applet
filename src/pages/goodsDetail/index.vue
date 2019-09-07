@@ -88,7 +88,8 @@ export default {
         price: 80,
         discountPrice: 64,
         stock: 199,
-        sales: 2422
+        sales: 2422,
+        score: 4.3
       },
       num: 0
     }
@@ -124,7 +125,7 @@ export default {
       this.currentTabKey = index
     },
     toShoppingCart () {
-
+      mpvue.navigateTo({ url: '/pages/shoppingCart/main' })
     },
     toPay () {
       if (this.num === 0) {
@@ -147,7 +148,10 @@ export default {
     }
   },
   mounted () {
-    // this.$http.post('/test', {username: 'linzeyi', password: '1241251'}).then(res => {
+    // this.$http.get('action/test', {
+    //   username: 'heoing',
+    //   password: 'aaa'
+    // }).then(res => {
     //   console.log(res)
     // })
     this.goods.id = this.$root.$mp.query.goodsId
@@ -196,7 +200,7 @@ export default {
   }
   .tab-content {
     flex-grow: 1;
-    background-color: #eee;
+    background-color: #f8f8f8;
     height: calc(100% - 140px - 40px - 56px);
     swiper {
       height: 100%;
