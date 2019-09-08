@@ -14,14 +14,14 @@
         <input :type="showPassword" placeholder="密码" />
       </div>
       <div class="forget">
-        <span @click="navTo('/pages/findPassword/main')">忘记密码</span>
+        <span @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</span>
       </div>
     </div>
     <div class="login">
       <span>登录</span>
     </div>
     <div class="create">
-      <span @click="navTo('/pages/register/main')">创建账号</span>
+      <span @click="Utils.navigateTo('/pages/register/main')">创建账号</span>
     </div>
   </div>
 </template>
@@ -41,11 +41,6 @@ export default {
       } else {
         return 'password';
       }
-    }
-  },
-  methods: {
-    navTo(url) {
-      mpvue.navigateTo({url})
     }
   },
   components: {

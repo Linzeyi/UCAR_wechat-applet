@@ -25,9 +25,14 @@ export function getHMSTime (date) {
   return formatTime(date).split(' ')[1]
 }
 
+export function navigateTo(url) {
+  mpvue.navigateTo({url})
+}
+
 export default {
   formatNumber,
   formatTime,
   getYMDTime,
-  getHMSTime
+  getHMSTime,
+  navigateTo
 }
