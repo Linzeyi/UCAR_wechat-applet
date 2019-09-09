@@ -12,6 +12,7 @@
         <goods-grid-list :goodsList="goodsList"></goods-grid-list>
       </div>
     </div>
+    <a href="/pages/myOrders/main">我的订单</a>
   </div>
 </template>
 

@@ -2,20 +2,26 @@
 const { CryptoApi } = require('./crypto.js')
 
 const SignApi = {
+  // getSign ({
+  //   cid,
+  //   data,
+  //   uid,
+  //   accountKey
+  // }) {
+  //   const signArr = [
+  //     `cid=${cid}`
+  //   ]
+  // }
   getSign({
     cid,
     q,
     uid,
     accountKey
   }) {
-    const signArr = [
+    let signArr = [
       `cid=${cid}`,
       `q=${q}`
-    ];
-    if (uid) {
-      signArr.push(`uid=${uid}`);
-    }
-
+    ]
     return CryptoApi.md5Sign(`${signArr.join(';')}${accountKey}`)
   },
 
