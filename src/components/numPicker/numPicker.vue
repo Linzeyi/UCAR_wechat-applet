@@ -1,7 +1,7 @@
 <template>
-  <div class="num-picker">
+  <div class="num-picker" :class="{'small': isSmall}">
     <div class="num-box">
-      <span class="reduce" @click="reduce()" :class="{'disabled': num == 0}">-</span>
+      <span class="reduce" @click="reduce()" :class="{'disabled': num == min}">-</span>
       <input type="number" v-model="value" @input="checkNum" @blur="blurEvent" />
       <span class="plus" @click="plus()" :class="{'disabled': num == max}">+</span>
     </div>
@@ -11,6 +11,18 @@
 <script>
 export default {
   props: {
+    isSmall: {
+      type: Boolean,
+      default () {
+        return false
+      }
+    },
+    min: {
+      type: Number,
+      default () {
+        return 0
+      }
+    },
     max: {
       type: Number,
       default () {
@@ -29,6 +41,9 @@ export default {
       value: 0
     }
   },
+  onLoad () {
+    this.value = this.num
+  },
   watch: {
     num () {
       this.value = this.num
@@ -36,45 +51,55 @@ export default {
   },
   methods: {
     blurEvent () {
-      if (isNaN(this.value)) {
+      if (isNaN(this.value) && this.value !== 0) {
         wx.showToast({
           title: '非法字符',
           icon: 'none',
           duration: 2000
         })
-        this.value = 0
-        this.$emit('update:num', 0)
+        this.value = this.min
+        this.$emit('update:num', this.min)
       }
     },
     checkNum (e) {
       let val = e.target.value
       let reg = new RegExp(/^[1-9]\d*$/)
-      if ((val === '' || val === 0 || reg.test(val)) && val <= this.max) {
-        this.$emit('update:num', parseInt(val))
-      } else {
-        this.value = 0
-        this.$emit('update:num', 0)
-        if (val > this.max) {
+      if (val === '' || Number(val) === this.min || reg.test(val)) {
+        if (Number(val) > this.max) {
+          this.value = this.min
+          this.$emit('update:num', this.min)
           wx.showToast({
-            title: '数值不能超过上限' + this.max,
+            title: '数值不能超过' + this.max,
+            icon: 'none',
+            duration: 2000
+          })
+        } else if (Number(val) < this.min) {
+          this.value = this.min
+          this.$emit('update:num', this.min)
+          wx.showToast({
+            title: '数值不能低于' + this.min,
             icon: 'none',
             duration: 2000
           })
         } else {
-          wx.showToast({
-            title: '非法字符',
-            icon: 'none',
-            duration: 2000
-          })
+          this.$emit('update:num', parseInt(val))
         }
+      } else {
+        this.value = this.min
+        this.$emit('update:num', this.min)
+        wx.showToast({
+          title: '非法字符',
+          icon: 'none',
+          duration: 2000
+        })
       }
     },
     reduce () {
-      if (this.num !== 0) {
+      if (this.num > this.min) {
         this.$emit('update:num', this.num - 1)
       } else {
         wx.showToast({
-          title: '数值不能小于0',
+          title: '数值不能低于' + this.min,
           icon: 'none',
           duration: 2000
         })
@@ -85,7 +110,7 @@ export default {
         this.$emit('update:num', this.num + 1)
       } else {
         wx.showToast({
-          title: '数值不能超过上限' + this.max,
+          title: '数值不能超过' + this.max,
           icon: 'none',
           duration: 2000
         })
@@ -96,7 +121,8 @@ export default {
 </script>
 
 <style scoped lang="less">
-@wh: 60rpx;
+@wh: 30px;
+@swh: 24px;
 .num-picker {
   display: inline-block;
   height: 100%;
@@ -105,29 +131,70 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
     input {
-      width: 60rpx;
+      width: @wh;
       height: @wh;
       color: #777;
       flex-grow: 1;
-      margin: 0 4px;
-      border-radius: 4px;
       text-align: center;
+      box-sizing: border-box;
     }
     span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
       box-sizing: border-box;
       color: #777;
       border: 1px solid #ddd;
       border-radius: 4px;
-      flex-grow: 1;
       width: @wh;
       height: @wh;
-      font-size: 15px;
       line-height: 50rpx;
+      font-size: 16px;
       text-align: center;
       &.disabled {
         background-color: #eee;
         color: #aaa;
+      }
+    }
+  }
+  &.small {
+    .num-box {
+      box-sizing: border-box;
+      border-radius: 2px;
+      height: @swh;
+      border: 1px solid #ddd;
+      input {
+        font-size: 12px;
+        width: 25px;
+        margin: 0 5px;
+        display: inline-block;
+        line-height: @swh;
+        height: @swh;
+        border: none;
+        outline: none;
+        color: #777;
+        flex-grow: 1;
+        text-align: center;
+      }
+      span {
+        display: inline-block;
+        border-radius: 0;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        color: #888;
+        height: @swh;
+        width: @swh;
+        line-height: 47rpx;
+        &.reduce {
+          border-right: 1px solid #ddd;
+        }
+        &.plus {
+          border-left: 1px solid #ddd;
+        }
       }
     }
   }

@@ -26,16 +26,15 @@
         </swiper-item>
       </swiper>
     </div>
-    <div class="tab-footer">
-      <p class="total-price">
-        商品金额：<span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-        <button class="toPay-btn" type="primary" @click="toPay">
-          <i class="iconfont icon-pay">&#xe643;</i>去结算
-          </button>
-        <button type="default" @click="toShoppingCart">
-          <i class="iconfont icon-shopping-cart">&#xe618;</i>购物车
-          </button>
-      </p>
+    <div class="tab-footer lzy-footer">
+      <div class="left-box">
+        <span>商品金额：</span>
+        <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
+      </div>
+      <div class="right-box">
+        <button class="shoppingCart-btn" @click="addToShoppingCart">加入购物车</button>
+        <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm">立即购买</button>
+      </div>
     </div>
   </div>
 </template>
@@ -88,7 +87,8 @@ export default {
         price: 80,
         discountPrice: 64,
         stock: 199,
-        sales: 2422
+        sales: 2422,
+        score: 4.3
       },
       num: 0
     }
@@ -123,10 +123,25 @@ export default {
     selectNavTab (index) {
       this.currentTabKey = index
     },
-    toShoppingCart () {
-
+    addToShoppingCart () {
+      if (this.num === 0) {
+        wx.showToast({
+          title: '商品数量不能为0',
+          icon: 'none',
+          duration: 2000
+        })
+      } else {
+        wx.showToast({
+          title: '添加成功',
+          icon: 'success',
+          duration: 2000
+        })
+      }
     },
-    toPay () {
+    toShoppingCart () {
+      mpvue.navigateTo({ url: '/pages/shoppingCart/main' })
+    },
+    toOrderConfirm () {
       if (this.num === 0) {
         wx.showToast({
           title: '商品数量不能为0',
@@ -147,7 +162,15 @@ export default {
     }
   },
   mounted () {
-    // this.$http.post('/test', {username: 'linzeyi', password: '1241251'}).then(res => {
+    // const data = {
+    //   username: 'heoning',
+    //   password: 'qqq',
+    //   type: {
+    //     id: 14,
+    //     name: '214'
+    //   }
+    // }
+    // this.$http.get('action/test', data).then(res => {
     //   console.log(res)
     // })
     this.goods.id = this.$root.$mp.query.goodsId
@@ -196,8 +219,8 @@ export default {
   }
   .tab-content {
     flex-grow: 1;
-    background-color: #eee;
-    height: calc(100% - 140px - 40px - 56px);
+    background-color: #f3f3f3;
+    height: calc(100% - 140px - 40px - 70px);
     swiper {
       height: 100%;
       swiper-item {
@@ -207,15 +230,8 @@ export default {
       }
     }
   }
-
   .tab-footer {
-    background-color: #fff;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 15px;
-    .total-price {
-      height: 36px;
-      line-height: 36px;
+    .left-box {
       font-size: 14px;
       .price {
         color: #ff6421;
@@ -225,29 +241,27 @@ export default {
           margin-right: 3px;
         }
       }
+    }
+    .right-box {
       button {
-        float: right;
-        border: none;
-        font-size: 14px;
-        line-height: 36px;
-        height: 36px;
-        padding: 0 20px;
-        border-radius: 4px;
-        color: #666;
-        margin-left: 10px;
-        &.toPay-btn {
-          color: #fff;
-          background-color: #1abc9c;
+        margin-left: 0px;
+        border-radius: 20px;
+        color: #fff;
+        &.shoppingCart-btn {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          background-color: orange;
           &:active {
-            background-color: #16a085;
+            background-color: #ff9a00;
           }
         }
-        &::before, &::after {
-          border: none
-        }
-        .iconfont {
-          font-size: 14px;
-          margin-right: 6px;
+        &.toOrderConfirm-btn {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+          background-color: #ff6421;
+          &:active {
+            background-color: #ec4e09;
+          }
         }
       }
     }

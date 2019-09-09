@@ -27,7 +27,7 @@
           <p>{{ balance }}元<i class="iconfont">&#xe601;</i></p>
         </span>
       </div>
-      <div class="weui-cell">
+      <div class="weui-cell" @click="routeTo('order')">
         <div class="weui-cell__hd">
           <i class="iconfont">&#xe643;</i>
         </div>
@@ -103,6 +103,9 @@ export default {
           break
         case 'search':
           mpvue.navigateTo({ url: '/pages/search/main' })
+          break
+        case 'order':
+          mpvue.navigateTo({ url: '/pages/myOrders/main' })
           break
       }
     }

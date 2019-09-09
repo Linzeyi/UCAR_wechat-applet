@@ -31,10 +31,15 @@ export const regularRule = {
   mail: /^\w+@[a-zA-Z0-9]{2,10}\.(com|cn)$/
 }
 
+export function navigateTo(url) {
+  mpvue.navigateTo({url})
+}
+
 export default {
   formatNumber,
   formatTime,
   getYMDTime,
   getHMSTime,
-  regularRule
+  regularRule,
+  navigateTo
 }

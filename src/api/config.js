@@ -1,12 +1,12 @@
 const config = {
   Host: {
-    production: 'http://10.104.118.232:8080/trainljapi/action/',
-    development: 'http://10.104.118.232:8080/trainljapi/action/',
-    test: 'http://10.104.118.232:8080/trainljapi/action/'
+    production: 'https://apiproxytest.ucarinc.com/ucarincapiproxy/',
+    development: 'https://apiproxytest.ucarinc.com/ucarincapiproxy/',
+    test: 'https://apiproxytest.ucarinc.com/ucarincapiproxy/'
   },
   Auth: {
     cid: '007001',
-    accountKey: '007'
+    accountKey: '7vL5EioNUyQ9Rs5gv7Jm'
   }
 }
 module.exports = config

@@ -15,8 +15,11 @@
     "pages/personalSettings/main",
     "pages/commentEditor/main",
     "pages/orderConfirm/main",
-    "pages/search/main"
-
+    "pages/search/main",
+    "pages/shoppingCart/main",
+    "pages/myOrders/main",
+    "pages/orderDetail/main",
+    "pages/goodsComments/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -36,6 +39,10 @@
       "selectedIconPath": "static/tabs/home-active.png"
     }, {
       "pagePath": "pages/classification/main",
+      "iconPath": "static/tabs/orders.png",
+      "selectedIconPath": "static/tabs/orders-active.png"
+    }, {
+      "pagePath": "pages/shoppingCart/main",
       "iconPath": "static/tabs/orders.png",
       "selectedIconPath": "static/tabs/orders-active.png"
     }, {

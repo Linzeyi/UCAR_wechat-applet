@@ -1,7 +1,7 @@
 <template>
-  <div class="orderConfirm-wrap">
+  <div class="orderConfirm-wrap lzy-list-wrap">
     <div class="order-panel">
-      <div class="address-box flex-box">
+      <div class="address-box lzy-flex-box">
         <div class="left-box">
           <i class="iconfont icon-address">&#xe613;</i>
         </div>
@@ -25,10 +25,10 @@
         <div class="header">
           <span class="header-title">{{item.store.name}}</span>
         </div>
-        <div class="info-box flex-box">
+        <div class="info-box lzy-flex-box">
           <div class="left-box">
             <div class="img-box">
-              <img :src="item.src" alt="商品图片">
+              <image :src="item.src" alt="商品图片" mode="aspectFit" ></image>
             </div>
           </div>
           <div class="content-box">
@@ -53,12 +53,12 @@
         </div>
       </div>
     </div>
-    <div class="footer-panel">
-      <p>
+    <div class="order-footer lzy-footer">
+      <div class="right-box">
         <span class="num">共{{getTotalNum}}件，</span>
         合计:<span class="total-price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-      </p>
-      <button class="confirmOrder-btn" type="success">提交订单</button>
+        <button class="confirmOrder-btn" @click="toOrderDetail">提交订单</button>
+      </div>
     </div>
   </div>
 </template>
@@ -67,11 +67,14 @@
 export default {
   data () {
     return {
+      order: {
+        orderId: 2
+      },
       goodsList: [
         {
           id: undefined,
           title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-          src: 'https://images.unsplash.com/photo-1530977875151-aae9742fde19?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=975&q=80',
+          src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
           store: {
             name: '米其林4S店'
           },
@@ -87,7 +90,7 @@ export default {
         {
           id: undefined,
           title: '【二手9成新】苹果8Plus Apple iPhone8',
-          src: 'https://images.unsplash.com/photo-1530977875151-aae9742fde19?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=975&q=80',
+          src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
           store: {
             name: '苹果旗舰店店'
           },
@@ -107,7 +110,7 @@ export default {
     this.getGoodsList()
   },
   onUnload () {
-    this.init()
+    // this.init()
   },
   computed: {
     getTotalNum () {
@@ -130,6 +133,9 @@ export default {
       this.goodsList = []
       this.num = 0
     },
+    toOrderDetail () {
+      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderId=' + this.order.orderId })
+    },
     getGoodsList () {
       // this.goodsList = this.$store.getters['Order/goodsList']
     }
@@ -139,10 +145,9 @@ export default {
 
 <style lang="less" scoped>
 .orderConfirm-wrap {
-  height: 100%;
   box-sizing: border-box;
   padding: 10px;
-  background-color: #eee;
+  background-color: #f3f3f3;
   .order-panel {
     background-color: #fff;
     padding: 10px;
@@ -152,18 +157,9 @@ export default {
     &:last-child {
       margin-bottom: 0;
     }
-    .flex-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      .left-box, .right-box {
-        text-align: center;
-      }
-      .content-box {
-        flex-grow: 1;
-      }
-    }
     .address-box {
+      text-align: left;
+      align-items: center;
       .left-box {
         color: orange;
         .icon-address {
@@ -177,6 +173,7 @@ export default {
         }
       }
       .content-box {
+        padding: 0;
         p {
           font-size: 12px;
           color: #333;
@@ -210,54 +207,6 @@ export default {
       }
       .flex-box {
         align-items: flex-start;
-        .left-box {
-          .img-box {
-            border-radius: 4px;
-            width: 60px;
-            height: 60px;
-            overflow: hidden;
-            text-align: center;
-            img {
-              margin: 0 auto;
-              width: 100%;
-            }
-          }
-        }
-        .content-box {
-          box-sizing: border-box;
-          padding: 2px 10px;
-          p {
-            font-size: 12px;
-            padding-bottom: 4px;
-            .title {
-              color: #333;
-            }
-            &.type {
-            font-size: 10px;
-              padding: 2px 4px;
-              background-color: #f6f6f6;
-              border-radius: 4px;
-              color: #999;
-            }
-          }
-        }
-        .right-box {
-          padding-left: 5px;
-          text-align: right;
-          .price {
-            margin-top: 5px;
-            font-size: 12px;
-            line-height: 12px;
-            .logo {
-              font-size: 8px;
-              margin-right: 2px;
-            }
-          }
-          .num {
-            font-size: 10px;
-            color: #999;
-          }
-        }
       }
       .footer {
         padding-top: 10px;
@@ -280,25 +229,8 @@ export default {
       }
     }
   }
-  .footer-panel {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 5px 10px;
-    background-color: #fff;
-    text-align: right;
-    font-size: 0px;
-    p, .confirmOrder-btn {
-      height: 40px;
-      line-height: 40px;
-    }
-    p {
-      vertical-align: top;
-      display: inline-block;
-      width: clac(100% - 100px);
-      font-size: 13px;
-      line-height: 40px;
+  .order-footer {
+    .right-box {
       .num {
         font-size: 11px;
         color: #999;
@@ -307,25 +239,17 @@ export default {
         margin-left: 6px;
         font-size: 16px;
         color: #ff6421;
-        line-height: 40px;
         .logo {
           font-size: 11px;
           margin-right: 4px;
         }
       }
-    }
-    .confirmOrder-btn {
-      vertical-align: top;
-      display: inline-block;
-      width: 100px;
-      font-size: 13px;
-      background-color: orange;
-      border-radius: 4px;
-      margin-left: 8px;
-      color: #fff;
-      border: none;
-      &::after, &::before {
-        border: none;
+      .confirmOrder-btn {
+        background-color: #ff6421;
+        color: #fff;
+        &:active {
+          background-color: #ec4e09;
+        }
       }
     }
   }
