@@ -30,8 +30,52 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less">
 page {
   height: 100%;
+}
+button {
+  &::before, &::after {
+    border: none;
+  }
+}
+.lzy-footer {
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .left-box {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+  }
+  .right-box {
+    text-align: right;
+    flex-grow: 1;
+    font-size: 12px;
+    height: 38px;
+    line-height: 38px;
+    button {
+      display: inline-block;
+      vertical-align: top;
+      height: 38px;
+      line-height: 38px;
+      font-size: 14px;
+      margin-left: 10px;
+      border-radius: 10px;
+      padding: 0 20px;
+      .iconfont {
+        font-size: 14px;
+        margin-right: 6px;
+      }
+    }
+  }
 }
 </style>

@@ -47,7 +47,6 @@
         <p>
           <span class="panel-title">数量</span>
           <num-picker :max="goods.stock" :num.sync="num"></num-picker>
-          <button class="shop-btn" type="warn" size="mini">加入购物车</button>
         </p>
       </div>
     </div>
@@ -89,6 +88,8 @@ export default {
   },
   components: {
     numPicker
+  },
+  methods: {
   }
 }
 </script>
@@ -152,22 +153,29 @@ export default {
       }
       &.num-panel {
         color: #444;
-        padding-top: 10px;
         span {
           line-height: 30px;
           vertical-align: top;
         }
         .shop-btn {
-          border-radius: 4px;
+          border-radius: 10px;
           margin-left: 10px;
           height: 30px;
           line-height: 30px;
           font-size: 12px;
           float: right;
-          border: none;
+          color: #fff;
           vertical-align: top;
-          &::before, &::after {
-            border: none;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: orange;
+          &:active {
+            background-color: #ff9a00;
+          }
+          .iconfont {
+            margin-right: 5px;
+            font-size: 18px;
           }
         }
       }

@@ -53,12 +53,12 @@
         </div>
       </div>
     </div>
-    <div class="footer-panel">
-      <p>
+    <div class="order-footer lzy-footer">
+      <div class="right-box">
         <span class="num">共{{getTotalNum}}件，</span>
         合计:<span class="total-price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-      </p>
-      <button class="confirmOrder-btn" type="success">提交订单</button>
+        <button class="confirmOrder-btn">提交订单</button>
+      </div>
     </div>
   </div>
 </template>
@@ -142,7 +142,7 @@ export default {
   height: 100%;
   box-sizing: border-box;
   padding: 10px;
-  background-color: #f8f8f8;
+  background-color: #f3f3f3;
   .order-panel {
     background-color: #fff;
     padding: 10px;
@@ -281,25 +281,8 @@ export default {
       }
     }
   }
-  .footer-panel {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 5px 10px;
-    background-color: #fff;
-    text-align: right;
-    font-size: 0px;
-    p, .confirmOrder-btn {
-      height: 40px;
-      line-height: 40px;
-    }
-    p {
-      vertical-align: top;
-      display: inline-block;
-      width: clac(100% - 100px);
-      font-size: 13px;
-      line-height: 40px;
+  .order-footer {
+    .right-box {
       .num {
         font-size: 11px;
         color: #999;
@@ -308,25 +291,17 @@ export default {
         margin-left: 6px;
         font-size: 16px;
         color: #ff6421;
-        line-height: 40px;
         .logo {
           font-size: 11px;
           margin-right: 4px;
         }
       }
-    }
-    .confirmOrder-btn {
-      vertical-align: top;
-      display: inline-block;
-      width: 100px;
-      font-size: 13px;
-      background-color: orange;
-      border-radius: 4px;
-      margin-left: 8px;
-      color: #fff;
-      border: none;
-      &::after, &::before {
-        border: none;
+      .confirmOrder-btn {
+        background-color: #ff6421;
+        color: #fff;
+        &:active {
+          background-color: #ec4e09;
+        }
       }
     }
   }

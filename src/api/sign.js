@@ -2,25 +2,40 @@
 const { CryptoApi } = require('./crypto.js')
 
 const SignApi = {
+  // getSign ({
+  //   cid,
+  //   data,
+  //   uid,
+  //   accountKey
+  // }) {
+  //   const signArr = [
+  //     `cid=${cid}`
+  //   ]
+  // }
   getSign({
     cid,
-    q,
+    data,
     uid,
     accountKey
   }) {
-    const signArr = [
-      `cid=${cid}`,
-      `q=${q}`
-    ];
-    if (uid) {
-      signArr.push(`uid=${uid}`);
+    let signArr = [
+      `cid=${cid}`
+    ]
+    for (let item in data) {
+      let str = item + '=' + data[item]
+      signArr.push(str)
     }
+    // let str = 'cid=007001;password=jjj;type={id:1,\nname:ppp\n};username=heoing' + accountKey
+    // if (uid) {
+    //   signArr.push(`uid=${uid}`);
+    // }
+    // console.log(`${signArr.join(';')}${accountKey}`)
+    // return CryptoApi.md5Sign(`${signArr.join(';')}${accountKey}`)
+    console.log(`${signArr.join(';')}${accountKey}`)
     return CryptoApi.md5Sign(`${signArr.join(';')}${accountKey}`)
   },
 
   getQ(body = {}, key) {
-    let data = '{\n' + '  "appVersion":"1"\n' + '}'
-    console.log(data)
     return CryptoApi.aesEncrypt(body || {}, key)
   }
 }

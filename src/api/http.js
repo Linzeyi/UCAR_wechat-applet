@@ -35,26 +35,26 @@ fly.interceptors.request.use(request => {
   const uid = null
   console.log('accountKey:' + accountKey)
   console.log('key:' + key)
-  const data = request.body ? JSON.stringify(request.body) : '' // 需要加密的请求数据，转成字符串
-  console.log('data:' + data)
-  const q = SignApi.getQ(data, accountKey) // 利用请求参数data和密钥key
-  console.log('q:' + q)
+  // const data = request.body ? JSON.stringify(request.body) : '' // 需要加密的请求数据，转成字符串
+  const data = request.body
+  console.log('data:', data)
+  // const q = SignApi.getQ(data, accountKey) // 利用请求参数data和密钥key
+  // console.log('q:' + q)
   const sign = SignApi.getSign({ // 利用cid、q、uid、accountKey生成签名
     cid,
-    q,
+    data,
     uid,
     accountKey
   })
-
-  const queryData = { // 最终的请求体
-    username: request.body.username,
-    password: request.body.password,
-    uid,
-    sign,
-    cid
-  }
-  request.body = queryData // 放入请求体
-  console.log('请求体：', queryData)
+  // const queryData = { // 最终的请求体
+  //   // uid,
+  //   sign,
+  //   cid
+  // }
+  request.body.sign = sign
+  request.body.cid = cid
+  // request.body = queryData // 放入请求体
+  // console.log('请求体：', queryData)
 
   // // 以下为测试数据解密算法，接口正式对接后要将该区域代码转移到response拦截器里
   // const resultStr = CryptoApi.aesDecrypt(q, key) // 利用key对返回的数据进行解密，得到字符串数据

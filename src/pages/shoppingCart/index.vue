@@ -2,13 +2,6 @@
   <div class="shoppingCart-wrap">
     <div class="cart-panel">
       <div class="cart-box">
-        <div class="header">
-          <div class="select-box">
-              <i class="iconfont icon-select-no" v-if="!isAllSelected" @click="selectAll(true)">&#xe656;</i>
-              <i class="iconfont icon-select-fill" v-else  @click="selectAll(false)">&#xe655;</i>
-          </div>
-          <span class="header-title">选中所有</span>
-        </div>
         <div class="goods-list">
           <div class="goods-box" v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex">
             <div class="left-box">
@@ -34,6 +27,20 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="cart-footer lzy-footer">
+      <div class="left-box">
+        <div class="select-box">
+          <i class="iconfont icon-select-no" v-if="!isAllSelected" @click="selectAll(true)">&#xe656;</i>
+          <i class="iconfont icon-select-fill" v-else  @click="selectAll(false)">&#xe655;</i>
+        </div>
+        <span class="select-title">全选</span>
+      </div>
+      <div class="right-box">
+        <span class="total">合计：</span>
+        <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
+        <button class="pay-btn" @click="toPay">结算({{getSelectedNum}})</button>
       </div>
     </div>
   </div>
@@ -87,7 +94,38 @@ export default {
       ]
     }
   },
+  computed: {
+    getTotalPrice () {
+      let price = 0
+      this.goodsList.map(item => {
+        if (item.isSelected) {
+          price += (item.type.price * item.num)
+        }
+      })
+      return price
+    },
+    getSelectedNum () {
+      let num = 0
+      this.goodsList.map(item => {
+        if (item.isSelected) {
+          num++
+        }
+      })
+      return num
+    }
+  },
   methods: {
+    toPay () {
+      if (this.getSelectedNum === 0) {
+        wx.showToast({
+          title: '商品数量不能为0',
+          icon: 'none',
+          duration: 2000
+        })
+      } else {
+        mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
+      }
+    },
     selectAll (flag) {
       this.isAllSelected = flag
       for (let index in this.goodsList) {
@@ -113,42 +151,33 @@ export default {
 .shoppingCart-wrap {
   height: 100%;
   box-sizing: border-box;
-  padding: 10px;
-  background-color: #f8f8f8;
+  padding: 10px 0;
+  background-color: #f3f3f3;
+  .select-box {
+    width: 40px;
+    text-align: center;
+    .iconfont {
+      font-size: 21px;
+      color: #ddd;
+      &.icon-select-fill {
+        color: orangered
+      }
+    }
+  }
   .cart-panel {
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
+    padding: 0 10px;
     box-sizing: border-box;
     &:last-child {
       margin-bottom: 0;
     }
-    .select-box {
-      width: 40px;
-      text-align: center;
-      .iconfont {
-        font-size: 21px;
-        color: #ddd;
-        &.icon-select-fill {
-          color: orangered
-        }
-      }
-    }
     .cart-box {
-      .header {
-        font-size: 12px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #eee;
-        color: #888;
-        display: flex;
-        align-items: center;
-      }
       .goods-list {
         .goods-box {
           display: flex;
-          padding: 10px 0;
-          border-bottom: 1px solid #eee;
+          padding: 10px;
+          border-radius: 10px;
+          margin-bottom: 10px;
+          background-color: #fff;
           .left-box {
             height: 70px;
             display: flex;
@@ -214,6 +243,31 @@ export default {
               }
             }
           }
+        }
+      }
+    }
+  }
+  .cart-footer {
+    .left-box {
+      .select-title {
+        font-size: 12px;
+        color: #666;
+      }
+    }
+    .right-box {
+      .price {
+        color: #ff6421;
+        font-size: 16px;
+        .logo {
+          font-size: 11px;
+          margin-right: 6px;
+        }
+      }
+      .pay-btn {
+        background-color: #ff6421;
+        color: #fff;
+        &:active {
+          background-color: #ec4e09;
         }
       }
     }
