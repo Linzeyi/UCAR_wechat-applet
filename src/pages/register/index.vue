@@ -106,7 +106,8 @@ export default {
       text-align: center;
       i {
         vertical-align: middle;
-        margin-right: 5rpx;
+        margin-right: 15rpx;
+        font-size: 40rpx;
       }
       input {
         display: inline-block;
