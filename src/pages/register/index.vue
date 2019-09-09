@@ -19,7 +19,8 @@
         <input :type="showPassword" placeholder="设置登录密码" />
       </div>
       <div class="aggrement">
-        <input type="checkbox" />
+        <i class="iconfont icon-select" v-if="agreementActive" @click="agreementActive = !agreementActive">&#xe655;</i>
+        <i class="iconfont" v-else @click="agreementActive = !agreementActive">&#xe656;</i>
         <p>
           已阅读并同意《
           <span>用户服务协议</span>》
@@ -37,7 +38,8 @@ import BaseButton from "@/components/base/BaseButton";
 export default {
   data() {
     return {
-      inputType: false
+      inputType: false,
+      agreementActive: false
     };
   },
   computed: {
@@ -58,6 +60,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.icon-select {
+  border-radius: 50%;
+  color: rgb(26, 188, 156);
+}
 .wrap {
   height: 100%;
   display: flex;
@@ -98,6 +104,10 @@ export default {
     }
     .aggrement {
       text-align: center;
+      i {
+        vertical-align: middle;
+        margin-right: 5rpx;
+      }
       input {
         display: inline-block;
         vertical-align: middle;
