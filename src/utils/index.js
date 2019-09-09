@@ -25,9 +25,16 @@ export function getHMSTime (date) {
   return formatTime(date).split(' ')[1]
 }
 
+export const regularRule = {
+  phone: /^(13[0-9]|14[5|7]|15[0-9]|17[0-9]|18[0-9])\d{8}$/,
+  money: /^[0-9]+(\.[0-9]{1,2})*$/,
+  mail: /^\w+@[a-zA-Z0-9]{2,10}\.(com|cn)$/
+}
+
 export default {
   formatNumber,
   formatTime,
   getYMDTime,
-  getHMSTime
+  getHMSTime,
+  regularRule
 }

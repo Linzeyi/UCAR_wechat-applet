@@ -12,15 +12,17 @@
             <div class="default-address" @click="setDefault(index)">
               <span><i class="iconfont tick" :style="item.isDefault ? 'color: #3ed474' : 'color: #bfbfbf'">&#xe65b;</i>默认地址</span>
             </div>
-            <div class="edit">
-              <i class="iconfont" @click="routeTo('modify', index)">&#xe603;</i>
+            <div class="action">
+              <i class="iconfont edit" @click="routeTo('modify', index)">&#xe66e;</i>
               <i class="iconfont delete" @click="deleteAddress(index)">&#xe625;</i>
             </div>
           </div>
         </li>
       </ul>
     </div>
-    <button class="weui-btn add" @click="routeTo('add')">添加地址</button>
+    <div class="add" @click="routeTo('add')">
+      <i class="iconfont">&#xe608;</i>
+    </div>
   </div>
 </template>
 
@@ -40,12 +42,22 @@ export default {
       },
       {
         addressId: 1,
-        receiverName: 'John',
+        receiverName: '阿徽超级帅',
         receiverPhone: '13073827938',
         encodePhone: '130****7938',
-        postCode: '3500095',
+        postCode: '361001',
         region: ['福建省', '厦门市', '思明区'],
         address: '展鸿路1号',
+        isDefault: false
+      },
+      {
+        addressId: 2,
+        receiverName: 'John',
+        receiverPhone: '13015768195',
+        encodePhone: '130****8195',
+        postCode: '3500095',
+        region: ['香港特别行政区', '香港特别行政区', '屯门区'],
+        address: '屯门市中心',
         isDefault: false
       }],
       currentDefault: 0
@@ -55,18 +67,27 @@ export default {
     // 删除地址
     deleteAddress (index) {
       let address = this.addressList
-      wx.showModal({
-        title: '删除地址',
-        content: '确认删除此收件地址',
-        confirmText: '删除',
-        cancelText: '取消',
-        confirmColor: 'red',
-        success: function (res) {
-          if (res.confirm) {
-            address.splice(index, 1)
+      if (address[index].isDefault) {
+        wx.showModal({
+          title: '提示',
+          content: '默认地址不能删除',
+          showCancel: false,
+          confirmText: '知道了'
+        })
+      } else {
+        wx.showModal({
+          title: '删除地址',
+          content: '确认删除此收件地址',
+          confirmText: '删除',
+          cancelText: '取消',
+          confirmColor: '#d34e44',
+          success: function (res) {
+            if (res.confirm) {
+              address.splice(index, 1)
+            }
           }
-        }
-      })
+        })
+      }
     },
     // 设置默认地址
     setDefault (index) {
@@ -78,7 +99,7 @@ export default {
           content: '确认设置此条为默认地址',
           confirmText: '确定',
           cancelText: '取消',
-          confirmColor: 'green',
+          // confirmColor: 'green',
           success: function (res) {
             if (res.confirm) {
               address[index].isDefault = true
@@ -137,17 +158,29 @@ export default {
           vertical-align: middle;
         }
       }
-      .edit {
+      .action {
         flex: 1;
         font-size: 0.25rem;
         vertical-align: middle;
         i {
           margin: 0 5px; 
         }
+        .edit {
+          font-size: 0.5rem;
+        }
         .delete {
           font-size: 0.4rem;
         }
       }
+    }
+  }
+  .add {
+    position: fixed;
+    right: 18px;
+    bottom: 40px;
+    i {
+      font-size: 1rem;
+      color: @baoWoBlack;
     }
   }
 }

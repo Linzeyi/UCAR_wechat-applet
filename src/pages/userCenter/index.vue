@@ -6,7 +6,7 @@
       </div>
       <div class="info">
         <div class="user-name">
-          <p>{{ accountName }}</p><span>{{ accountLevel }}</span>
+          <p class="name">{{ accountName }}</p><span>{{ accountLevel }}</span>
         </div>
         <p>积分：{{ integral }}</p>
       </div>
@@ -29,7 +29,7 @@
       </div>
       <div class="weui-cell">
         <div class="weui-cell__hd">
-          <i class="iconfont">&#xe619;</i>
+          <i class="iconfont">&#xe643;</i>
         </div>
         <div class="weui-cell__bd">
           <p>我的订单</p>
@@ -40,7 +40,7 @@
       </div>
       <div class="weui-cell" @click="routeTo('address')">
         <div class="weui-cell__hd">
-          <i class="iconfont">&#xe605;</i>
+          <i class="iconfont">&#xe686;</i>
         </div>
         <div class="weui-cell__bd">
           <p>地址管理</p>
@@ -51,7 +51,7 @@
       </div>
       <div class="weui-cell" @click="routeTo('message')">
         <div class="weui-cell__hd">
-          <i class="iconfont">&#xe6bb;</i>
+          <i class="iconfont">&#xe7a2;</i>
         </div>
         <div class="weui-cell__bd">
           <p>我的消息</p>
@@ -134,6 +134,9 @@ export default {
       }
       .user-name {
         display: flex;
+        .name {
+          font-family: 'PingFangSC';
+        }
         span {
           border: 0.5px solid rgb(247, 97, 97);
           border-radius:5px;

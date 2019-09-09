@@ -4,17 +4,19 @@
       <p>充值金额</p>
       <div class="amount">
         <i class="iconfont">&#xe808;</i>
-        <input type="number" pattern="[0-9]*" class="weui-input" placeholder="输入金额">
+        <input type="number" pattern="[0-9]*" class="weui-input" placeholder="输入金额" v-model="amount">
       </div>
     </div>
-    <button class="weui-btn confirm">确定</button>
+    <button class="weui-btn confirm" :disabled="!amount">确定</button>
   </div>
 </template>
 
 <script>
 export default {
-  create () {
-
+  data () {
+    return {
+      amount: null
+    }
   }
 }
 </script>
@@ -46,7 +48,7 @@ export default {
   }
   .confirm {
     position: absolute;
-    bottom: 12px;
+    bottom: 40px;
     color: white;
     background: @baoWoBlack;
     font-family: @baoWoFont;

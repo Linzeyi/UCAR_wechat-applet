@@ -96,7 +96,7 @@ export default {
 @baoWoFont: 'PingFangSC-Light';
 @large-font: 16px;
 .page {
-  background: #ededed;
+  background: #f3f3f375;
   font-family: @baoWoFont;
   .title {
     display: flex;
