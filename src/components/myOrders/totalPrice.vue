@@ -17,11 +17,9 @@ export default {
   computed: {
     getTotalPrice () {
       let totalPrice = 0
-      console.log(this.goodsList)
       for (let key in this.goodsList) {
         totalPrice += this.goodsList[key].type.price * this.goodsList[key].num
       }
-      console.log(totalPrice)
       return totalPrice
     }
   }

@@ -17,7 +17,7 @@
             <span class="order-id">订单编号：{{orderItem.orderId}}</span>
           </div>
           <div class="right-box">
-            <span class="status">等待付款</span>
+            <span class="status">{{orderItem.status}}</span>
           </div>
         </div>
         <div class="goods-list">
@@ -45,8 +45,11 @@
             合计：<span class="price"><span class="logo">¥</span><comTotalPrice :goodsList="orderItem.goodsList"></comTotalPrice></span>
           </div>
           <div class="goods-footer">
-            <span class="option-btn">取消订单</span>
-            <span class="option-btn">去支付</span>
+            <span class="option-btn" @click="toOrderDetail(orderItem)">查看订单</span>
+            <span class="option-btn">删除订单</span>
+            <span class="option-btn" v-if="orderItem.status != '交易成功'">取消订单</span>
+            <span class="option-btn" v-if="orderItem.status == '未支付'">去支付</span>
+            <span class="option-btn" v-if="orderItem.status === '交易成功'" @click="toGoodsComments(orderItem)">评价</span>
           </div>
         </div>
       </div>
@@ -86,7 +89,7 @@ export default {
       orderList: [
         {
           orderId: 'XD215135',
-          status: 0,
+          status: '等待付款',
           goodsList: [
             {
               id: undefined,
@@ -120,7 +123,7 @@ export default {
         },
         {
           orderId: 'XD532325',
-          status: 1,
+          status: '交易成功',
           goodsList: [
             {
               id: undefined,
@@ -131,10 +134,10 @@ export default {
               },
               type: {
                 title: '规格/型号',
-                content: '最大/2090',
-                price: 54
+                content: '最大/9595',
+                price: 80
               },
-              num: 3
+              num: 6
             },
             {
               id: undefined,
@@ -145,10 +148,44 @@ export default {
               },
               type: {
                 title: '内存',
-                content: '64G',
-                price: 3162
+                content: '256G',
+                price: 4999
               },
-              num: 1
+              num: 2
+            }
+          ]
+        },
+        {
+          orderId: 'XD532325',
+          status: '未支付',
+          goodsList: [
+            {
+              id: undefined,
+              title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
+              src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
+              store: {
+                name: '米其林4S店'
+              },
+              type: {
+                title: '规格/型号',
+                content: '最大/9595',
+                price: 80
+              },
+              num: 6
+            },
+            {
+              id: undefined,
+              title: '【二手9成新】苹果8Plus Apple iPhone8',
+              src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
+              store: {
+                name: '苹果旗舰店店'
+              },
+              type: {
+                title: '内存',
+                content: '256G',
+                price: 4999
+              },
+              num: 2
             }
           ]
         }
@@ -164,6 +201,12 @@ export default {
   computed: {
   },
   methods: {
+    toGoodsComments (item) {
+      mpvue.navigateTo({ url: '/pages/goodsComments/main?orderId=' + item.orderId })
+    },
+    toOrderDetail (item) {
+      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderId=' + item.orderId })
+    }
   }
 }
 </script>
@@ -223,11 +266,8 @@ export default {
           text-align: right;
           .status {
             display: inline-block;
-            height: 30px;
             font-size: 12px;
-            padding: 0 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            color: orangered;
           }
         }
       }
@@ -311,6 +351,12 @@ export default {
             border-radius: 15px;
             color: #777;
             margin-left: 10px;
+            box-sizing: border-box;
+            background-color: #fff;
+            &:active {
+              color: #555;
+              border: 1px solid #bbb;
+            }
           }
         }
       }

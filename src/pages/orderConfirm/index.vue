@@ -1,7 +1,7 @@
 <template>
-  <div class="orderConfirm-wrap">
+  <div class="orderConfirm-wrap lzy-list-wrap">
     <div class="order-panel">
-      <div class="address-box flex-box">
+      <div class="address-box lzy-flex-box">
         <div class="left-box">
           <i class="iconfont icon-address">&#xe613;</i>
         </div>
@@ -25,7 +25,7 @@
         <div class="header">
           <span class="header-title">{{item.store.name}}</span>
         </div>
-        <div class="info-box flex-box">
+        <div class="info-box lzy-flex-box">
           <div class="left-box">
             <div class="img-box">
               <image :src="item.src" alt="商品图片" mode="aspectFit" ></image>
@@ -57,7 +57,7 @@
       <div class="right-box">
         <span class="num">共{{getTotalNum}}件，</span>
         合计:<span class="total-price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-        <button class="confirmOrder-btn">提交订单</button>
+        <button class="confirmOrder-btn" @click="toOrderDetail">提交订单</button>
       </div>
     </div>
   </div>
@@ -67,6 +67,9 @@
 export default {
   data () {
     return {
+      order: {
+        orderId: 2
+      },
       goodsList: [
         {
           id: undefined,
@@ -130,6 +133,9 @@ export default {
       this.goodsList = []
       this.num = 0
     },
+    toOrderDetail () {
+      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderId=' + this.order.orderId })
+    },
     getGoodsList () {
       // this.goodsList = this.$store.getters['Order/goodsList']
     }
@@ -139,7 +145,6 @@ export default {
 
 <style lang="less" scoped>
 .orderConfirm-wrap {
-  height: 100%;
   box-sizing: border-box;
   padding: 10px;
   background-color: #f3f3f3;
@@ -152,18 +157,9 @@ export default {
     &:last-child {
       margin-bottom: 0;
     }
-    .flex-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      .left-box, .right-box {
-        text-align: center;
-      }
-      .content-box {
-        flex-grow: 1;
-      }
-    }
     .address-box {
+      text-align: left;
+      align-items: center;
       .left-box {
         color: orange;
         .icon-address {
@@ -177,6 +173,7 @@ export default {
         }
       }
       .content-box {
+        padding: 0;
         p {
           font-size: 12px;
           color: #333;
@@ -210,55 +207,6 @@ export default {
       }
       .flex-box {
         align-items: flex-start;
-        .left-box {
-          .img-box {
-            border-radius: 4px;
-            width: 60px;
-            height: 60px;
-            overflow: hidden;
-            text-align: center;
-            image {
-              margin: 0 auto;
-              width: 100%;
-              height: 100%;
-            }
-          }
-        }
-        .content-box {
-          box-sizing: border-box;
-          padding: 2px 10px;
-          p {
-            font-size: 12px;
-            padding-bottom: 4px;
-            .title {
-              color: #333;
-            }
-            &.type {
-              font-size: 10px;
-              padding: 2px 4px;
-              background-color: #f6f6f6;
-              border-radius: 4px;
-              color: #999;
-            }
-          }
-        }
-        .right-box {
-          padding-left: 5px;
-          text-align: right;
-          .price {
-            margin-top: 5px;
-            font-size: 12px;
-            line-height: 12px;
-            .logo {
-              font-size: 8px;
-              margin-right: 2px;
-            }
-          }
-          .num {
-            font-size: 10px;
-            color: #999;
-          }
-        }
       }
       .footer {
         padding-top: 10px;

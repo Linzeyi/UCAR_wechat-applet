@@ -1,7 +1,7 @@
 <template>
   <div class="num-picker" :class="{'small': isSmall}">
     <div class="num-box">
-      <span class="reduce" @click="reduce()" :class="{'disabled': num == 0}">-</span>
+      <span class="reduce" @click="reduce()" :class="{'disabled': num == min}">-</span>
       <input type="number" v-model="value" @input="checkNum" @blur="blurEvent" />
       <span class="plus" @click="plus()" :class="{'disabled': num == max}">+</span>
     </div>
@@ -15,6 +15,12 @@ export default {
       type: Boolean,
       default () {
         return false
+      }
+    },
+    min: {
+      type: Number,
+      default () {
+        return 0
       }
     },
     max: {
@@ -36,7 +42,6 @@ export default {
     }
   },
   onLoad () {
-    console.log('数量选择器')
     this.value = this.num
   },
   watch: {
@@ -46,45 +51,55 @@ export default {
   },
   methods: {
     blurEvent () {
-      if (isNaN(this.value)) {
+      if (isNaN(this.value) && this.value !== 0) {
         wx.showToast({
           title: '非法字符',
           icon: 'none',
           duration: 2000
         })
-        this.value = 0
-        this.$emit('update:num', 0)
+        this.value = this.min
+        this.$emit('update:num', this.min)
       }
     },
     checkNum (e) {
       let val = e.target.value
       let reg = new RegExp(/^[1-9]\d*$/)
-      if ((val === '' || val === 0 || reg.test(val)) && val <= this.max) {
-        this.$emit('update:num', parseInt(val))
-      } else {
-        this.value = 0
-        this.$emit('update:num', 0)
-        if (val > this.max) {
+      if (val === '' || Number(val) === this.min || reg.test(val)) {
+        if (Number(val) > this.max) {
+          this.value = this.min
+          this.$emit('update:num', this.min)
           wx.showToast({
-            title: '数值不能超过上限' + this.max,
+            title: '数值不能超过' + this.max,
+            icon: 'none',
+            duration: 2000
+          })
+        } else if (Number(val) < this.min) {
+          this.value = this.min
+          this.$emit('update:num', this.min)
+          wx.showToast({
+            title: '数值不能低于' + this.min,
             icon: 'none',
             duration: 2000
           })
         } else {
-          wx.showToast({
-            title: '非法字符',
-            icon: 'none',
-            duration: 2000
-          })
+          this.$emit('update:num', parseInt(val))
         }
+      } else {
+        this.value = this.min
+        this.$emit('update:num', this.min)
+        wx.showToast({
+          title: '非法字符',
+          icon: 'none',
+          duration: 2000
+        })
       }
     },
     reduce () {
-      if (this.num !== 0) {
+      if (this.num > this.min) {
         this.$emit('update:num', this.num - 1)
       } else {
         wx.showToast({
-          title: '数值不能小于0',
+          title: '数值不能低于' + this.min,
           icon: 'none',
           duration: 2000
         })
@@ -95,7 +110,7 @@ export default {
         this.$emit('update:num', this.num + 1)
       } else {
         wx.showToast({
-          title: '数值不能超过上限' + this.max,
+          title: '数值不能超过' + this.max,
           icon: 'none',
           duration: 2000
         })
@@ -116,6 +131,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
     input {
       width: @wh;
       height: @wh;

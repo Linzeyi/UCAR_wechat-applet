@@ -1,5 +1,5 @@
 <template>
-  <div class="shoppingCart-wrap">
+  <div class="shoppingCart-wrap lzy-list-wrap">
     <div class="goods-list-wrap">
       <div class="goods-list">
         <div class="goods-box" v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex">
@@ -21,7 +21,7 @@
                   <p class="bottom-p">
                     <span class="price"><span class="logo">¥</span>{{goodsItem.type.price * goodsItem.num}}</span>
                     <span class="numPicker-box">
-                      <num-picker :isSmall="1" :max="goodsItem.type.stock" :num.sync="goodsItem.num"></num-picker>
+                      <num-picker :min="1" :isSmall="1" :max="goodsItem.type.stock" :num.sync="goodsItem.num"></num-picker>
                     </span>
                   </p>
                 </div>
@@ -43,7 +43,7 @@
       <div class="right-box">
         <span class="total">合计：</span>
         <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-        <button class="pay-btn" @click="toPay">结算({{getSelectedNum}})</button>
+        <button class="to-pay-btn" @click="toPay">结算({{getSelectedNum}})</button>
       </div>
     </div>
   </div>
@@ -155,7 +155,6 @@ export default {
 
 <style lang="less">
 .shoppingCart-wrap {
-  height: 100%;
   box-sizing: border-box;
   padding: 10px 0;
   background-color: #f3f3f3;
@@ -299,7 +298,7 @@ export default {
           margin-right: 6px;
         }
       }
-      .pay-btn {
+      .to-pay-btn {
         background-color: #ff6421;
         color: #fff;
         &:active {

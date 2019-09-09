@@ -33,7 +33,7 @@
       </div>
       <div class="right-box">
         <button class="shoppingCart-btn" @click="addToShoppingCart">加入购物车</button>
-        <button class="toPay-btn" type="primary" @click="toPay">立即购买</button>
+        <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm">立即购买</button>
       </div>
     </div>
   </div>
@@ -141,7 +141,7 @@ export default {
     toShoppingCart () {
       mpvue.navigateTo({ url: '/pages/shoppingCart/main' })
     },
-    toPay () {
+    toOrderConfirm () {
       if (this.num === 0) {
         wx.showToast({
           title: '商品数量不能为0',
@@ -162,17 +162,17 @@ export default {
     }
   },
   mounted () {
-    const data = {
-      username: 'heoning',
-      password: 'qqq',
-      type: {
-        id: 14,
-        name: '214'
-      }
-    }
-    this.$http.get('action/test', data).then(res => {
-      console.log(res)
-    })
+    // const data = {
+    //   username: 'heoning',
+    //   password: 'qqq',
+    //   type: {
+    //     id: 14,
+    //     name: '214'
+    //   }
+    // }
+    // this.$http.get('action/test', data).then(res => {
+    //   console.log(res)
+    // })
     this.goods.id = this.$root.$mp.query.goodsId
     wx.setNavigationBarTitle({
       title: this.goods.title
@@ -255,7 +255,7 @@ export default {
             background-color: #ff9a00;
           }
         }
-        &.toPay-btn {
+        &.toOrderConfirm-btn {
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
           background-color: #ff6421;

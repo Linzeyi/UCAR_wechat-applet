@@ -39,6 +39,10 @@ button {
     border: none;
   }
 }
+.lzy-list-wrap {
+  height: calc(100% - 54px);
+  overflow-y: auto;
+}
 .lzy-footer {
   background-color: #fff;
   border-top: 1px solid #eee;
@@ -75,6 +79,60 @@ button {
         font-size: 14px;
         margin-right: 6px;
       }
+    }
+  }
+}
+.lzy-flex-box {
+  display: flex;
+  justify-content: center;
+  .left-box {
+    .img-box {
+      border-radius: 4px;
+      width: 60px;
+      height: 60px;
+      overflow: hidden;
+      text-align: center;
+      image {
+        margin: 0 auto;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+  .content-box {
+    box-sizing: border-box;
+    padding: 2px 10px;
+    flex-grow: 1;
+    p {
+      font-size: 12px;
+      padding-bottom: 4px;
+      .title {
+        color: #333;
+      }
+      &.type {
+        font-size: 10px;
+        padding: 2px 4px;
+        background-color: #f6f6f6;
+        border-radius: 4px;
+        color: #999;
+      }
+    }
+  }
+  .right-box {
+    padding-left: 5px;
+    text-align: right;
+    .price {
+      margin-top: 5px;
+      font-size: 12px;
+      line-height: 12px;
+      .logo {
+        font-size: 8px;
+        margin-right: 2px;
+      }
+    }
+    .num {
+      font-size: 10px;
+      color: #999;
     }
   }
 }
