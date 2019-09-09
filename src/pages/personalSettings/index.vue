@@ -114,13 +114,11 @@ export default {
   text-align: center;
 
   > div {
-    height: 30px;
-    width: 40px;
+    height: 60rpx;
+    line-height: 60rpx;
+    width: 80rpx;
     display: inline-block;
-    border: 1px solid black;
-     > span {
-       line-height: 30px;
-     }
+    border: 2rpx solid black;
   }
 }
 
@@ -128,60 +126,62 @@ export default {
   background-color: rgb(138,138,138);
 }
 .wrap {
+  padding-top: 100rpx;
+  font-size: 30rpx;
+
   .head {
     margin: auto;
-    margin-top: 50px;
-    padding-bottom: 30px;
+    padding-bottom: 60rpx;
     text-align: center;
-    border-bottom: 2px solid rgb(228, 228, 228);
+    border-bottom: 2rpx solid rgb(228, 228, 228);
   }
 
   .avatar {
-    height: 60px;
-    width: 60px;
+    height: 120rpx;
+    width: 120rpx;
     border-radius: 50%;
-    border: 1px solid black;
+    border: 2rpx solid black;
   }
 
   .form {
     .form-item {
       transform: scale(1);
-      padding: 15px 35px;
-      border-bottom: 2px solid rgb(228, 228, 228);
+      padding: 30rpx 70rpx;
+      border-bottom: 2rpx solid rgb(228, 228, 228);
       display: flex;
       justify-content: flex-start;
       align-items: center;
 
       > span {
-        width: 80px;
+        width: 160rpx;
       }
 
       i {
         position: fixed;
-        right: 15px;
+        right: 30rpx;
       }
 
       input {
         flex-grow: 1;
-        max-width: 220px;
+        max-width: 440rpx;
         text-align: start;
         display: inline-block;
+        font-size: 30rpx;
       }
     }
   }
 
   .footer {
-    position: fixed;
-    bottom: 0;
+    margin-top: 60rpx;
     width: 100%;
     > div {
-      padding: 15px 35px;
-      border-bottom: 2px solid rgb(228, 228, 228);
+      padding: 30rpx 70rpx;
+      border-bottom: 2rpx solid rgb(228, 228, 228);
       display: flex;
       justify-content: space-between;
 
       &:nth-of-type(1) {
-        border-top: 2px solid rgb(228, 228, 228);
+        border-top: 2rpx solid rgb(228, 228, 228);
       }
     }
   }

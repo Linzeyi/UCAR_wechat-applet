@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap"  @click="checkboxActive = !checkboxActive">
+  <div class="wrap"  @click="clickHandle">
     <input type="checkbox" class="offscreen" v-model="checkboxActive" />
     <label :class="{checked: checkboxActive, switch: true}"></label>
   </div>
@@ -11,6 +11,12 @@ export default {
     return {
       checkboxActive: false
     };
+  },
+  methods: {
+    clickHandle() {
+      this.checkboxActive = !this.checkboxActive
+      this.$emit('click')
+    }
   }
 };
 </script>
@@ -18,37 +24,38 @@ export default {
 <style lang="less" scoped>
 .wrap {
   position: fixed;
-  right: 0;
-  height: 20px;
-  width: 40px;
   z-index: 3;
+  right: 0;
+  height: 40rpx;
+  width: 80rpx;
+  font-size: 30rpx;
 }
 
 .switch {
   position: relative;
   display: inline-block;
-  width: 40px;
-  height: 20px;
+  width: 80rpx;
+  height: 40rpx;
   background-color: rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
+  border-radius: 40rpx;
   transition: all 0.3s;
 }
 .switch::after {
   content: "";
   position: absolute;
-  width: 18px;
-  height: 18px;
-  border-radius: 18px;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 36rpx;
   background-color: white;
-  top: 1px;
-  left: 1px;
+  top: 2rpx;
+  left: 2rpx;
   transition: all 0.3s;
 }
 
 .checked.switch {
   background-color: rgb(26, 188, 156);
   &::after {
-    transform: translateX(20px);
+    transform: translateX(40rpx);
   }
 }
 .offscreen {

@@ -44,8 +44,12 @@ export default {
 <style lang="less" scoped>
 .wrap {
   position: fixed;
+  height: 40rpx;
+  line-height: 40rpx;
   right: 0;
+  bottom: 0.2rpx;
   z-index: 3;
+  font-size: 30rpx;
 }
 .captcha {
   color: rgb(26, 188, 156);

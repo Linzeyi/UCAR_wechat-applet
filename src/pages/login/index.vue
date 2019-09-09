@@ -1,50 +1,57 @@
 <template>
   <div class="wrap">
-    <img src="http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg" alt="头像" />
+    <img :src="avatarUrl" alt="头像" />
     <div class="form">
-      <div class="opacity">
+      <div class="input-item">
         <img src="/static/images/u110.svg" />
         <input type="text" placeholder="账号" />
       </div>
-      <div class="opacity">
+      <div class="input-item">
         <img src="/static/images/u109.svg" />
-        <span @click="inputType = !inputType">
-          <switch-button></switch-button>
-        </span>
+        <switch-button @click="inputType = !inputType"></switch-button>
         <input :type="showPassword" placeholder="密码" />
       </div>
       <div class="forget">
-        <span @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</span>
+        <base-text @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</base-text>
       </div>
     </div>
-    <div class="login">
-      <span>登录</span>
-    </div>
-    <div class="create">
-      <span @click="Utils.navigateTo('/pages/register/main')">创建账号</span>
-    </div>
+    <base-button>登录</base-button>
+    <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
+    <button class="wx-login" open-type="getUserInfo" @getuserinfo="getUserInfo">微信一键登录</button>
   </div>
 </template>
 
 <script>
-import SwitchButton from '@/components/switchButton/SwitchButton';
+import SwitchButton from "@/components/switchButton/SwitchButton";
+import BaseButton from "@/components/base/BaseButton";
+import BaseText from "@/components/base/BaseText";
 export default {
   data() {
     return {
+      avatarUrl:
+        "http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg",
       inputType: false
     };
   },
   computed: {
     showPassword() {
       if (this.inputType) {
-        return 'text';
+        return "text";
       } else {
-        return 'password';
+        return "password";
       }
     }
   },
+  methods: {
+    getUserInfo(e) {
+      const rawData = JSON.parse(e.target.rawData);
+      this.avatarUrl = rawData.avatarUrl;
+    }
+  },
   components: {
-    SwitchButton
+    SwitchButton,
+    BaseButton,
+    BaseText
   }
 };
 </script>
@@ -52,6 +59,7 @@ export default {
 <style lang="less" scoped>
 .wrap {
   height: 100%;
+  padding: 10rpx;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -59,56 +67,48 @@ export default {
 
   & > img {
     display: block;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 70px;
-    border: 1px solid rgb(26, 188, 156);
+    width: 160rpx;
+    height: 160rpx;
+    margin-bottom: 140rpx;
+    border: 2rpx solid rgb(26, 188, 156);
     border-radius: 50%;
   }
 
   .form {
     width: 80%;
-    transform: scale(1);
-    margin-bottom: 90px;
+    margin-bottom: 180rpx;
 
-    .opacity {
-      opacity: 0.5;
+    .input-item {
+      transform: scale(1);
+      margin-bottom: 60rpx;
+      border-bottom: 2rpx solid rgb(228, 228, 228);
       & > input {
-        margin-bottom: 30px;
         text-align: center;
-        border-bottom: 1rpx solid rgb(228, 228, 228);
+        min-height: 40rpx;
+        padding-left: 90rpx;
+        padding-right: 90rpx;
+        font-size: 30rpx;
       }
-
       & > img {
         position: fixed;
-        width: 20px;
-        height: 20px;
+        width: 40rpx;
+        height: 40rpx;
       }
     }
-    .forget {
-      width: 100%;
-      color: rgb(26, 188, 156);
-      text-align: right;
-    }
   }
 
-  .login {
+  .wx-login {
     width: 70%;
-    height: 35px;
-    border-radius: 10px;
+    height: 70rpx;
+    line-height: 70rpx;
+    border-radius: 35rpx;
     background-color: rgb(26, 188, 156);
     text-align: center;
-    margin-bottom: 10px;
-
-    span {
-      vertical-align: middle;
-      color: white;
-      font-size: 1.2em;
-    }
+    margin-bottom: 20rpx;
+    color: black;
   }
-
-  .create {
-    color: rgb(26, 188, 156);
+  .forget {
+    text-align: right;
   }
 }
 </style>
