@@ -163,11 +163,12 @@ export default {
   },
   mounted () {
     const data = {
-      id: 13,
-      username: 'heoing',
-      password: 'jjj',
-      typeId: 4,
-      typeName: '2000'
+      username: 'heoning',
+      password: 'qqq',
+      type: {
+        id: 14,
+        name: '214'
+      }
     }
     this.$http.get('action/test', data).then(res => {
       console.log(res)

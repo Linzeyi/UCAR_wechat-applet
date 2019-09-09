@@ -14,24 +14,14 @@ const SignApi = {
   // }
   getSign({
     cid,
-    data,
+    q,
     uid,
     accountKey
   }) {
     let signArr = [
-      `cid=${cid}`
+      `cid=${cid}`,
+      `q=${q}`
     ]
-    for (let item in data) {
-      let str = item + '=' + data[item]
-      signArr.push(str)
-    }
-    // let str = 'cid=007001;password=jjj;type={id:1,\nname:ppp\n};username=heoing' + accountKey
-    // if (uid) {
-    //   signArr.push(`uid=${uid}`);
-    // }
-    // console.log(`${signArr.join(';')}${accountKey}`)
-    // return CryptoApi.md5Sign(`${signArr.join(';')}${accountKey}`)
-    console.log(`${signArr.join(';')}${accountKey}`)
     return CryptoApi.md5Sign(`${signArr.join(';')}${accountKey}`)
   },
 
