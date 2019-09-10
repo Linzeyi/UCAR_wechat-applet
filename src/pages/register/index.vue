@@ -8,7 +8,9 @@
       </div>
       <div class="input-item">
         <img src="/static/images/u163.svg" />
-        <captcha></captcha>
+        <div class="captcha">
+          <captcha></captcha>
+        </div>
         <input type="text" placeholder="短信验证码" maxlength="8"/>
       </div>
       <div class="input-item">
@@ -60,6 +62,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.captcha {
+  position: fixed;
+  right: 0;
+  z-index: 3;
+}
 .icon-select {
   border-radius: 50%;
   color: rgb(26, 188, 156);

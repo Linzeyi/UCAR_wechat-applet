@@ -7,7 +7,6 @@
         <span>|</span>
         <button class="wx-login" open-type="getUserInfo" @getuserinfo="getUserInfo">微信头像</button>
       </div>
-      <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
     </div>
     <div class="form">
       <div class="form-item">
@@ -46,11 +45,16 @@
         <i class="iconfont">&#xe601;</i>
       </div>
     </div>
+    <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
   </div>
 </template>
 
 <script>
+import mpToast from 'mpvue-weui/src/toast';
 export default {
+  components: {
+    mpToast
+  },
   data() {
     return {
       avatarUrl: "",
