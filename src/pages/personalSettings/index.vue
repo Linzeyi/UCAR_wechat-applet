@@ -1,8 +1,13 @@
 <template>
   <div class="wrap">
     <div class="head">
-      <img class="avatar" :src="avatar" @click="previewImage" mode="aspectFill" />
-      <p @click.stop="chooseImage">更改头像</p>
+      <img class="avatar" :src="avatarUrl" @click="previewImage" mode="aspectFill" />
+      <div>
+        <p @click.stop="chooseImage">更改头像</p>
+        <span>|</span>
+        <button class="wx-login" open-type="getUserInfo" @getuserinfo="getUserInfo">微信头像</button>
+      </div>
+      <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
     </div>
     <div class="form">
       <div class="form-item">
@@ -22,8 +27,12 @@
       <div class="form-item">
         <span>性别</span>
         <div class="gender">
-          <div :class="{genderActive: isGenderActive}" @click="isGenderActive = !isGenderActive"><span>男</span></div>
-          <div :class="{genderActive: !isGenderActive}" @click="isGenderActive = !isGenderActive"><span>女</span></div>
+          <div :class="{genderActive: isGenderActive}" @click="isGenderActive = !isGenderActive">
+            <span>男</span>
+          </div>
+          <div :class="{genderActive: !isGenderActive}" @click="isGenderActive = !isGenderActive">
+            <span>女</span>
+          </div>
         </div>
       </div>
     </div>
@@ -44,49 +53,59 @@
 export default {
   data() {
     return {
-      avatar: '',
+      avatarUrl: "",
       showCancel: [false, false],
-      name: '',
-      email: '',
+      name: "",
+      email: "",
       isGenderActive: true,
-      index: null
+      index: null,
+      showToast: false
     };
   },
   methods: {
     previewImage() {
-      if (this.avatar === '') {
+      if (this.avatarUrl === "") {
         this.chooseImage();
         return;
       }
       const _this = this;
+      console.log(_this.avatarUrl);
       wx.previewImage({
-        current: _this.avatar,
-        urls: _this.avatar
+        current: _this.avatarUrl,
+        urls: [_this.avatarUrl]
       });
     },
     chooseImage() {
       const _this = this;
       wx.chooseImage({
         count: 1,
-        sizeType: ['original', 'compressed'],
-        sourceType: ['album', 'camera'],
+        sizeType: ["original", "compressed"],
+        sourceType: ["album", "camera"],
         success(res) {
           const tempFilePaths = res.tempFilePaths;
-          _this.avatar = tempFilePaths;
+          _this.avatarUrl = tempFilePaths[0];
         }
       });
     },
     controlCancelShow() {
-      if (this.name === '' || this.index !== 0) {
+      if (this.name === "" || this.index !== 0) {
         this.showCancel[0] = false;
       } else {
         this.showCancel[0] = true;
       }
 
-      if (this.email === '' || this.index !== 1) {
+      if (this.email === "" || this.index !== 1) {
         this.showCancel[1] = false;
       } else {
         this.showCancel[1] = true;
+      }
+    },
+    getUserInfo(e) {
+      const detail = e.mp.detail;
+      if (detail.userInfo) {
+        this.avatarUrl = detail.userInfo.avatarUrl;
+      } else {
+        this.showToast = true;
       }
     }
   },
@@ -123,7 +142,7 @@ export default {
 }
 
 .genderActive {
-  background-color: rgb(138,138,138);
+  background-color: rgb(138, 138, 138);
 }
 .wrap {
   padding-top: 100rpx;
@@ -134,6 +153,27 @@ export default {
     padding-bottom: 60rpx;
     text-align: center;
     border-bottom: 2rpx solid rgb(228, 228, 228);
+
+    p {
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    span {
+      vertical-align: middle;
+      color: #FD6432;
+      font-size: 35rpx;
+      font-weight: bold;
+    }
+
+    button {
+      padding: 0;
+      line-height: normal;
+      display: inline-block;
+      font-size: 30rpx;
+      background-color: white;
+      vertical-align: middle;
+    }
   }
 
   .avatar {

@@ -4,7 +4,7 @@
     <div class="form">
       <div class="input-item">
         <img src="/static/images/u110.svg" />
-        <input type="text" placeholder="账号" />
+        <input type="text" placeholder="账号"/>
       </div>
       <div class="input-item">
         <img src="/static/images/u109.svg" />
@@ -17,7 +17,7 @@
     </div>
     <base-button>登录</base-button>
     <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
-    <button class="wx-login" open-type="getUserInfo" @getuserinfo="getUserInfo">微信一键登录</button>
+    
   </div>
 </template>
 
@@ -33,6 +33,11 @@ export default {
       inputType: false
     };
   },
+  components: {
+    SwitchButton,
+    BaseButton,
+    BaseText
+  },
   computed: {
     showPassword() {
       if (this.inputType) {
@@ -41,17 +46,6 @@ export default {
         return "password";
       }
     }
-  },
-  methods: {
-    getUserInfo(e) {
-      const rawData = JSON.parse(e.target.rawData);
-      this.avatarUrl = rawData.avatarUrl;
-    }
-  },
-  components: {
-    SwitchButton,
-    BaseButton,
-    BaseText
   }
 };
 </script>
@@ -76,7 +70,7 @@ export default {
 
   .form {
     width: 80%;
-    margin-bottom: 180rpx;
+    margin-bottom: 120rpx;
 
     .input-item {
       transform: scale(1);
@@ -95,17 +89,6 @@ export default {
         height: 40rpx;
       }
     }
-  }
-
-  .wx-login {
-    width: 70%;
-    height: 70rpx;
-    line-height: 70rpx;
-    border-radius: 35rpx;
-    background-color: rgb(26, 188, 156);
-    text-align: center;
-    margin-bottom: 20rpx;
-    color: black;
   }
   .forget {
     text-align: right;
