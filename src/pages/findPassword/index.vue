@@ -18,8 +18,8 @@
         <span @click="showPassword = !showPassword">
           <switch-button></switch-button>
         </span>
-        <input v-if="showPassword" type="text" placeholder="设置登录密码" v-model="form.password" />
-        <input v-else type="password" placeholder="设置登录密码" v-model="form.password" />
+        <input v-if="showPassword" type="text" placeholder="设置登录密码" v-model="form.password" maxlength="20"/>
+        <input v-else type="password" placeholder="设置登录密码" v-model="form.password" maxlength="20"/>
       </div>
     </div>
     <base-button @click="handleSubmit">确定</base-button>

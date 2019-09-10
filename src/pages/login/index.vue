@@ -9,8 +9,8 @@
       <div class="input-item">
         <img src="/static/images/u109.svg" />
         <switch-button @click="showPassword = !showPassword"></switch-button>
-        <input v-if="showPassword" type="text" placeholder="密码" v-model="form.password" />
-        <input v-else type="password" placeholder="密码" v-model="form.password" />
+        <input v-if="showPassword" type="text" placeholder="密码" v-model="form.password" maxlength="20"/>
+        <input v-else type="password" placeholder="密码" v-model="form.password" maxlength="20"/>
       </div>
       <div class="forget">
         <base-text @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</base-text>

@@ -47,6 +47,10 @@ export default {
         commit('SHOW_TOAST', { type: 'error', content: '密码不能为空' })
         return
       }
+      if (!/^[a-zA-Z0-9]{6,20}$/.test(password)) {
+        commit('SHOW_TOAST', { type: 'error', content: '密码为6-20位字母或数字' })
+        return
+      }
       return true
     }
   }

@@ -1,37 +1,87 @@
 <template>
   <div class="wrap">
-    <div>
+    <div class="input-item">
       <span>旧密码</span>
-      <input type="password" />
+      <input type="password" placeholder="点击输入密码" maxlength="20" v-model="form.oldPassword" />
     </div>
-    <div>
+    <div class="input-item">
       <span>新密码</span>
-      <input type="password" />
+      <input type="password" placeholder="请输入新密码" maxlength="20" v-model="form.newPassword" />
     </div>
-    <div>
+    <div class="input-item">
       <span>确认密码</span>
-      <input type="password" />
+      <input type="password" placeholder="请再次输入新密码" maxlength="20" v-model="form.againPassword" />
     </div>
-    <div class="captcha">
+    <div class="input-item captcha">
       <span>短信验证码</span>
-      <input type="text" maxlength="8" />
+      <input type="text" maxlength="8" placeholder="短信验证码" v-model="form.captcha" />
       <div class="captcha">
         <captcha></captcha>
       </div>
     </div>
+    <div class="submit">
+      <base-button @click="handleSubmit">保存</base-button>
+    </div>
+    <base-message></base-message>
   </div>
 </template>
 
 <script>
 import Captcha from "@/components/captcha/Captcha";
+import BaseButton from "@/components/base/BaseButton";
+import BaseMessage from "@/components/base/BaseMessage";
 export default {
+  data() {
+    return {
+      form: {
+        oldPassword: "",
+        newPassword: "",
+        againPassword: "",
+        captcha: ""
+      }
+    };
+  },
   components: {
-    Captcha
+    Captcha,
+    BaseButton,
+    BaseMessage
+  },
+  methods: {
+    async handleSubmit() {
+      let flag = false;
+      flag = await this.$store.dispatch(
+        "UserInfo/checkPassword",
+        this.form.newPassword
+      );
+      if (!flag) {
+        return;
+      }
+      flag = await this.$store.dispatch(
+        "UserInfo/checkCaptcha",
+        this.form.captcha
+      );
+      if (!flag) {
+        return;
+      }
+      if (this.form.newPassword !== this.form.againPassword) {
+        this.$store.commit("SHOW_TOAST", {
+          type: "error",
+          content: "两次密码不一致"
+        });
+      }
+      // 判断旧密码是否一致，需调接口
+      console.log("修改成功");
+    }
   }
 };
 </script>
 
 <style lang="less" scoped>
+.submit {
+  margin-top: 120rpx;
+  text-align: center;
+}
+
 .captcha {
   vertical-align: middle;
   display: inline-block;
@@ -43,7 +93,7 @@ export default {
   padding-top: 30rpx;
   font-size: 30rpx;
 
-  > div {
+  .input-item {
     width: 100%;
     box-sizing: border-box;
     padding: 20rpx 50rpx;
@@ -62,7 +112,8 @@ export default {
       margin: 0;
       margin-left: 10rpx;
       vertical-align: middle;
-      max-width: 300rpx;
+      max-width: 320rpx;
+      min-height: 30rpx;
       display: inline-block;
       font-size: 30rpx;
     }
