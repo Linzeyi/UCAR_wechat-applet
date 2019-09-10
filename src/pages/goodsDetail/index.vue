@@ -37,7 +37,6 @@
 
 <script>
 import goodsInfo from '../../components/goodsDetail/goodsInfo/goodsInfo'
-import goodsText from '../../components/goodsDetail/goodsText/goodsText'
 import goodsComment from '../../components/goodsDetail/goodsComment/goodsComment'
 import typeDialog from '../../components/typeDialog/typeDialog'
 
@@ -94,7 +93,6 @@ export default {
   },
   components: {
     goodsInfo,
-    goodsText,
     goodsComment,
     typeDialog
   },

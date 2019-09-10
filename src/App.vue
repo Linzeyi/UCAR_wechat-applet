@@ -44,6 +44,7 @@ button {
   overflow-y: auto;
 }
 .lzy-footer {
+  z-index: 10;
   background-color: #fff;
   border-top: 1px solid #eee;
   position: fixed;
