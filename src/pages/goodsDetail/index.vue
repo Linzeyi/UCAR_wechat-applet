@@ -1,25 +1,20 @@
 <template>
   <div class="goodsDetail">
-    <com-swiper :imgList="imgList"></com-swiper>
+    
     <div class="tab-navbar">
       <div class="flex-box">
           <div class="tab-navbar-item" 
             v-for="(item, index) in navbarList" 
             :key="index" 
-            :class="{'on': currentTabKey == index}"
-            @click="selectNavTab(index)"
-          >
-            {{item.name}}
+            @click="selectNavTab(index)">
+            <span class="nav-name" :class="{'on': currentTabKey == index}">{{item.name}}</span>
           </div>
       </div>
     </div>
     <div class="tab-content">
       <swiper :current="currentTabKey" @change="changeTabContent">
         <swiper-item>
-          <goods-info :goods.sync="goods" :num.sync="num"></goods-info>
-        </swiper-item>
-        <swiper-item>
-          <goods-text :goodsText.sync="goods.text"></goods-text>
+          <goods-info :goods.sync="goods" :num.sync="goods.num"></goods-info>
         </swiper-item>
         <swiper-item >
           <goods-comment :goodsId="goods.id"></goods-comment>
@@ -36,14 +31,14 @@
         <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm">立即购买</button>
       </div>
     </div>
+    <type-dialog :parentType="'goodsDetail'"></type-dialog>
   </div>
 </template>
 
 <script>
-import comSwiper from '../../components/comSwiper/comSwiper'
 import goodsInfo from '../../components/goodsDetail/goodsInfo/goodsInfo'
-import goodsText from '../../components/goodsDetail/goodsText/goodsText'
 import goodsComment from '../../components/goodsDetail/goodsComment/goodsComment'
+import typeDialog from '../../components/typeDialog/typeDialog'
 
 export default {
   data () {
@@ -55,67 +50,63 @@ export default {
           name: '商品信息'
         },
         {
-          key: 'text',
-          name: '详情'
-        },
-        {
           key: 'comment',
           name: '评论'
         }
       ],
-      imgList: [
-        {
-          url: 'https://images.unsplash.com/photo-1567494355252-047444d52a43?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80',
-          alt: '1'
-        },
-        {
-          url: 'https://images.unsplash.com/photo-1530977875151-aae9742fde19?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=975&q=80',
-          alt: '2'
-        },
-        {
-          url: 'https://images.unsplash.com/photo-1455894127589-22f75500213a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1579&q=80',
-          alt: '3'
-        }
-      ],
-      goods: {
-        id: 1,
-        title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-        store: {
-          name: '米其林4S店'
-        },
-        text: '<h1>车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器</h1><p>asfjah卡少暗示法护暗示法科技撒回复，sad 跟萨芬和感慨阿斯顿个， 阿拉善个</p><img src="https://images.unsplash.com/photo-1567494355252-047444d52a43?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80" /><p>asfjah卡少暗示法护暗示法科技撒回复，sad 跟萨芬和感慨阿斯顿个， 阿拉善个</p>',
-        price: 80,
-        discountPrice: 64,
-        stock: 199,
-        sales: 2422,
-        score: 4.3
-      },
-      num: 0
+      goods: {}
     }
   },
-
-  watch: {
-    num (val) {
-      console.log('num改变:' + val)
-    }
-  },
-
   computed: {
     getTotalPrice () {
-      return (this.goods.discountPrice > 0 ? this.goods.discountPrice : this.goods.price) * (this.num ? this.num : 0)
+      if (!this.checkSelectedType) {
+        return 0
+      } else {
+        return this.getSelectedTypePrice * (this.goods.num ? this.goods.num : 0)
+      }
+    },
+    getSelectedTypePrice () {
+      let type = this.getSelectedType
+      return type.discountPrice ? type.discountPrice : type.price
+    },
+    getSelectedType () {
+      let arr = this.goods.type
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].isSelected) {
+          return arr[i]
+        }
+      }
+      return {}
+    },
+    checkSelectedType () {
+      let arr = this.goods.type
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].isSelected) {
+          return true
+        }
+      }
+      return false
     }
   },
-  components: {
-    comSwiper,
-    goodsInfo,
-    goodsText,
-    goodsComment
+  onLoad () {
+    this.goods = this.$store.getters['Goods/goods']
   },
-
+  components: {
+    goodsInfo,
+    goodsComment,
+    typeDialog
+  },
+  async onPullDownRefresh() {
+    console.log('下拉刷新')
+    console.log(this)
+    // 停止下拉刷新
+    // wx.stopPullDownRefresh()
+  },
   methods: {
     init () {
-      this.num = 0
       this.currentTabKey = 0
+      this.$store.commit('Goods/SET_GOODS', {})
+      this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
     },
     changeTabContent (e) {
       this.currentTabKey = e.mp.detail.current
@@ -124,17 +115,34 @@ export default {
       this.currentTabKey = index
     },
     addToShoppingCart () {
-      if (this.num === 0) {
+      let that = this
+      if (this.goods.num === 0) {
         wx.showToast({
           title: '商品数量不能为0',
           icon: 'none',
           duration: 2000
         })
-      } else {
+      } else if (!this.checkSelectedType) {
         wx.showToast({
-          title: '添加成功',
-          icon: 'success',
+          title: '请选择一个规格类型',
+          icon: 'none',
           duration: 2000
+        })
+      } else {
+        wx.showModal({
+          title: '添加购物车',
+          content: '是否将本商品加入购物车',
+          confirmText: '确定',
+          success (res) {
+            if (res.confirm) {
+              that.$store.commit('ShoppingCart/ADD_GOODS', that.goods)
+              wx.showToast({
+                title: '添加成功',
+                icon: 'success',
+                duration: 2000
+              })
+            }
+          }
         })
       }
     },
@@ -142,22 +150,31 @@ export default {
       mpvue.navigateTo({ url: '/pages/shoppingCart/main' })
     },
     toOrderConfirm () {
-      if (this.num === 0) {
-        wx.showToast({
-          title: '商品数量不能为0',
-          icon: 'none',
-          duration: 2000
-        })
-      } else {
-        this.$store.commit('Order/SET_GOODSLIST', {
-          goodsList: [
-            {
-              id: this.goods.id,
-              num: this.num
+      if (this.checkSelectedType) {
+        if (this.goods.num === 0) {
+          wx.showToast({
+            title: '商品数量不能为0',
+            icon: 'none',
+            duration: 2000
+          })
+        } else {
+          let goodsList = [this.goods]
+          let selectedGoodsList = JSON.parse(JSON.stringify(goodsList))
+          selectedGoodsList.map(goodsItem => {
+            let selectedType
+            for (let i = 0; i < goodsItem.type.length; i++) {
+              if (goodsItem.type[i].isSelected) {
+                selectedType = goodsItem.type[i]
+                break
+              }
             }
-          ]
-        })
-        mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
+            goodsItem.type = selectedType
+          })
+          this.$store.commit('Order/SET_GOODSLIST', selectedGoodsList)
+          mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
+        }
+      } else {
+        this.$store.commit('Goods/SET_SHOWTYPEDIALOG', true)
       }
     }
   },
@@ -193,34 +210,37 @@ export default {
     background-color: #fff;
     border: none;
     align-items: center;
-    height: 40px;
-    line-height: 40px;
     .flex-box {
       display: flex;
       position: relative;
-      height: 40px;
     }
     .tab-navbar-item {
       display: block;
       padding: 0;
       box-sizing: border-box;
-      height: 40px;
-      line-height: 40px;
+      height: 45px;
+      line-height: 45px;
       text-align: center;
       flex-grow: 1;
       font-size:28rpx;
       color: #aaa;
-      border-bottom: 1px solid #ddd;
-      &.on {
-        color: #1abc9c;
-        border-bottom: 2px solid #1abc9c;
+      .nav-name {
+        display: inline-block;
+        padding: 0 10px;
+        height: 30px;
+        line-height: 30px;
+        border-bottom: 2px solid #ddd;
+        &.on {
+          color: #ec4e09;
+          border-bottom: 2px solid #ec4e09;
+        }
       }
     }
   }
   .tab-content {
-    flex-grow: 1;
     background-color: #f3f3f3;
-    height: calc(100% - 140px - 40px - 70px);
+    flex-shrink: 0;
+    height: calc(100% - 62px - 50px);
     swiper {
       height: 100%;
       swiper-item {

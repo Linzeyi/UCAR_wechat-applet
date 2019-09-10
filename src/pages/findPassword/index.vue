@@ -2,108 +2,140 @@
   <div class="wrap">
     <img src="http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg" alt="头像" />
     <div class="form">
-      <div class="opacity">
-        <div>
-          <img src="/static/images/u162.svg" />
-          <input type="text" placeholder="输入手机号码" />
-        </div>
-        <div>
-          <img src="/static/images/u163.svg" />
+      <div class="input-item">
+        <img src="/static/images/u162.svg" />
+        <input type="text" placeholder="输入手机号码" v-model="form.phone" />
+      </div>
+      <div class="input-item">
+        <img src="/static/images/u163.svg" />
+        <div class="captcha">
           <captcha></captcha>
-          <input type="text" placeholder="短信验证码" />
         </div>
-        <div>
-          <img src="/static/images/u109.svg" />
-          <span @click="inputType = !inputType">
-            <switch-button></switch-button>
-          </span>
-          <input :type="showPassword" placeholder="输入新的登录密码" />
-        </div>
+        <input type="text" placeholder="短信验证码" maxlength="8" v-model="form.captcha" />
+      </div>
+      <div class="input-item">
+        <img src="/static/images/u109.svg" />
+        <span @click="showPassword = !showPassword">
+          <switch-button></switch-button>
+        </span>
+        <input v-if="showPassword" type="text" placeholder="设置登录密码" v-model="form.password" maxlength="20"/>
+        <input v-else type="password" placeholder="设置登录密码" v-model="form.password" maxlength="20"/>
       </div>
     </div>
-    <div class="submit">
-      <span>确认</span>
-    </div>
+    <base-button @click="handleSubmit">确定</base-button>
+    <base-message></base-message>
   </div>
 </template>
 
 <script>
-import Captcha from '@/components/captcha/Captcha';
-import SwitchButton from '@/components/switchButton/SwitchButton';
-
+import Captcha from "@/components/captcha/Captcha";
+import SwitchButton from "@/components/switchButton/SwitchButton";
+import BaseButton from "@/components/base/BaseButton";
+import BaseMessage from "@/components/base/BaseMessage";
 export default {
   data() {
     return {
-      inputType: false
+      form: {
+        phone: "",
+        captcha: "",
+        password: ""
+      },
+      showPassword: false
     };
-  },
-  computed: {
-    showPassword() {
-      if (this.inputType) {
-        return 'text';
-      } else {
-        return 'password';
-      }
-    }
   },
   components: {
     Captcha,
-    SwitchButton
+    SwitchButton,
+    BaseButton,
+    BaseMessage
+  },
+  methods: {
+    async handleSubmit() {
+      let flag = false;
+      flag = await this.$store.dispatch("UserInfo/checkPhone", this.form.phone);
+      if (!flag) {
+        return;
+      }
+      flag = await this.$store.dispatch(
+        "UserInfo/checkCaptcha",
+        this.form.captcha
+      );
+      if (!flag) {
+        return;
+      }
+      flag = await this.$store.dispatch(
+        "UserInfo/checkPassword",
+        this.form.password
+      );
+      if (!flag) {
+        return;
+      }
+      console.log("验证成功");
+    }
   }
 };
 </script>
 
 <style lang="less" scoped>
+.captcha {
+  position: fixed;
+  right: 0;
+  z-index: 3;
+}
 .wrap {
   height: 100%;
+  padding: 10rpx;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-size: 30rpx;
 
   & > img {
     display: block;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 70px;
-    border: 1px solid rgb(26, 188, 156);
+    width: 160rpx;
+    height: 160rpx;
+    margin-bottom: 140rpx;
+    border: 2rpx solid rgb(26, 188, 156);
     border-radius: 50%;
   }
 
   .form {
-    width: 85%;
-    margin-bottom: 90px;
+    width: 80%;
+    margin-bottom: 90rpx;
     transform: scale(1);
 
-    .opacity {
-      opacity: 0.5;
+    .input-item {
+      transform: scale(1);
+      margin-bottom: 60rpx;
+      border-bottom: 2rpx solid rgb(228, 228, 228);
     }
 
-    .opacity > div > input {
-      margin-bottom: 30px;
+    .input-item > input {
       text-align: center;
-      border-bottom: 1rpx solid rgb(228, 228, 228);
+      min-height: 40rpx;
+      padding-left: 90rpx;
+      padding-right: 90rpx;
     }
 
-    .opacity > div > img {
+    .input-item > img {
       position: fixed;
-      width: 20px;
-      height: 20px;
+      width: 40rpx;
+      height: 40rpx;
     }
   }
 
   .submit {
     width: 70%;
-    height: 35px;
-    border-radius: 10px;
+    height: 35rpx;
+    line-height: 35rpx;
+    border-radius: 10rpx;
     background-color: rgb(26, 188, 156);
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 10rpx;
 
     span {
-      vertical-align: middle;
       color: white;
-      font-size: 1.2em;
     }
   }
 }
