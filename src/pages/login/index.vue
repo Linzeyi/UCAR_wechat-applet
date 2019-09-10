@@ -4,20 +4,21 @@
     <div class="form">
       <div class="input-item">
         <img src="/static/images/u110.svg" />
-        <input type="text" placeholder="账号"/>
+        <input type="text" placeholder="账号" v-model="form.phone" />
       </div>
       <div class="input-item">
         <img src="/static/images/u109.svg" />
-        <switch-button @click="inputType = !inputType"></switch-button>
-        <input :type="showPassword" placeholder="密码" />
+        <switch-button @click="showPassword = !showPassword"></switch-button>
+        <input v-if="showPassword" type="text" placeholder="密码" v-model="form.password" />
+        <input v-else type="password" placeholder="密码" v-model="form.password" />
       </div>
       <div class="forget">
         <base-text @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</base-text>
       </div>
     </div>
-    <base-button>登录</base-button>
+    <base-button @click="handleSubmit">登录</base-button>
     <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
-    
+    <base-message></base-message>
   </div>
 </template>
 
@@ -25,26 +26,40 @@
 import SwitchButton from "@/components/switchButton/SwitchButton";
 import BaseButton from "@/components/base/BaseButton";
 import BaseText from "@/components/base/BaseText";
+import BaseMessage from "@/components/base/BaseMessage";
 export default {
   data() {
     return {
+      form: {
+        phone: "",
+        password: ""
+      },
       avatarUrl:
         "http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg",
-      inputType: false
+      showPassword: false
     };
   },
   components: {
     SwitchButton,
     BaseButton,
-    BaseText
+    BaseText,
+    BaseMessage
   },
-  computed: {
-    showPassword() {
-      if (this.inputType) {
-        return "text";
-      } else {
-        return "password";
+  methods: {
+    async handleSubmit() {
+      let flag = false;
+      flag = await this.$store.dispatch("UserInfo/checkPhone", this.form.phone);
+      if (!flag) {
+        return;
       }
+      flag = await this.$store.dispatch(
+        "UserInfo/checkPassword",
+        this.form.password
+      );
+      if (!flag) {
+        return;
+      }
+      console.log("验证成功");
     }
   }
 };

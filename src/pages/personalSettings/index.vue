@@ -38,11 +38,11 @@
     <div class="footer">
       <div>
         <span>修改密码</span>
-        <i class="iconfont">&#xe601;</i>
+        <i class="iconfont icon-size">&#xe601;</i>
       </div>
       <div>
         <span>注销</span>
-        <i class="iconfont">&#xe601;</i>
+        <i class="iconfont icon-size">&#xe601;</i>
       </div>
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
@@ -132,6 +132,9 @@ export default {
   color: rgb(138, 138, 138);
 }
 
+.icon-size {
+  font-size: 25rpx;
+}
 .gender {
   display: inline-block;
   text-align: center;
@@ -198,16 +201,18 @@ export default {
 
       > span {
         width: 160rpx;
+        vertical-align: middle;
       }
 
       i {
-        position: fixed;
-        right: 30rpx;
+        margin-left: 25rpx;
+        vertical-align: middle;
       }
 
       input {
         flex-grow: 1;
-        max-width: 440rpx;
+        max-width: 400rpx;
+        min-height: 30rpx;
         text-align: start;
         display: inline-block;
         font-size: 30rpx;

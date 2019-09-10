@@ -4,24 +4,26 @@
     <div class="form">
       <div class="input-item">
         <img src="/static/images/u162.svg" />
-        <input type="text" placeholder="输入手机号码" />
+        <input type="text" placeholder="输入手机号码" v-model="form.phone" />
       </div>
       <div class="input-item">
         <img src="/static/images/u163.svg" />
         <div class="captcha">
           <captcha></captcha>
         </div>
-        <input type="text" placeholder="短信验证码" maxlength="8"/>
+        <input type="text" placeholder="短信验证码" maxlength="8" v-model="form.captcha" />
       </div>
       <div class="input-item">
         <img src="/static/images/u109.svg" />
-        <span @click="inputType = !inputType">
+        <span @click="showPassword = !showPassword">
           <switch-button></switch-button>
         </span>
-        <input :type="showPassword" placeholder="输入新的登录密码" />
+        <input v-if="showPassword" type="text" placeholder="设置登录密码" v-model="form.password" />
+        <input v-else type="password" placeholder="设置登录密码" v-model="form.password" />
       </div>
     </div>
-    <base-button>确定</base-button>
+    <base-button @click="handleSubmit">确定</base-button>
+    <base-message></base-message>
   </div>
 </template>
 
@@ -29,26 +31,47 @@
 import Captcha from "@/components/captcha/Captcha";
 import SwitchButton from "@/components/switchButton/SwitchButton";
 import BaseButton from "@/components/base/BaseButton";
-
+import BaseMessage from "@/components/base/BaseMessage";
 export default {
   data() {
     return {
-      inputType: false
+      form: {
+        phone: "",
+        captcha: "",
+        password: ""
+      },
+      showPassword: false
     };
-  },
-  computed: {
-    showPassword() {
-      if (this.inputType) {
-        return "text";
-      } else {
-        return "password";
-      }
-    }
   },
   components: {
     Captcha,
     SwitchButton,
-    BaseButton
+    BaseButton,
+    BaseMessage
+  },
+  methods: {
+    async handleSubmit() {
+      let flag = false;
+      flag = await this.$store.dispatch("UserInfo/checkPhone", this.form.phone);
+      if (!flag) {
+        return;
+      }
+      flag = await this.$store.dispatch(
+        "UserInfo/checkCaptcha",
+        this.form.captcha
+      );
+      if (!flag) {
+        return;
+      }
+      flag = await this.$store.dispatch(
+        "UserInfo/checkPassword",
+        this.form.password
+      );
+      if (!flag) {
+        return;
+      }
+      console.log("验证成功");
+    }
   }
 };
 </script>

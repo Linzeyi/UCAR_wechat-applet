@@ -7,6 +7,7 @@ import UserCenter from './modules/userCenter/index'
 import Goods from './modules/goods/index'
 import Order from './modules/order/index'
 import ShoppingCart from './modules/shoppingCart/index'
+import UserInfo from './modules/userInfo/index'
 
 Vue.use(Vuex)
 
@@ -17,7 +18,8 @@ const store = new Vuex.Store({
     UserCenter,
     Goods,
     Order,
-    ShoppingCart
+    ShoppingCart,
+    UserInfo
   }
 })
 
