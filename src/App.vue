@@ -51,7 +51,7 @@ button {
   left: 0;
   right: 0;
   box-sizing: border-box;
-  padding: 10px;
+  padding: 15px 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -88,8 +88,8 @@ button {
   .left-box {
     .img-box {
       border-radius: 4px;
-      width: 60px;
-      height: 60px;
+      width: 68px;
+      height: 68px;
       overflow: hidden;
       text-align: center;
       image {

@@ -1,14 +1,36 @@
 export default {
   namespaced: true,
   state: {
-    goodsList: []
+    statusList: [
+      '待付款', '待发货', '待收货', '已完成', '已取消'
+    ],
+    order: {
+      status: 0,
+      remark: '',
+      createTime: '',
+      addressInfo: {
+        name: '',
+        phone: '',
+        address: ''
+      },
+      goodsList: []
+    }
   },
   getters: {
-    goodsList: state => state.goodsList
+    statusList: state => state.statusList,
+    goodsList: state => state.order.goodsList,
+    order: state => state.order,
+    addressInfo: state => state.order.addressInfo
   },
   mutations: {
     SET_GOODSLIST (state, goodsList) {
-      state.goodsList = goodsList
+      state.order.goodsList = goodsList
+    },
+    SET_ADDRESSINFO (state, addressInfo) {
+      state.order.addressInfo = addressInfo
+    },
+    SET_ORDER (state, order) {
+      state.order = order
     }
   },
   actions: {

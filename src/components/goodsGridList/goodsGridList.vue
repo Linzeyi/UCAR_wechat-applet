@@ -1,12 +1,19 @@
 <template>
-  <div class="weui-grids goods-grids">
-    <a v-for="(item, index) in goodsList" :key="index" :href="'/pages/goodsDetail/main?goodsId=' + item.id" class="weui-grid">
-      <div class="weui-grid__img">
-        <img :src="item.src" :alt="item.name">
+  <div class="goods-grids">
+    <div v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex" class="grid-box">
+      <div class="content-box" @click="toGoodsDetail(goodsItem)">
+        <div class="img-box">
+          <image :src="goodsItem.type[0].imgList[0]" :alt="goodsItem.title" mode="widthFix"></image>
+        </div>
+        <p class="title">{{goodsItem.title}}</p>
+        <p class="label">
+          <span class="price">
+            <span class="logo">¥</span>
+            {{goodsItem.type[0].discountPrice ? goodsItem.type[0].discountPrice : goodsItem.type[0].price}}
+          </span>
+        </p>
       </div>
-      <p class="weui-grid__text">{{item.name}}</p>
-      <p class="weui-grid__label">¥{{item.price}}</p>
-    </a>
+    </div>
   </div>
 </template>
 
@@ -19,6 +26,12 @@ export default {
         return []
       }
     }
+  },
+  methods: {
+    toGoodsDetail (goods) {
+      this.$store.commit('Goods/SET_GOODS', goods)
+      mpvue.navigateTo({ url: '/pages/goodsDetail/main' })
+    }
   }
 }
 </script>
@@ -26,27 +39,53 @@ export default {
 <style lang="less" scoped>
 .goods-grids {
   border: none;
-  .weui-grid {
-    padding: 10px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 5px;
+  .grid-box {
+    padding: 5px;
+    width: calc(100% / 3);
     border: none;
-    .weui-grid__img {
-      height: 50px;
-      width: 100%;
-      box-sizing: border-box;
-      border: 2px solid #e6e6e6;
-      border-radius: 2px;
-      margin: 0 auto 5px auto;
+    box-sizing: border-box;
+    .content-box {
       overflow: hidden;
-    }
-    .weui-grid__text {
-      text-align: center;
-      font-size: 26rpx;
-      font-weight: 600;
-    }
-    .weui-grid__label {
-      color: #aaa;
-      font-size: 22rpx;
-      line-height: 20rpx;
+      border-radius: 10px;
+      padding-bottom: 10px;
+      background-color: #fff;
+      .img-box {
+        width: 100%;
+        margin: 0 auto 5px auto;
+        overflow: hidden;
+        text-align: center;
+        image {
+          width: 100%;
+          height: 100%;
+          margin: 0 auto;
+        }
+      }
+      .title {
+        margin-top: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 0 10px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+      .label {
+        padding: 0 10px;
+        margin-top: 4px;
+        font-size: 14px;
+        .price {
+          color: #ff6421;
+          .logo {
+            font-size: 10px;
+            margin-right: 3px;
+          }
+        }
+      }
     }
   }
 }

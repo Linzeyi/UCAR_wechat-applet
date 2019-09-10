@@ -2,7 +2,7 @@
   <div class="orderPay-wrap lzy-list-wrap">
     <div class="wrap-panel top-panel">
       <div class="left-box">
-        <p class="status">等待买家付款...</p>
+        <p class="status" v-if="order.status == 0">等待买家付款...</p>
       </div>
     </div>
     <div class="wrap-panel goods-panel">
@@ -11,25 +11,25 @@
         <span class="title">选购商品</span>
       </div>
       <div class="goods-list">
-        <div class="goods-box" v-for="(item, index) in goodsList" :key="index">
+        <div class="goods-box" v-for="(goodsItem, goodsIndex) in order.goodsList" :key="goodsIndex">
           <div class="info-box lzy-flex-box">
             <div class="left-box">
               <div class="img-box">
-                <image :src="item.src" alt="商品图片"></image>
+                <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
               </div>
             </div>
             <div class="content-box">
-              <p class="title">{{item.title}}</p>
+              <p class="title">{{goodsItem.title}}</p>
               <p class="type">
                 <span class="type-title">
-                  {{item.type.title}}:
+                  {{goodsItem.type.title}}:
                 </span>
-                <span class="type-item">{{item.type.content}}；</span>
+                <span class="type-item">{{goodsItem.type.content}}；</span>
               </p>
             </div>
             <div class="right-box">
-              <p class="price"><span class="logo">¥</span>{{item.price}}</p>
-              <p class="num">x{{item.num}}</p>
+              <p class="price"><span class="logo">¥</span>{{goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price}}</p>
+              <p class="num">x{{goodsItem.num}}</p>
             </div>
           </div>
         </div>
@@ -60,15 +60,15 @@
       </div>
       <div class="content-panel">
         <span class="title">收货人</span>
-        <span>{{addressInfo.name}}</span>
+        <span>{{order.addressInfo.name}}</span>
       </div>
       <div class="content-panel">
         <span class="title">联系方式</span>
-        <span>{{addressInfo.phone}}</span>
+        <span>{{order.addressInfo.phone}}</span>
       </div>
       <div class="content-panel">
         <span class="title">收货地址</span>
-        <span>{{addressInfo.address}}</span>
+        <span>{{order.addressInfo.address}}</span>
       </div>
     </div>
     <div class="wrap-panel order-info-panel">
@@ -81,8 +81,16 @@
         <span>{{order.orderId}}</span>
       </div>
       <div class="content-panel">
+        <span class="title">订单状态</span>
+        <span>{{getStatusList}}</span>
+      </div>
+      <div class="content-panel">
         <span class="title">创建时间</span>
         <span>{{order.createTime}}</span>
+      </div>
+      <div class="content-panel">
+        <span class="title">我的备注</span>
+        <span>{{order.remark}}</span>
       </div>
     </div>
     <div class="wrap-panel pay-type-panel">
@@ -116,55 +124,19 @@ export default {
     return {
       order: {
         orderId: 'XDD0001',
-        createTime: this.Utils.formatTime(new Date())
+        createTime: this.Utils.formatTime(new Date()),
+        status: '0',
+        addressInfo: {},
+        goodsList: []
       },
-      addressInfo: {
-        name: '萨芬',
-        phone: '12412515222',
-        address: '北京市朝阳区广顺大街与来广西路交汇处'
-      },
-      goodsList: [
-        {
-          id: undefined,
-          title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-          src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
-          store: {
-            name: '米其林4S店'
-          },
-          type: {
-            title: '规格/型号',
-            content: '最大/2090'
-          },
-          price: 54,
-          stock: 199,
-          sales: 2422,
-          num: 3
-        },
-        {
-          id: undefined,
-          title: '【二手9成新】苹果8Plus Apple iPhone8',
-          src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
-          store: {
-            name: '苹果旗舰店店'
-          },
-          type: {
-            title: '内存',
-            content: '64G'
-          },
-          price: 3162,
-          stock: 2422,
-          sales: 155,
-          num: 1
-        }
-      ],
       payTypeList: [
         {
           name: '余额',
-          balance: 1551
+          balance: 8551
         },
         {
           name: '支付宝',
-          balance: 5000
+          balance: 25000
         }
       ],
       selectPayType: {}
@@ -172,38 +144,74 @@ export default {
   },
   mounted () {
     this.selectPayType = this.payTypeList[0]
+    this.order = this.$store.getters['Order/order']
   },
   onUnload () {
   },
   computed: {
     getTotalPrice () {
       let price = 0
-      this.goodsList.map(item => {
-        price += item.num * item.price
+      this.order.goodsList.map(item => {
+        price += item.num * (item.type.discountPrice ? item.type.discountPrice : item.type.price)
       })
       return price
+    },
+    getStatusList () {
+      return this.$store.getters['Order/statusList'][parseInt(this.order.status)]
     }
   },
   methods: {
     cancelOrder () {
-      wx.showToast({
+      wx.showModal({
         title: '取消订单',
-        icon: 'none',
-        duration: 2000
+        content: '是否确认取消订单',
+        cancelText: '否',
+        confirmText: '是',
+        success (res) {
+          if (res.confirm) {
+            console.log('取消订单')
+          }
+        }
       })
     },
     payOrder () {
+      let that = this
       if (this.getTotalPrice > this.selectPayType.balance) {
-        wx.showToast({
+        wx.showModal({
           title: '您的余额已不足',
-          icon: 'none',
-          duration: 2000
+          content: '请充值或选用其他支付方式',
+          cancelText: '选用其他',
+          confirmText: '前往充值',
+          success (res) {
+            if (res.confirm) {
+
+            }
+          }
         })
       } else {
-        wx.showToast({
-          title: '支付成功',
-          icon: 'success',
-          duration: 2000
+        wx.showModal({
+          title: '确认付款',
+          content: '本次应付金额共计' + this.getTotalPrice + '\r\n是否用' + this.selectPayType.name + '支付方式付款',
+          confirmText: '支付',
+          success (res) {
+            if (res.confirm) {
+              wx.showModal({
+                title: '支付成功',
+                content: '将为您跳转至我的订单界面',
+                showCancel: false,
+                success (res) {
+                  console.log('付款成功，支付订单：', that.order)
+                  mpvue.navigateTo({ url: '/pages/myOrders/main' })
+                }
+              })
+            } else {
+              wx.showToast({
+                title: '取消支付',
+                icon: 'none',
+                duration: 2000
+              })
+            }
+          }
         })
       }
     }

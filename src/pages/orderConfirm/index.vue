@@ -7,12 +7,12 @@
         </div>
         <div class="content-box">
           <p>
-            <span class="name">林泽毅</span>
-            <span class="phone">13107927091</span>
-            <span class="type">默认</span>
+            <span class="name">{{order.addressInfo.name}}</span>
+            <span class="phone">{{order.addressInfo.phone}}</span>
+            <span class="type" v-if="order.addressInfo.isDefault">默认</span>
           </p>
           <p>
-            福建省厦门市思明区宝龙一城西塔21楼
+            {{order.addressInfo.address}}
           </p>
         </div>
         <div class="right-box">
@@ -20,37 +20,45 @@
         </div>
       </div>
     </div>
-    <div class="order-panel goods-panel" v-for="(item, index) in goodsList" :key="index">
+    <div class="order-panel goods-panel" v-for="(goodsItem, goodsIndex) in order.goodsList" :key="goodsIndex">
       <div class="goods-box">
         <div class="header">
-          <span class="header-title">{{item.store.name}}</span>
+          <span class="header-title">{{goodsItem.store.name}}</span>
         </div>
         <div class="info-box lzy-flex-box">
           <div class="left-box">
             <div class="img-box">
-              <image :src="item.src" alt="商品图片" mode="aspectFit" ></image>
+              <image :src="goodsItem.type.imgList[0]" alt="商品图片" mode="aspectFit" ></image>
             </div>
           </div>
-          <div class="content-box">
-            <p class="title">{{item.title}}</p>
+          <div class="content-box"  @click="toGoodsDetail(goodsItem)">
+            <p class="title">{{goodsItem.title}}</p>
             <p class="type">
               <span class="type-title">
-                {{item.type.title}}:
+                {{goodsItem.type.title}}:
               </span>
-              <span class="type-item">{{item.type.content}}；</span>
+              <span class="type-item">{{goodsItem.type.content}}；</span>
             </p>
           </div>
           <div class="right-box">
-            <p class="price"><span class="logo">¥</span>{{item.price}}</p>
-            <p class="num">x{{item.num}}</p>
+            <p class="price"><span class="logo">¥</span>{{goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price}}</p>
+            <p class="num">x{{goodsItem.num}}</p>
           </div>
         </div>
         <div class="footer">
           <p>
-            <span class="num">共{{item.num}}件</span>
-            小记：<span class="price"><span class="logo">¥</span>{{item.num * item.price}}</span>
+            <span class="num">共{{goodsItem.num}}件</span>
+            小记：<span class="price"><span class="logo">¥</span>{{(goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price) * goodsItem.num}}</span>
           </p>
         </div>
+      </div>
+    </div>
+    <div class="order-panel">
+      <div class="header">
+        <span class="header-title">备注<span class="tips">（非必填）</span></span>
+      </div>
+      <div class="remarks">
+        <textarea v-model="order.remark" placeholder="请输入针对该订单的备注信息..." maxlength="300" auto-height="true"></textarea>
       </div>
     </div>
     <div class="order-footer lzy-footer">
@@ -68,42 +76,16 @@ export default {
   data () {
     return {
       order: {
-        orderId: 2
-      },
-      goodsList: [
-        {
-          id: undefined,
-          title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-          src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
-          store: {
-            name: '米其林4S店'
-          },
-          type: {
-            title: '规格/型号',
-            content: '最大/2090'
-          },
-          price: 54,
-          stock: 199,
-          sales: 2422,
-          num: 3
+        orderId: 'XD100024',
+        remark: '',
+        addressInfo: {
+          name: '林泽毅',
+          phone: '13107927091',
+          address: '福建省厦门市思明区宝龙一城西塔21楼',
+          isDefault: true
         },
-        {
-          id: undefined,
-          title: '【二手9成新】苹果8Plus Apple iPhone8',
-          src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
-          store: {
-            name: '苹果旗舰店店'
-          },
-          type: {
-            title: '内存',
-            content: '64G'
-          },
-          price: 3162,
-          stock: 2422,
-          sales: 155,
-          num: 1
-        }
-      ]
+        goodsList: []
+      }
     }
   },
   mounted () {
@@ -115,15 +97,15 @@ export default {
   computed: {
     getTotalNum () {
       let num = 0
-      this.goodsList.map(item => {
+      this.order.goodsList.map(item => {
         num += item.num
       })
       return num
     },
     getTotalPrice () {
       let price = 0
-      this.goodsList.map(item => {
-        price += item.num * item.price
+      this.order.goodsList.map(item => {
+        price += item.num * (item.type.discountPrice ? item.type.discountPrice : item.type.price)
       })
       return price
     }
@@ -133,11 +115,40 @@ export default {
       this.goodsList = []
       this.num = 0
     },
+    toGoodsDetail (goodsItem) {
+      let that = this
+      wx.showModal({
+        title: '订单未提交',
+        content: '您的订单尚未提交，如果离开此页面将不会保存订单信息，是否继续？',
+        cancelText: '否',
+        confirmText: '是',
+        success (res) {
+          if (res.confirm) {
+            that.$store.commit('Goods/SET_GOODS', goodsItem)
+            mpvue.navigateTo({ url: '/pages/goodsDetail/main' })
+          }
+        }
+      })
+    },
     toOrderDetail () {
-      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderId=' + this.order.orderId })
+      let that = this
+      wx.showModal({
+        title: '提交订单',
+        content: '是否提交该订单',
+        cancelText: '否',
+        confirmText: '是',
+        success (res) {
+          if (res.confirm) {
+            that.order.createTime = that.Utils.formatTime(new Date())
+            that.order.status = 0
+            that.$store.commit('Order/SET_ORDER', that.order)
+            mpvue.navigateTo({ url: '/pages/orderDetail/main' })
+          }
+        }
+      })
     },
     getGoodsList () {
-      // this.goodsList = this.$store.getters['Order/goodsList']
+      this.order.goodsList = this.$store.getters['Order/goodsList']
     }
   }
 }
@@ -156,6 +167,24 @@ export default {
     box-sizing: border-box;
     &:last-child {
       margin-bottom: 0;
+    }
+    .header {
+      font-size: 12px;
+      margin-bottom: 10px;
+      .tips {
+        font-size: 11px;
+        color: #ff6421;
+      }
+    }
+    .remarks {
+      margin: 14px 0;
+      font-size: 12px;
+      color: #555;
+      textarea {
+        width: 100%;
+        text-indent: 0;
+        padding-left: 0;
+      }
     }
     .address-box {
       text-align: left;
@@ -201,10 +230,6 @@ export default {
       }
     }
     .goods-box {
-      .header {
-        font-size: 12px;
-        margin-bottom: 10px;
-      }
       .flex-box {
         align-items: flex-start;
       }

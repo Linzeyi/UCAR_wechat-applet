@@ -10,18 +10,24 @@
                   <i class="iconfont icon-select-no" v-if="!goodsItem.isSelected">&#xe656;</i>
                   <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
                 </div>
-                <div class="img-box">
-                  <image :src="goodsItem.src" alt="商品图片" mode="aspectFit"></image>
+                <div class="img-box" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
+                  <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit"></image>
                 </div>
               </div>
               <div class="content-box">
                 <div class="info-box">
-                  <p class="title">{{goodsItem.title}}</p>
-                  <p class="type">{{goodsItem.type.title}}:{{goodsItem.type.content}}</p>
-                  <p class="bottom-p">
-                    <span class="price"><span class="logo">¥</span>{{goodsItem.type.price * goodsItem.num}}</span>
+                  <p class="title" @click="toGoodsDetail(goodsItem)">{{goodsItem.title}}</p>
+                  <p class="type" 
+                  v-for="(typeItem, typeIndex) in goodsItem.type" 
+                  :key="typeIndex" 
+                  :class="{'isSelected': typeItem.isSelected}"
+                  @click="showTypeDialog(goodsItem)">
+                    {{typeItem.title}}:{{typeItem.content}}
+                  </p>
+                  <p class="bottom-p" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
+                    <span class="price"><span class="logo">¥</span>{{(typeItem.discountPrice ? typeItem.discountPrice : typeItem.price )* goodsItem.num}}</span>
                     <span class="numPicker-box">
-                      <num-picker :min="1" :isSmall="1" :max="goodsItem.type.stock" :num.sync="goodsItem.num"></num-picker>
+                      <num-picker :min="1" :isSmall="1" :max="typeItem.stock" :num.sync="goodsItem.num"></num-picker>
                     </span>
                   </p>
                 </div>
@@ -43,66 +49,40 @@
       <div class="right-box">
         <span class="total">合计：</span>
         <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-        <button class="to-pay-btn" @click="toPay">结算({{getSelectedNum}})</button>
+        <button class="to-pay-btn" @click="toOrderConfirm">结算({{getSelectedNum}})</button>
       </div>
     </div>
+    <type-dialog :parentType="'shoppingCart'"></type-dialog>
   </div>
 </template>
 
 <script>
 import numPicker from '../../components/numPicker/numPicker'
+import typeDialog from '../../components/typeDialog/typeDialog'
 
 export default {
   components: {
-    numPicker
+    numPicker,
+    typeDialog
   },
   data () {
     return {
       isAllSelected: false,
-      goodsList: [
-        {
-          id: undefined,
-          title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-          src: 'https://f11.baidu.com/it/u=1773370537,2404250031&fm=72',
-          store: {
-            name: '米其林4S店'
-          },
-          type: {
-            title: '规格/型号',
-            content: '最大/2090',
-            price: 54,
-            stock: 199
-          },
-          sales: 2422,
-          num: 3,
-          isSelected: false
-        },
-        {
-          id: undefined,
-          title: '【二手9成新】苹果8Plus Apple iPhone8',
-          src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1983789125,876896115&fm=11&gp=0.jpg',
-          store: {
-            name: '苹果旗舰店店'
-          },
-          type: {
-            title: '内存',
-            content: '64G',
-            price: 3162,
-            stock: 2422
-          },
-          sales: 155,
-          num: 1,
-          isSelected: false
-        }
-      ]
+      goodsList: []
     }
   },
   computed: {
     getTotalPrice () {
       let price = 0
-      this.goodsList.map(item => {
-        if (item.isSelected) {
-          price += (item.type.price * item.num)
+      this.goodsList.map(goodsItem => {
+        if (goodsItem.isSelected) {
+          let selectedType
+          goodsItem.type.map(typeItem => {
+            if (typeItem.isSelected) {
+              selectedType = typeItem
+            }
+          })
+          price += ((selectedType.discountPrice ? selectedType.discountPrice : selectedType.price) * goodsItem.num)
         }
       })
       return price
@@ -115,13 +95,39 @@ export default {
         }
       })
       return num
+    },
+    getSelectedGoodsList () {
+      let selectedGoodsList = []
+      this.goodsList.map(item => {
+        if (item.isSelected) {
+          selectedGoodsList.push(item)
+        }
+      })
+      return selectedGoodsList
     }
   },
+  onLoad () {
+    this.goodsList = this.$store.getters['ShoppingCart/goodsList']
+  },
+  async onPullDownRefresh() {
+    console.log('下拉刷新')
+    console.log(this)
+    // 停止下拉刷新
+    // wx.stopPullDownRefresh()
+  },
   methods: {
+    showTypeDialog (goodsItem) {
+      this.$store.commit('Goods/SET_GOODS', goodsItem)
+      this.$store.commit('Goods/SET_SHOWTYPEDIALOG', true)
+    },
     deleteItem (item, index) {
       this.goodsList.splice(index, 1)
     },
-    toPay () {
+    toGoodsDetail (goodsItem) {
+      this.$store.commit('Goods/SET_GOODS', goodsItem)
+      mpvue.navigateTo({ url: '/pages/goodsDetail/main' })
+    },
+    toOrderConfirm () {
       if (this.getSelectedNum === 0) {
         wx.showToast({
           title: '商品数量不能为0',
@@ -129,6 +135,18 @@ export default {
           duration: 2000
         })
       } else {
+        let selectedGoodsList = JSON.parse(JSON.stringify(this.getSelectedGoodsList))
+        selectedGoodsList.map(goodsItem => {
+          let selectedType
+          for (let i = 0; i < goodsItem.type.length; i++) {
+            if (goodsItem.type[i].isSelected) {
+              selectedType = goodsItem.type[i]
+              break
+            }
+          }
+          goodsItem.type = selectedType
+        })
+        this.$store.commit('Order/SET_GOODSLIST', selectedGoodsList)
         mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
       }
     },
@@ -201,10 +219,15 @@ export default {
               justify-content: center;
               align-items: center;
               .img-box {
+                border-radius: 2px;
                 flex-grow: 1;
                 width: 70px;
                 height: 70px;
                 overflow: hidden;
+                display: none;
+                &.isSelected {
+                  display: inline-block;
+                }
                 image {
                   width: 100%;
                   height: 100%;
@@ -226,11 +249,15 @@ export default {
                     color: #333;
                   }
                   &.type {
+                    display: none;
                     font-size: 10px;
                     padding: 2px 4px;
                     background-color: #f6f6f6;
                     border-radius: 4px;
                     color: #999;
+                    &.isSelected {
+                      display: block;
+                    }
                   }
                   .price {
                     font-size: 12px;
@@ -241,10 +268,14 @@ export default {
                     }
                   }
                   &.bottom-p {
+                    display: none;
                     margin-top: 5px;
                     height: 30px;
                     position: relative;
                     padding: 0;
+                    &.isSelected {
+                      display: block;
+                    }
                     .price {
                       display: inline-block;
                       height: 30px;

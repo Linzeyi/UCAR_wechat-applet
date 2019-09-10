@@ -197,7 +197,12 @@ export default {
   },
   watch: {
   },
-
+  async onPullDownRefresh() {
+    console.log('下拉刷新')
+    console.log(this)
+    // 停止下拉刷新
+    // wx.stopPullDownRefresh()
+  },
   computed: {
   },
   methods: {

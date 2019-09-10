@@ -1,7 +1,10 @@
 <template>
   <div class="goodsInfo-wrap">
+    <div class="panel-box imgList-box">
+      <com-swiper :imgList="getImgList"></com-swiper>
+    </div>
     <div class="panel-box title-box">
-      <p class="price-panel"><span class="price"><span class="logo">¥</span>{{goods.price}}</span></p>
+      <p class="price-panel"><span class="price"><span class="logo">¥</span>{{getGoodsPrice}}</span></p>
       <h2 class="goods-title">{{goods.title}}<span class="score">{{goods.score}}</span></h2>
     </div>
     <div class="panel-box">
@@ -13,40 +16,44 @@
       </div>
       <div class="panel">
         <p>
+          <span class="panel-title">描述</span>
+          <span class="desc">{{goods.desc}}</span>
+        </p>
+      </div>
+      <div class="panel">
+        <p>
           <span class="panel-title">销量</span>已售
-          <span class="sales">{{goods.sales}}</span>
+          <span class="sales">{{getGoodsSales}}</span>
           件
         </p>
       </div>
     </div>
     <div class="panel-box">
       <div class="panel">
-        <p>
+        <p @click="showTypeDialog">
           <span class="panel-title">选择</span>
-          <span class="select-type">已选：“iphone6p/6sp一拳超人ok”</span>
+          <span class="select-type" v-if="checkSelectedType">已选：“{{getSelectedType.title + ':' + getSelectedType.content}};”</span>
+          <span class="select-type" v-else>未选择任何规格样式...</span>
           <i class="iconfont icon-right">&#xe601;</i>
         </p>
       </div>
-      <div class="panel">
+      <div class="panel" v-if="checkSelectedType">
         <p>
           <span class="panel-title">库存</span>尚余
-          <span class="stock">{{goods.stock}}</span>
+          <span class="stock">{{getSelectedType.stock}}</span>
           件
-        </p>
-      </div>
-      <div class="panel">
-        <p>
-          <span class="panel-title">参数</span>
-          <span class="stock">品牌 型号...</span>
-          <i class="iconfont icon-right">&#xe601;</i>
         </p>
       </div>
     </div>
     <div class="panel-box shop-box">
       <div class="panel num-panel">
-        <p>
+        <p v-if="checkSelectedType">
           <span class="panel-title">数量</span>
-          <num-picker :max="goods.stock" :num.sync="num"></num-picker>
+          <num-picker :max="getSelectedType.stock" :num.sync="goods.num"></num-picker>
+        </p>
+        <p v-else>
+          <span class="panel-title">数量</span>
+          <span class="default-num-font">0<span class="tips">（请选择一个规格样式）</span></span>
         </p>
       </div>
     </div>
@@ -54,6 +61,7 @@
 </template>
 
 <script>
+import comSwiper from '../../comSwiper/comSwiper'
 import numPicker from '../../numPicker/numPicker'
 
 export default {
@@ -67,29 +75,77 @@ export default {
             name: '无'
           },
           text: '',
-          price: 0,
-          discountPrice: 0,
-          stock: 0,
-          sales: 0
+          num: 0,
+          type: []
         }
-      }
-    },
-    num: {
-      type: Number,
-      default () {
-        return 0
       }
     }
   },
-  watch: {
-    num (val) {
-      this.$emit('update:num', val)
+  data () {
+    return {
+    }
+  },
+  methods: {
+    showTypeDialog () {
+      this.$store.commit('Goods/SET_SHOWTYPEDIALOG', true)
+    }
+  },
+  computed: {
+    getImgList () {
+      this.goods.type.map(item => {
+        if (item.isSelected) {
+          return item.imgList
+        }
+      })
+      return this.goods.type[0].imgList
+    },
+    checkSelectedType () {
+      let arr = this.goods.type
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].isSelected) {
+          return true
+        }
+      }
+      return false
+    },
+    getSelectedType () {
+      let arr = this.goods.type
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].isSelected) {
+          return arr[i]
+        }
+      }
+      return {}
+    },
+    getGoodsSales () {
+      let sales = 0
+      this.goods.type.map(item => {
+        sales += item.sales
+      })
+      return sales
+    },
+    getGoodsPrice () {
+      let minPrice = 0
+      let maxPrice = 0
+      this.goods.type.map(item => {
+        let price = item.discountPrice ? item.discountPrice : item.price
+        if (price >= maxPrice) {
+          maxPrice = price
+        }
+        if (price <= minPrice) {
+          minPrice = price
+        }
+      })
+      if (minPrice === maxPrice) {
+        return minPrice
+      } else {
+        return minPrice + '-' + maxPrice
+      }
     }
   },
   components: {
-    numPicker
-  },
-  methods: {
+    numPicker,
+    comSwiper
   }
 }
 </script>
@@ -146,16 +202,26 @@ export default {
         color: #a8a8a8;
         margin-right: 15px;
       }
-      .stock {
-      }
       .sales {
         color: #ff6421;
+      }
+      .desc {
+        display: inline-block;
+        width: calc(100% - 56px);
+        vertical-align: top;
+        padding-bottom: 10px;
       }
       &.num-panel {
         color: #444;
         span {
           line-height: 30px;
           vertical-align: top;
+        }
+        .default-num-font {
+          .tips {
+            font-size: 10px;
+            color: #ff6421;
+          }
         }
         .shop-btn {
           border-radius: 10px;
