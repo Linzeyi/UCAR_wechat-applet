@@ -1,24 +1,34 @@
 <template>
   <div class="address-wrap">
     <div class="address-list">
-      <ul>
-        <li v-for="(item, index) in addressList" :key="index">
-          <div class="receiver-info">
-            <span class="receiver-name">{{ item.receiverName }}</span>
-            <span>{{ item.encodePhone }}</span>
-            <p class="address">{{ item.address }}</p>
-          </div>
-          <div class="info-edit">
-            <div class="default-address" @click="setDefault(index)">
-              <span><i class="iconfont tick" :style="item.isDefault ? 'color: #3ed474' : 'color: #bfbfbf'">&#xe65b;</i>默认地址</span>
+      <div class="mo-box" v-for="(item, index) in addressList" :key="index">
+        <movable-area class="mo-area">
+          <movable-view class="mo-view" x="66" y="0" out-of-bounds="true" direction="horizontal" inertia="true" damping="100">
+            <div class="receiver-info">
+              <span class="receiver-name">{{ item.receiverName }}</span>
+              <span>{{ item.encodePhone }}</span>
+              <p class="address">{{ item.address }}</p>
             </div>
-            <div class="action">
-              <i class="iconfont edit" @click="routeTo('modify', index)">&#xe66e;</i>
-              <i class="iconfont delete" @click="deleteAddress(index)">&#xe625;</i>
+            <div class="info-edit">
+              <div class="default-address" @click="setDefault(index)">
+                <span>
+                  <i class="iconfont icon-select-no tick" v-if="!item.isDefault">&#xe656;</i>
+                  <i class="iconfont icon-select-fill tick" v-else>&#xe655;</i>
+                  默认地址
+                </span>
+              </div>
+            </div>
+          </movable-view>
+          <div class="action-box">
+            <div class="edit" @click="routeTo('modify', index)">
+              <i class="iconfont edit">&#xe66e;</i>
+            </div>
+            <div class="delete" @click="deleteAddress(index)">
+              <i class="iconfont delete">&#xe625;</i>
             </div>
           </div>
-        </li>
-      </ul>
+        </movable-area>
+      </div>
     </div>
     <div class="add" @click="routeTo('add')">
       <i class="iconfont">&#xe608;</i>
@@ -122,17 +132,72 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@baoWoBlack: rgb(51, 51, 51);
+@baoWoBlack: #515151;
+@baoWoRed: #771212;
 @baoWoFont: 'PingFangSC-Light';
+@sliderX: 60px;
 .address-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
+  height: 100%;
+  background-color: #f3f3f3;
   .address-list {
-    li {
-      margin: 20px 0;
+    padding-top: 2px;
+    .mo-box {
+      overflow: hidden;
+      margin: 10px 10px;
+      .mo-area {
+        position: relative;
+        left: -@sliderX;
+        width: calc(100% + @sliderX);
+        height: auto;
+        background-color: #ffffff;
+        border-radius: 15px;
+        .mo-view {
+          position: relative;
+          width: calc(100% - @sliderX);
+          height: auto;
+          z-index: 9;
+          background-color: #ffffff;
+          border-radius: 15px;
+        }
+      }
+      .action-box {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: @sliderX;
+        z-index: 8;
+        .edit {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          // background-color: #f7ba5e;
+          background-color: @baoWoBlack; 
+          height: 50%;
+          border-top-right-radius: 15px;
+          i {
+            font-size: 30px;
+            color: #ffffff;
+          }
+        }
+        .delete {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: @baoWoRed;
+          height: 50%;
+          border-bottom-right-radius: 15px;
+          i {
+            font-size: 21px;
+            color: #ffffff;
+          }
+        }
+      }
     }
     .receiver-info {
-      box-shadow: 0 -0.08px 5px rgb(223, 223, 223), 0 0.01px 1px rgb(221, 221, 221);
+      box-shadow: 0 0.01px 3px rgb(221, 221, 221);
       font-size: 0.35rem;
       padding: 8px 15px;
       .receiver-name {
@@ -146,30 +211,16 @@ export default {
     .info-edit {
       display: flex;
       font-size: 0.8em;
-      box-shadow: 0 0.08px 5px rgb(223, 223, 223);
       padding: 8px 18px;
+      align-items: center;
       .default-address {
         flex: 8;
         line-height: 32px;
         .tick {
           font-size: 0.35rem;
           margin-right: 5px;
-          color: #3ed474;
+          color: @baoWoRed;
           vertical-align: middle;
-        }
-      }
-      .action {
-        flex: 1;
-        font-size: 0.25rem;
-        vertical-align: middle;
-        i {
-          margin: 0 5px; 
-        }
-        .edit {
-          font-size: 0.5rem;
-        }
-        .delete {
-          font-size: 0.4rem;
         }
       }
     }

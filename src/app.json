@@ -19,7 +19,8 @@
     "pages/shoppingCart/main",
     "pages/myOrders/main",
     "pages/orderDetail/main",
-    "pages/goodsComments/main"
+    "pages/goodsComments/main",
+    "pages/selectAddress/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

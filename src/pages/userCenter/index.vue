@@ -62,6 +62,7 @@
       </div>
     </div>
     <button class="weui-btn" @click="routeTo('search')" style="margin-top: 20px;">搜索</button>
+    <button class="weui-btn" @click="routeTo('selectAddress')" style="margin-top: 20px;">选择地址</button>
   </div>
 </template>
 
@@ -106,6 +107,9 @@ export default {
           break
         case 'order':
           mpvue.navigateTo({ url: '/pages/myOrders/main' })
+          break
+        case 'selectAddress':
+          mpvue.navigateTo({ url: '/pages/selectAddress/main' })
           break
       }
     }

@@ -72,7 +72,11 @@
       <i class="iconfont tick" :style="formData.isDefault ? 'color: #3ed474' : 'color: #bfbfbf'">&#xe65b;</i>
       <span>设为默认地址</span>
     </div>
-    <button class="weui-btn btn-save" @click="submitForm">保存</button>
+    <button 
+      class="weui-btn btn-save" 
+      @click="submitForm"
+      :style="formCanSubmit ? 'opacity: 1' : 'opacity: 0.5'">
+      保存</button>
   </div>
 </template>
 
@@ -84,15 +88,58 @@ export default {
       focus: undefined // 用于判断目前聚焦的input
     }
   },
+  computed: {
+    formCanSubmit () {
+      let obj = this.formData
+      for (const key in obj) {
+        if (key !== 'isDefault') {
+          if (key === 'region') {
+            if (obj[key].length === 0) {
+              return false
+            }
+          } else {
+            if (obj[key] === '') {
+              return false
+            }
+          }
+        }
+      }
+      return true
+    }
+  },
   methods: {
     // 设为默认地址
     setDefault () {
       this.formData.isDefault = !this.formData.isDefault
     },
 
+    // 表单验证
+    validateForm () {
+      if (!this.Utils.regularRule.phone.test(this.formData.receiverPhone)) {
+        this.showToast('请输入正确的手机号')
+        return false
+      }
+      if (!this.Utils.regularRule.postCode.test(this.formData.postCode)) {
+        this.showToast('请输入正确的邮政编码')
+        return false
+      }
+      return true
+    },
+
     // 提交表单
     submitForm (str) {
-      console.log(str)
+      if (this.formCanSubmit && this.validateForm()) {
+        console.log('提交！')
+      }
+    },
+
+    // toast提示
+    showToast (text) {
+      wx.showToast({
+        title: text,
+        icon: 'none',
+        duration: 2000
+      })
     },
 
     // 清空输入框
