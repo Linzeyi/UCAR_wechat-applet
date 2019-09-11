@@ -66,7 +66,7 @@ const goodsList = [
         content: '64GB',
         price: 7899.00,
         discountPrice: 0,
-        stock: 6325,
+        stock: 67325,
         sales: 15131,
         isSelected: false,
         imgList: [
@@ -79,7 +79,7 @@ const goodsList = [
         content: '256GB',
         price: 8999.00,
         discountPrice: 0,
-        stock: 5729,
+        stock: 62729,
         sales: 17321,
         isSelected: false,
         imgList: [
@@ -92,7 +92,7 @@ const goodsList = [
         content: '512GB',
         price: 11099.00,
         discountPrice: 0,
-        stock: 6432,
+        stock: 84432,
         sales: 11241,
         isSelected: false,
         imgList: [
