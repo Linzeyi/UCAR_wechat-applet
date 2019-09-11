@@ -1,6 +1,6 @@
 <template>
   <div class="goods-grids">
-    <div v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex" class="grid-box">
+    <div v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex" class="grid-box" :style="'width: calc(100% / ' + col + ')'">
       <div class="content-box" @click="toGoodsDetail(goodsItem)">
         <div class="img-box">
           <image :src="goodsItem.type[0].imgList[0]" :alt="goodsItem.title" mode="widthFix"></image>
@@ -25,7 +25,16 @@ export default {
       default () {
         return []
       }
+    },
+    col: {
+      type: Number,
+      default () {
+        return 3
+      }
     }
+  },
+  onLoad () {
+
   },
   methods: {
     toGoodsDetail (goods) {
