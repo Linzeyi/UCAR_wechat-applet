@@ -64,10 +64,11 @@ export default {
         return;
       }
       if (this.form.newPassword !== this.form.againPassword) {
-        this.$store.commit("SHOW_TOAST", {
+        this.$store.commit("UserInfo/SHOW_TOAST", {
           type: "error",
           content: "两次密码不一致"
         });
+        return
       }
       // 判断旧密码是否一致，需调接口
       console.log("修改成功");
@@ -77,11 +78,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.submit {
-  margin-top: 120rpx;
-  text-align: center;
-}
-
 .captcha {
   vertical-align: middle;
   display: inline-block;
@@ -109,6 +105,7 @@ export default {
     }
 
     > input {
+      text-align: center;
       margin: 0;
       margin-left: 10rpx;
       vertical-align: middle;
@@ -117,6 +114,11 @@ export default {
       display: inline-block;
       font-size: 30rpx;
     }
+  }
+
+  .submit {
+    margin-top: 120rpx;
+    text-align: center;
   }
 }
 </style>

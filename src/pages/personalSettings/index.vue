@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="footer">
-      <div>
+      <div @click="Utils.navigateTo('/pages/updatePassword/main')">
         <span>修改密码</span>
         <i class="iconfont icon-size">&#xe601;</i>
       </div>
@@ -152,7 +152,7 @@ export default {
   background-color: rgb(138, 138, 138);
 }
 .wrap {
-  padding-top: 100rpx;
+  padding-top: 50rpx;
   font-size: 30rpx;
 
   .head {

@@ -15,11 +15,17 @@
       </div>
       <div class="input-item">
         <img src="/static/images/u109.svg" />
-        <span @click="showPassword = !showPassword">
-          <switch-button></switch-button>
+        <span class="switch-button">
+          <switch-button @click="showPassword = !showPassword"></switch-button>
         </span>
-        <input v-if="showPassword" type="text" placeholder="设置登录密码" v-model="form.password" maxlength="20"/>
-        <input v-else type="password" placeholder="设置登录密码" v-model="form.password" maxlength="20"/>
+        <input
+          v-if="showPassword"
+          type="text"
+          placeholder="设置登录密码"
+          v-model="form.password"
+          maxlength="20"
+        />
+        <input v-else type="password" placeholder="设置登录密码" v-model="form.password" maxlength="20" />
       </div>
     </div>
     <base-button @click="handleSubmit">确定</base-button>
@@ -77,6 +83,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.switch-button {
+  position: fixed;
+  right: 0;
+  z-index: 3;
+}
 .captcha {
   position: fixed;
   right: 0;

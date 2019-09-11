@@ -15,11 +15,17 @@
       </div>
       <div class="input-item">
         <img src="/static/images/u109.svg" />
-        <span @click="showPassword = !showPassword">
-          <switch-button></switch-button>
+        <span class="switch-button">
+          <switch-button @click="showPassword = !showPassword"></switch-button>
         </span>
-        <input v-if="showPassword" type="text" placeholder="设置登录密码" v-model="form.password" maxlength="20"/>
-        <input v-else type="password" placeholder="设置登录密码" v-model="form.password" maxlength="20"/>
+        <input
+          v-if="showPassword"
+          type="text"
+          placeholder="设置登录密码"
+          v-model="form.password"
+          maxlength="20"
+        />
+        <input v-else type="password" placeholder="设置登录密码" v-model="form.password" maxlength="20" />
       </div>
       <div class="aggrement">
         <i
@@ -65,26 +71,38 @@ export default {
   },
   methods: {
     async handleRegister() {
-      let flag = false
+      let flag = false;
       flag = await this.$store.dispatch("UserInfo/checkPhone", this.form.phone);
       if (!flag) {
-        return
+        return;
       }
-      flag = await this.$store.dispatch("UserInfo/checkCaptcha", this.form.captcha);
+      flag = await this.$store.dispatch(
+        "UserInfo/checkCaptcha",
+        this.form.captcha
+      );
       if (!flag) {
-        return
+        return;
       }
-      flag = await this.$store.dispatch("UserInfo/checkPassword", this.form.password);
+      flag = await this.$store.dispatch(
+        "UserInfo/checkPassword",
+        this.form.password
+      );
       if (!flag) {
-        return
+        return;
       }
-      console.log('验证成功')
+      console.log("验证成功");
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
+.switch-button {
+  position: fixed;
+  right: 0;
+  z-index: 3;
+}
+
 .captcha {
   position: fixed;
   right: 0;
