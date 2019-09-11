@@ -31,12 +31,20 @@
             </div>
           </div>
           <div class="info-box">
-            <p class="name">{{item.sender.name}}</p>
-            <p class="date-type">
-              <span class="date">{{item.sendTime}}</span>
-              <span class="type">{{item.type}}</span>
+            <p class="name-score">
+              <span class="name">{{item.sender.name}}</span>
+              <span class="score">
+                <span class="star" v-for="(starItem, starIndex) in 5" :key="starIndex" :class="{'stared': starIndex + 1 <= item.score}">
+                  <i class="iconfont icon-star">&#xe623;</i>
+                  <i class="iconfont icon-stared">&#xe624;</i>
+                </span>
+              </span>
+            </p>
+            <p class="type">
+              已购：{{item.type}}
             </p>
             <p class="content">{{item.content}}</p>
+            <p class="date">{{item.sendTime}}</p>
           </div>
         </div>
       </div>
@@ -137,10 +145,14 @@ export default {
   padding: 10px 15px;
   background-color: #fff;
   .statistics-wrap {
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    box-shadow: 0 6rpx 20rpx 0 #ddd;
+    border-radius: 5px;
+    overflow: hidden;
     h1 {
-      font-size: 30px;
+      font-size: 22px;
+      color: #888;
       font-weight: 600;
       margin-bottom: 5px;
     }
@@ -167,7 +179,7 @@ export default {
         flex-grow: 1;
         padding:  0 5px 0 0;
         .progress-box {
-          padding-top: 4px;
+          padding-top: 9px;
           box-sizing: border-box;
           height: 52px;
           .progress-panel {
@@ -251,18 +263,20 @@ export default {
     .comment-list {
       padding: 10px 0;
       .list-panel {
-        padding: 15px;
-        border-radius: 6px;
-        background-color: #eee;
-        margin-bottom: 10px;
+        background-color: #fff;
+        margin-bottom: 6px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
         display: flex;
         &:last-child {
           margin: 0;
         }
         .left-box {
           .img-box {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
             text-align: center;
             image {
               width: 100%;
@@ -273,22 +287,55 @@ export default {
         }
         .info-box {
           flex-grow: 1;
+          padding-left: 10px;
+          box-sizing: border-box;
           p {
             font-size: 12px;
-            &.name {
-              margin-bottom: 5px;
-            }
-            &.date-type {
-              font-size: 11px;
-              color: #999;
-              display: flex;
+            &.name-score {
               margin-bottom: 10px;
-              .type {
+              display: flex;
+              justify-content: space-between;
+              .name {
                 flex-grow: 1;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
               }
+              .score {
+                .star {
+                  .iconfont {
+                    font-size: 10px;
+                    color: orangered;
+                  }
+                  .icon-star {
+                    display: inline;
+                  }
+                  .icon-stared {
+                    display: none;
+                  }
+                  &.stared {
+                    .icon-star {
+                      display: none;
+                    }
+                    .icon-stared {
+                      display: inline;
+                    }
+                  }
+                }
+              }
+            }
+            &.type {
+              font-size: 11px;
+              color: #888;
+              padding: 2px 5px;
+              background-color: #eee;
+              border-radius: 2px;
+            }
+            &.content {
+              margin-top: 10px;
+            }
+            &.date {
+              margin-top: 5px;
+              font-size: 11px;
+              color: #888;
+              text-align: right;
             }
           }
         }
