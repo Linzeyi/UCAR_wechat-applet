@@ -8,7 +8,9 @@
       </div>
       <div class="input-item">
         <img src="/static/images/u109.svg" />
-        <switch-button @click="showPassword = !showPassword"></switch-button>
+        <span class="switch-button">
+          <switch-button @click="showPassword = !showPassword"></switch-button>
+        </span>
         <input v-if="showPassword" type="text" placeholder="密码" v-model="form.password" maxlength="20"/>
         <input v-else type="password" placeholder="密码" v-model="form.password" maxlength="20"/>
       </div>
@@ -66,6 +68,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.switch-button {
+  position: fixed;
+  right: 0;
+  z-index: 3;
+}
 .wrap {
   height: 100%;
   padding: 10rpx;

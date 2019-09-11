@@ -17,7 +17,7 @@
             <span class="order-id">订单编号：{{orderItem.orderId}}</span>
           </div>
           <div class="right-box">
-            <span class="status">{{orderItem.status}}</span>
+            <span class="status">{{getStatusList[orderItem.status]}}</span>
           </div>
         </div>
         <div class="goods-list">
@@ -25,7 +25,7 @@
             <div class="flex-box">
               <div class="left-box">
                 <div class="img-box">
-                  <image :src="goodsItem.src" alt="商品图片"></image>
+                  <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
                 </div>
               </div>
               <div class="content-box">
@@ -46,10 +46,9 @@
           </div>
           <div class="goods-footer">
             <span class="option-btn" @click="toOrderDetail(orderItem)">查看订单</span>
-            <span class="option-btn">删除订单</span>
-            <span class="option-btn" v-if="orderItem.status != '交易成功'">取消订单</span>
-            <span class="option-btn" v-if="orderItem.status == '未支付'">去支付</span>
-            <span class="option-btn" v-if="orderItem.status === '交易成功'" @click="toGoodsComments(orderItem)">评价</span>
+            <span class="option-btn" v-if="orderItem.status <= 1 ">取消订单</span>
+            <span class="option-btn" v-if="orderItem.status === 0">去支付</span>
+            <span class="option-btn" @click="toGoodsComments(orderItem)">评价</span>
           </div>
         </div>
       </div>
@@ -195,6 +194,9 @@ export default {
   components: {
     comTotalPrice
   },
+  onLoad () {
+    this.init()
+  },
   watch: {
   },
   async onPullDownRefresh() {
@@ -204,10 +206,18 @@ export default {
     // wx.stopPullDownRefresh()
   },
   computed: {
+    getStatusList () {
+      return this.$store.getters['Order/statusList']
+    }
   },
   methods: {
-    toGoodsComments (item) {
-      mpvue.navigateTo({ url: '/pages/goodsComments/main?orderId=' + item.orderId })
+    init () {
+      this.orderList = this.$store.getters['Order/orderList']
+      console.log("我的订单列表获取：", this.orderList)
+    },
+    toGoodsComments (order) {
+      this.$store.commit('Comment/SET_ORDER', order)
+      mpvue.navigateTo({ url: '/pages/goodsComments/main?orderId=' + order.orderId })
     },
     toOrderDetail (item) {
       mpvue.navigateTo({ url: '/pages/orderDetail/main?orderId=' + item.orderId })
@@ -219,6 +229,7 @@ export default {
 <style lang="less" scoped>
 .myOrders-wrap {
   height: 100%;
+  background-color: #f3f3f3;
   .tab-panel {
     position: fixed;
     left: 0;
@@ -231,6 +242,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #fff;
     border-bottom: 1px solid #eee;
     .tab-item {
       text-align: center;
@@ -244,9 +256,9 @@ export default {
   .order-list-wrap {
     position: relative;
     top: 40px;
-    padding: 10px;
     height: calc(100% - 40px);
-    background-color: #f3f3f3;
+    overflow-y: auto;
+    padding: 10px;
     box-sizing: border-box;
     .order-box {
       width: 100%;
@@ -278,7 +290,7 @@ export default {
       }
       .goods-list {
         .goods-box {
-          padding-bottom: 10px;
+          padding-bottom: 20px;
           .flex-box {
             display: flex;
             justify-content: center;
@@ -301,7 +313,12 @@ export default {
               padding: 0 10px;
               flex-grow: 1;
               .title {
+                margin-bottom: 5px;
                 font-size: 13px;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow: hidden;
               }
               .type {
                 font-size: 10px;

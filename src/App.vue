@@ -40,7 +40,7 @@ button {
   }
 }
 .lzy-list-wrap {
-  height: calc(100% - 54px);
+  height: calc(100% - 64px);
   overflow-y: auto;
 }
 .lzy-footer {

@@ -8,6 +8,7 @@ import Goods from './modules/goods/index'
 import Order from './modules/order/index'
 import ShoppingCart from './modules/shoppingCart/index'
 import UserInfo from './modules/userInfo/index'
+import Comment from './modules/comment/index'
 
 Vue.use(Vuex)
 
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
     Goods,
     Order,
     ShoppingCart,
-    UserInfo
+    UserInfo,
+    Comment
   }
 })
 

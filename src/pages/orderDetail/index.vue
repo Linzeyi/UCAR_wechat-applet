@@ -142,25 +142,41 @@ export default {
       selectPayType: {}
     }
   },
-  mounted () {
+  onLoad () {
     this.selectPayType = this.payTypeList[0]
-    this.order = this.$store.getters['Order/order']
+    this.order = JSON.parse(JSON.stringify(this.$store.getters['Order/order']))
+    let title = '订单详情'
+    if (this.order.status === 0 || this.order.status === '0') {
+      title = '订单支付'
+    }
+    wx.setNavigationBarTitle({
+      title: title
+    })
   },
   onUnload () {
+    this.init()
   },
   computed: {
     getTotalPrice () {
       let price = 0
-      this.order.goodsList.map(item => {
-        price += item.num * (item.type.discountPrice ? item.type.discountPrice : item.type.price)
-      })
-      return price
+      if (JSON.stringify(this.order) === '{}') {
+        return 0
+      } else {
+        this.order.goodsList.map(item => {
+          price += item.num * (item.type.discountPrice ? item.type.discountPrice : item.type.price)
+        })
+        return price
+      }
     },
     getStatusList () {
       return this.$store.getters['Order/statusList'][parseInt(this.order.status)]
     }
   },
   methods: {
+    init () {
+      console.log('orderDetail页面销毁')
+      this.$store.commit('Order/INIT_ORDER')
+    },
     cancelOrder () {
       wx.showModal({
         title: '取消订单',
@@ -201,6 +217,7 @@ export default {
                 showCancel: false,
                 success (res) {
                   console.log('付款成功，支付订单：', that.order)
+                  that.$store.commit('Order/ADD_ORDER', that.order)
                   mpvue.navigateTo({ url: '/pages/myOrders/main' })
                 }
               })

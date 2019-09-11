@@ -23,21 +23,6 @@
       </div>
     </div>
     <div class="comment-list-wrap">
-      <div class="option-panel">
-        <p>
-          <span class="left">轻点评分</span>
-          <span class="right">
-            <span class="my-score" v-if="myScore >= 0">{{myScore}}分</span>
-            <span class="star" v-for="(item, index) in 5" :key="index" :class="{'stared': index + 1 <= myScore}" @click="selectScore(index)">
-              <i class="iconfont icon-star">&#xe623;</i>
-              <i class="iconfont icon-stared">&#xe624;</i>
-            </span>
-          </span>
-        </p>
-      </div>
-      <div class="to-comment-panel">
-        <span @click="toEditComment()"><i class="iconfont icon-edit">&#xe609;</i> 攥写评论</span>
-      </div>
       <div class="comment-list">
         <div class="list-panel" v-for="(item, index) in commentList" :key="index">
           <div class="top-panel">

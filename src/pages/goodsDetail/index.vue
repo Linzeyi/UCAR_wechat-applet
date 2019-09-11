@@ -1,6 +1,5 @@
 <template>
   <div class="goodsDetail">
-    
     <div class="tab-navbar">
       <div class="flex-box">
           <div class="tab-navbar-item" 
@@ -22,7 +21,7 @@
       </swiper>
     </div>
     <div class="tab-footer lzy-footer">
-      <div class="left-box">
+      <div class="left-box" :class="{'small': getTotalPrice >= 100000}">
         <span>商品金额：</span>
         <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
       </div>
@@ -62,7 +61,7 @@ export default {
       if (!this.checkSelectedType) {
         return 0
       } else {
-        return this.getSelectedTypePrice * (this.goods.num ? this.goods.num : 0)
+        return (this.getSelectedTypePrice * (this.goods.num ? this.goods.num : 0)).toFixed(2)
       }
     },
     getSelectedTypePrice () {
@@ -90,6 +89,9 @@ export default {
   },
   onLoad () {
     this.goods = this.$store.getters['Goods/goods']
+    wx.setNavigationBarTitle({
+      title: this.goods.title
+    })
   },
   components: {
     goodsInfo,
@@ -178,23 +180,6 @@ export default {
       }
     }
   },
-  mounted () {
-    // const data = {
-    //   username: 'heoning',
-    //   password: 'qqq',
-    //   type: {
-    //     id: 14,
-    //     name: '214'
-    //   }
-    // }
-    // this.$http.get('action/test', data).then(res => {
-    //   console.log(res)
-    // })
-    this.goods.id = this.$root.$mp.query.goodsId
-    wx.setNavigationBarTitle({
-      title: this.goods.title
-    })
-  },
   onUnload () {
     this.init()
   }
@@ -253,11 +238,24 @@ export default {
   .tab-footer {
     .left-box {
       font-size: 14px;
+      &.small {
+        font-size: 12px;
+        .price {
+          font-size: 13px;
+          .logo {
+            font-size: 11px;
+          }
+        }
+      }
       .price {
         color: #ff6421;
-        font-size: 18px;
+        font-size: 16px;
+        max-width: 88px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         .logo {
-          font-size: 12px;
+          font-size: 13px;
           margin-right: 3px;
         }
       }

@@ -171,6 +171,102 @@ const goodsList = [
     ],
     num: 1,
     isSelected: false
+  },
+  {
+    id: undefined,
+    score: 4.9,
+    title: '小度智能音箱 百度智能音响 WiFi/蓝牙音箱 、智能机器人、海量资源、生活助手、2600+技能、带娃神器故事机',
+    desc: '国民爆款小度音箱升级换代，新品Play来袭，色彩更多，功能更多，潮范更足，性价比更高！',
+    store: {
+      name: '自营店'
+    },
+    type: [
+      {
+        title: '颜色',
+        content: '【新品】茶白',
+        price: 120.00,
+        discountPrice: 87.00,
+        stock: 15263,
+        sales: 5185,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/40895/2/12550/90318/5d5cfa54E51041c67/0c9cee9c9c037b12.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/80933/26/7941/401559/5d5cfa67Eb29501a2/5fd995d5eb547898.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/75999/14/7726/98582/5d5cfa55E008b203f/ab8cad76de8495bf.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: '【新品】橘灿红',
+        price: 120.00,
+        discountPrice: 87.00,
+        stock: 17332,
+        sales: 7343,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/53695/31/8412/266090/5d5e63f4E533542c3/a77cdc3d22afb3fb.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/83465/2/8032/276928/5d5e63f4E12c008f7/0b647531db0fa136.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/44446/2/8983/185622/5d5e63f5Efb783a5e/bf82acd587a9e76a.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: 'Summer',
+        price: 129.00,
+        discountPrice: 0,
+        stock: 12512,
+        sales: 7832,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/65007/30/3717/292440/5d1d7b49E79503a56/ce0feb6d30c1782e.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/72068/37/3546/232797/5d1d7b45E9a966f6c/d635c946407f64b3.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/62903/4/3830/742814/5d1f3af5E676b21f5/11ec63e7112bf59d.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: 'Victory',
+        price: 129.00,
+        discountPrice: 0,
+        stock: 12891,
+        sales: 6232,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n0/jfs/t1/39768/23/10671/236389/5d1d7965Ed5151611/d6a7dfc262ec24b4.jpg',
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/79579/34/3710/611384/5d1f3bb3E66983244/cd9ea787d5018101.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/36353/21/12182/458211/5d255b64E80b2720c/a6808c9e0f2d55fb.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: '抽象几何',
+        price: 129.00,
+        discountPrice: 0,
+        stock: 11025,
+        sales: 6834,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n0/jfs/t1/34068/37/15528/272719/5d1d7acbEd49fd4ff/96c3670da0d66e34.jpg',
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/40179/35/4243/632873/5d1f3b43Eeff467c6/3dc9acc9913a2bc2.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/57518/25/4720/458211/5d255ba6Efe321769/d2d8ad27ea6b843c.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: '蒙德里安',
+        price: 129.00,
+        discountPrice: 0,
+        stock: 12519,
+        sales: 9284,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n0/jfs/t1/33540/27/15522/242166/5d1d7a75E1cc23279/7e34370ee0fe11b1.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/50788/3/4237/528991/5d1f3b69E5508347d/4d7339947099df2c.jpg'
+        ]
+      }
+    ],
+    num: 1,
+    isSelected: false
   }
 ]
 
@@ -347,10 +443,170 @@ const shoppingCartGoodsList = [
     ],
     num: 1,
     isSelected: false
+  },
+  {
+    id: undefined,
+    score: 4.9,
+    title: '小度智能音箱 百度智能音响 WiFi/蓝牙音箱 、智能机器人、海量资源、生活助手、2600+技能、带娃神器故事机',
+    desc: '国民爆款小度音箱升级换代，新品Play来袭，色彩更多，功能更多，潮范更足，性价比更高！',
+    store: {
+      name: '自营店'
+    },
+    type: [
+      {
+        title: '颜色',
+        content: '【新品】茶白',
+        price: 120.00,
+        discountPrice: 87.00,
+        stock: 15263,
+        sales: 5185,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/40895/2/12550/90318/5d5cfa54E51041c67/0c9cee9c9c037b12.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/80933/26/7941/401559/5d5cfa67Eb29501a2/5fd995d5eb547898.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/75999/14/7726/98582/5d5cfa55E008b203f/ab8cad76de8495bf.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: '【新品】橘灿红',
+        price: 120.00,
+        discountPrice: 87.00,
+        stock: 17332,
+        sales: 7343,
+        isSelected: true,
+        imgList: [
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/53695/31/8412/266090/5d5e63f4E533542c3/a77cdc3d22afb3fb.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/83465/2/8032/276928/5d5e63f4E12c008f7/0b647531db0fa136.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/44446/2/8983/185622/5d5e63f5Efb783a5e/bf82acd587a9e76a.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: 'Summer',
+        price: 129.00,
+        discountPrice: 0,
+        stock: 12512,
+        sales: 7832,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/65007/30/3717/292440/5d1d7b49E79503a56/ce0feb6d30c1782e.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/72068/37/3546/232797/5d1d7b45E9a966f6c/d635c946407f64b3.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/62903/4/3830/742814/5d1f3af5E676b21f5/11ec63e7112bf59d.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: 'Victory',
+        price: 129.00,
+        discountPrice: 0,
+        stock: 12891,
+        sales: 6232,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n0/jfs/t1/39768/23/10671/236389/5d1d7965Ed5151611/d6a7dfc262ec24b4.jpg',
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/79579/34/3710/611384/5d1f3bb3E66983244/cd9ea787d5018101.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/36353/21/12182/458211/5d255b64E80b2720c/a6808c9e0f2d55fb.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: '抽象几何',
+        price: 129.00,
+        discountPrice: 0,
+        stock: 11025,
+        sales: 6834,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n0/jfs/t1/34068/37/15528/272719/5d1d7acbEd49fd4ff/96c3670da0d66e34.jpg',
+          'https://img14.360buyimg.com/n1/s546x546_jfs/t1/40179/35/4243/632873/5d1f3b43Eeff467c6/3dc9acc9913a2bc2.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/57518/25/4720/458211/5d255ba6Efe321769/d2d8ad27ea6b843c.jpg'
+        ]
+      },
+      {
+        title: '颜色',
+        content: '蒙德里安',
+        price: 129.00,
+        discountPrice: 0,
+        stock: 12519,
+        sales: 9284,
+        isSelected: false,
+        imgList: [
+          'https://img14.360buyimg.com/n0/jfs/t1/33540/27/15522/242166/5d1d7a75E1cc23279/7e34370ee0fe11b1.jpg',
+          'https://img14.360buyimg.com/n0/jfs/t1/50788/3/4237/528991/5d1f3b69E5508347d/4d7339947099df2c.jpg'
+        ]
+      }
+    ],
+    num: 1,
+    isSelected: false
+  }
+]
+
+const orderList = [
+  {
+    orderId: 'xD100241',
+    remark: '快递请用顺风！！',
+    status: 0,
+    createTime: "2019/09/11 10:57:34",
+    addressInfo: {
+      address: "福建省厦门市思明区宝龙一城西塔21楼",
+      isDefault: true,
+      name: "林泽毅",
+      phone: "13107927091"
+    },
+    goodsList: [
+      {
+        desc: "【73万+好评，JD自营闪电发货】 1、四个喇叭，高度解析！2、舒适贴耳，无痛佩戴！3、通用vivo华为oppo等！4、下单送创意收纳包！",
+        title: "兰士顿 D4C耳机入耳式有线降噪隔音四核双动圈重低音苹果vivo华为oppo通用K歌音乐手机吃鸡电脑游戏耳麦黑色",
+        isSelected: true,
+        num: 1,
+        score: 4.2,
+        store: {
+          name: '自营店'
+        },
+        type: {
+          content: "【带麦调音款 Type-C扁插头】",
+          discountPrice: 0,
+          isSelected: true,
+          price: 79,
+          sales: 4332,
+          stock: 12521,
+          title: "版本",
+          imgList: [
+            "https://img14.360buyimg.com/n0/jfs/t25249/71/836446341/349789/d7309e2a/5b7d2b8eN10615099.jpg",
+            "https://img14.360buyimg.com/n0/jfs/t23578/260/2055689556/42015/4420c294/5b72d6fcNb35fc3a8.jpg"
+          ]
+        }
+      },
+      {
+        desc: "【iPhone焕新季，抢券立减400元】6.5英寸大屏旗舰，A12仿生芯片流畅体验，支持双卡！选【换修无忧版】获 AppleCare 原厂服务，享只换不修！更有快速换机、保值换新、轻松月付！",
+        title: "Apple iPhone XS Max (A2104) 256GB 银色 移动联通电信4G手机 双卡双待",
+        isSelected: true,
+        num: 1,
+        score: 4.8,
+        store: {
+          name: '自营店'
+        },
+        type: {
+          content: "64GB",
+          discountPrice: 0,
+          isSelected: true,
+          price: 7899,
+          sales: 15131,
+          stock: 6325,
+          title: "内存",
+          imgList: [
+            "https://img14.360buyimg.com/n0/jfs/t1/1652/7/3499/134740/5b997c0fE207efcef/cad8689a40192c53.jpg",
+            "https://img14.360buyimg.com/n0/jfs/t1/1652/7/3499/134740/5b997c0fE207efcef/cad8689a40192c53.jpg"
+          ]
+        }
+      }
+    ]
   }
 ]
 
 export {
   goodsList,
-  shoppingCartGoodsList
+  shoppingCartGoodsList,
+  orderList
 }

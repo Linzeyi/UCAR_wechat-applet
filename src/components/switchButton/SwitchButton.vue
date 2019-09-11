@@ -23,9 +23,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  position: fixed;
-  z-index: 3;
-  right: 0;
   height: 40rpx;
   width: 80rpx;
   font-size: 30rpx;

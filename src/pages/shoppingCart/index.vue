@@ -21,13 +21,13 @@
                   v-for="(typeItem, typeIndex) in goodsItem.type" 
                   :key="typeIndex" 
                   :class="{'isSelected': typeItem.isSelected}"
-                  @click="showTypeDialog(goodsItem)">
+                  @click="handlerShowTypeDialog(goodsItem)">
                     {{typeItem.title}}:{{typeItem.content}}
                   </p>
                   <p class="bottom-p" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
                     <span class="price"><span class="logo">¥</span>{{(typeItem.discountPrice ? typeItem.discountPrice : typeItem.price )* goodsItem.num}}</span>
                     <span class="numPicker-box">
-                      <num-picker :min="1" :isSmall="1" :max="typeItem.stock" :num.sync="goodsItem.num"></num-picker>
+                      <num-picker :min="1" :isSmall="true" :max="typeItem.stock" :num.sync="goodsItem.num"></num-picker>
                     </span>
                   </p>
                 </div>
@@ -116,9 +116,12 @@ export default {
     // wx.stopPullDownRefresh()
   },
   methods: {
-    showTypeDialog (goodsItem) {
+    handlerShowTypeDialog (goodsItem) {
       this.$store.commit('Goods/SET_GOODS', goodsItem)
-      this.$store.commit('Goods/SET_SHOWTYPEDIALOG', true)
+      this.showTypeDialog(true)
+    },
+    showTypeDialog (flag) {
+      this.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
     },
     deleteItem (item, index) {
       this.goodsList.splice(index, 1)
@@ -147,6 +150,8 @@ export default {
           goodsItem.type = selectedType
         })
         this.$store.commit('Order/SET_GOODSLIST', selectedGoodsList)
+        console.log('购物车选中商品：', selectedGoodsList)
+        console.log('购物车发起订单')
         mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
       }
     },
@@ -244,9 +249,13 @@ export default {
                 box-sizing: border-box;
                 p {
                   font-size: 12px;
-                  padding-bottom: 4px;
+                  margin-bottom: 4px;
                   &.title {
                     color: #333;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 2;
+                    overflow: hidden;
                   }
                   &.type {
                     display: none;
