@@ -69,7 +69,8 @@
       </div>
     </div>
     <div class="isDefault" @click="setDefault">
-      <i class="iconfont tick" :style="formData.isDefault ? 'color: #3ed474' : 'color: #bfbfbf'">&#xe65b;</i>
+      <i class="iconfont icon-select-no tick" v-if="!formData.isDefault">&#xe656;</i>
+      <i class="iconfont icon-select-fill tick" v-else>&#xe655;</i>
       <span>设为默认地址</span>
     </div>
     <button 
@@ -94,27 +95,10 @@ export default {
         isDefault: false // 标示新增地址是否为默认
       },
       focus: undefined // 用于存储目前聚焦的input
-      // formCanSubmit: false
     }
   },
   computed: {
     formCanSubmit () {
-      // if (this.formData.receiverName === '') {
-      //   return false
-      // }
-      // if (this.formData.receiverPhone === '') {
-      //   return false
-      // }
-      // if (this.formData.postCode === '') {
-      //   return false
-      // }
-      // if (this.formData.region.length === 0) {
-      //   return false
-      // }
-      // if (this.formData.address === '') {
-      //   return false
-      // }
-      // return true
       let obj = this.formData
       for (const key in obj) {
         if (key !== 'isDefault') {
@@ -133,14 +117,38 @@ export default {
     }
   },
   methods: {
-    // 设为默认地址
+    // 设置默认地址
     setDefault () {
       this.formData.isDefault = !this.formData.isDefault
     },
 
+    // 表单验证
+    validateForm () {
+      if (!this.Utils.regularRule.phone.test(this.formData.receiverPhone)) {
+        this.showToast('请输入正确的手机号')
+        return false
+      }
+      if (!this.Utils.regularRule.postCode.test(this.formData.postCode)) {
+        this.showToast('请输入正确的邮政编码')
+        return false
+      }
+      return true
+    },
+
     // 提交表单
     submitForm (str) {
-      console.log(this.Utils.regularRule.phone.test(this.formData.receiverPhone))
+      if (this.formCanSubmit && this.validateForm()) {
+        console.log('提交!')
+      }
+    },
+
+    // toast提示
+    showToast (text) {
+      wx.showToast({
+        title: text,
+        icon: 'none',
+        duration: 2000
+      })
     },
 
     // 清空输入框
@@ -176,7 +184,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@baoWoBlack: rgb(51, 51, 51);
+@baoWoBlack: #515151;
+@baoWoRed: #771212;
 @baoWoFont: 'PingFangSC-Light';
 .addAddress-wrap {
   font-family: @baoWoFont;
@@ -216,6 +225,7 @@ export default {
     i {
       margin-right: 5px;
       font-size: 0.8em;
+      color: @baoWoRed;
     }
     span {
       font-size: 0.8em;

@@ -7,7 +7,11 @@
         <input type="number" pattern="[0-9]*" class="weui-input" placeholder="输入金额" v-model="amount">
       </div>
     </div>
-    <button class="weui-btn confirm" :disabled="!amount">确定</button>
+    <button 
+      class="weui-btn confirm" 
+      :disabled="!amount" 
+      @click="confirm"
+      :style="canConfirm ? 'opacity: 1' : 'opacity: 0.5'">确定</button>
   </div>
 </template>
 
@@ -17,12 +21,29 @@ export default {
     return {
       amount: null
     }
+  },
+  computed: {
+    canConfirm () {
+      if (this.amount) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  methods: {
+    confirm () {
+      if (this.Utils.regularRule.money.test(this.amount)) {
+        console.log('充值！')
+      }
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
-@baoWoBlack: rgb(51, 51, 51);
+@baoWoBlack: #515151;
+@baoWoRed: #771212;
 @baoWoFont: 'PingFangSC-Light';
 .wallet-wrap {
   font-family: @baoWoFont;
@@ -43,6 +64,7 @@ export default {
       }
       input {
         font-size: 0.5rem;
+        color: @baoWoRed;
       }
     }
   }
