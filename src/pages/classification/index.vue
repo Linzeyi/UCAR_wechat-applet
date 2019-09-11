@@ -33,9 +33,10 @@ export default {
   },
   data() {
     return {
-      isActive: null,
+      itemHeight: 0,
+      halfWindowHeight: 0,
       scrollTop: 0,
-      systemInfo: {},
+      isActive: null,
       classList: [
         { id: "1", name: "品类一" },
         { id: "2", name: "品类二" },
@@ -92,7 +93,12 @@ export default {
     };
   },
   mounted() {
-    this.systemInfo = this.$store.getters["SystemInfo/systemInfo"];
+    const systemInfo = this.$store.getters["SystemInfo/systemInfo"];
+    const windowWidth = systemInfo.windowWidth;
+    const windowHeight = systemInfo.windowHeight;
+    const scale = windowWidth / 750;
+    this.itemHeight = 100 * scale;
+    this.halfWindowHeight = windowHeight / 2;
   },
   methods: {
     scrollHandle(e) {
@@ -100,16 +106,13 @@ export default {
     },
     clickItem(index) {
       this.isActive = index;
-      this.selectMiddle(index)
+      this.selectMiddle(index);
     },
     selectMiddle(index) {
-      const windowWidth = this.systemInfo.windowWidth;
-      const scale = windowWidth / 750;
-      const halfWindowHeight = windowWidth / 2;
-      const itemHeight = 100 * scale;
-      const allItemHeight = itemHeight * index;
-      if (allItemHeight > halfWindowHeight) {
-        this.scrollTop = allItemHeight - halfWindowHeight - itemHeight / 2;
+      index += 1;
+      const selectMiddleHeight = this.itemHeight * (index - 0.5);
+      if (selectMiddleHeight > this.halfWindowHeight) {
+        this.scrollTop = selectMiddleHeight - this.halfWindowHeight;
       } else {
         this.scrollTop = 0;
       }
@@ -133,7 +136,7 @@ export default {
 }
 .scroll-left {
   background-color: rgb(230, 230, 230);
-  width: 240rpx;
+  width: 200rpx;
   flex-shrink: 0;
   &::-webkit-scrollbar {
     display: none;
