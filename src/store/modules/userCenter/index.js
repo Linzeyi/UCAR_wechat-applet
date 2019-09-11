@@ -1,3 +1,4 @@
+import { addressList } from '@/fake.js'
 export default {
   namespaced: true,
   state: {
@@ -7,9 +8,9 @@ export default {
     phone: undefined, // 手机号
     orderNum: undefined, // 订单条数
     message: undefined, // 消息条数
-    defaultAddress: {},
+    defaultAddress: addressList[0],
     selectedAddress: {},
-    addressList: []
+    addressList: addressList
   },
   getters: {
     defaultAddress: state => state.defaultAddress,

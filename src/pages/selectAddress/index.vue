@@ -27,39 +27,12 @@
 </template>
 
 <script>
+import { addressList } from '@/fake.js'
+
 export default {
   data () {
     return {
-      addressList: [{
-        addressId: 0,
-        receiverName: 'Thomas',
-        receiverPhone: '13015768195',
-        encodePhone: '130****8195',
-        postCode: '3500095',
-        region: ['广东省', '中山市', '石岐区街道'],
-        address: '兴中道体育场',
-        isDefault: true
-      },
-      {
-        addressId: 1,
-        receiverName: '阿徽超级帅',
-        receiverPhone: '13073827938',
-        encodePhone: '130****7938',
-        postCode: '361001',
-        region: ['福建省', '厦门市', '思明区'],
-        address: '展鸿路1号',
-        isDefault: false
-      },
-      {
-        addressId: 2,
-        receiverName: 'John',
-        receiverPhone: '13015768195',
-        encodePhone: '130****8195',
-        postCode: '3500095',
-        region: ['香港特别行政区', '香港特别行政区', '屯门区'],
-        address: '屯门市中心',
-        isDefault: false
-      }],
+      addressList: addressList,
       selected: 0 // 记录选中了哪条地址
     }
   },
@@ -85,7 +58,7 @@ export default {
     },
     confirm () {
       this.$store.state.UserCenter.selectedAddress = this.addressList[this.selected]
-      console.log(this.$store.state.UserCenter.selectedAddress)
+      // console.log(this.$store.getters['UserCenter/selectedAddress'])
     }
   }
 }
