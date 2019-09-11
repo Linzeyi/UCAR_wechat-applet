@@ -15,14 +15,14 @@
             <div class="receiver-info">
               <span class="receiver-name">{{ item.receiverName }}</span>
               <span>{{ item.encodePhone }}</span>
-              <p class="address">{{ item.address }}</p>
+              <p class="address">{{ item.region[0] + item.region[1] + item.region[2] + item.address }}</p>
             </div>
             <p class="default-address" v-if="item.isDefault">默认地址</p>
           </div>
         </li>
       </ul>
     </div>
-    <button class="confirm-btn">确定</button>
+    <button class="confirm-btn" @click="confirm">确定</button>
   </div>
 </template>
 
@@ -38,8 +38,7 @@ export default {
         postCode: '3500095',
         region: ['广东省', '中山市', '石岐区街道'],
         address: '兴中道体育场',
-        isDefault: true,
-        isSelected: true
+        isDefault: true
       },
       {
         addressId: 1,
@@ -49,8 +48,7 @@ export default {
         postCode: '361001',
         region: ['福建省', '厦门市', '思明区'],
         address: '展鸿路1号',
-        isDefault: false,
-        isSelected: false
+        isDefault: false
       },
       {
         addressId: 2,
@@ -60,20 +58,34 @@ export default {
         postCode: '3500095',
         region: ['香港特别行政区', '香港特别行政区', '屯门区'],
         address: '屯门市中心',
-        isDefault: false,
-        isSelected: false
+        isDefault: false
       }],
       selected: 0 // 记录选中了哪条地址
+    }
+  },
+  created () {
+    let obj = this.addressList
+    for (let i = 0; i < obj.length; i++) {
+      if (obj[i].isDefault) {
+        this.selected = i
+        obj[i].isSelected = true
+      } else {
+        obj[i].isSelected = false
+      }
     }
   },
   methods: {
     selectAddress (index) {
       if (index !== this.selected) {
-        let addList = this.addressList
-        addList[this.selected].isSelected = !addList[this.selected].isSelected
-        addList[index].isSelected = !addList[index].isSelected
+        let addrList = this.addressList
+        addrList[this.selected].isSelected = !addrList[this.selected].isSelected
+        addrList[index].isSelected = !addrList[index].isSelected
         this.selected = index
       }
+    },
+    confirm () {
+      this.$store.state.UserCenter.selectedAddress = this.addressList[this.selected]
+      console.log(this.$store.state.UserCenter.selectedAddress)
     }
   }
 }

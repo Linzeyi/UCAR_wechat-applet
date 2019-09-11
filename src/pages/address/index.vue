@@ -7,7 +7,7 @@
             <div class="receiver-info">
               <span class="receiver-name">{{ item.receiverName }}</span>
               <span>{{ item.encodePhone }}</span>
-              <p class="address">{{ item.address }}</p>
+              <p class="address">{{ item.region[0] + item.region[1] + item.region[2] + item.address}}</p>
             </div>
             <div class="info-edit">
               <div class="default-address" @click="setDefault(index)">
@@ -99,6 +99,7 @@ export default {
         })
       }
     },
+
     // 设置默认地址
     setDefault (index) {
       let me = this
@@ -109,7 +110,6 @@ export default {
           content: '确认设置此条为默认地址',
           confirmText: '确定',
           cancelText: '取消',
-          // confirmColor: 'green',
           success: function (res) {
             if (res.confirm) {
               address[index].isDefault = true
@@ -120,6 +120,8 @@ export default {
         })
       }
     },
+
+    // 路由跳转
     routeTo (type, index) {
       if (type === 'add') {
         mpvue.navigateTo({ url: '/pages/addAddress/main' })
@@ -146,6 +148,7 @@ export default {
     .mo-box {
       overflow: hidden;
       margin: 10px 10px;
+      border-radius: 15px;
       .mo-area {
         position: relative;
         left: -@sliderX;
@@ -200,6 +203,7 @@ export default {
       box-shadow: 0 0.01px 3px rgb(221, 221, 221);
       font-size: 0.35rem;
       padding: 8px 15px;
+      border-radius: 15px;
       .receiver-name {
         margin-right: 8px;
       }

@@ -24,7 +24,7 @@ export default {
   },
   computed: {
     canConfirm () {
-      if (this.amount !== null) {
+      if (this.amount) {
         return true
       } else {
         return false

@@ -69,7 +69,8 @@
       </div>
     </div>
     <div class="isDefault" @click="setDefault">
-      <i class="iconfont tick" :style="formData.isDefault ? 'color: #3ed474' : 'color: #bfbfbf'">&#xe65b;</i>
+      <i class="iconfont icon-select-no tick" v-if="!formData.isDefault">&#xe656;</i>
+      <i class="iconfont icon-select-fill tick" v-else>&#xe655;</i>
       <span>设为默认地址</span>
     </div>
     <button 
@@ -178,7 +179,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@baoWoBlack: rgb(51, 51, 51);
+@baoWoBlack: #515151;
+@baoWoRed: #771212;
 @baoWoFont: 'PingFangSC-Light';
 .modifyAddress-wrap {
   font-family: @baoWoFont;
@@ -218,6 +220,7 @@ export default {
     i {
       margin-right: 5px;
       font-size: 0.8em;
+      color: @baoWoRed;
     }
     span {
       font-size: 0.8em;
