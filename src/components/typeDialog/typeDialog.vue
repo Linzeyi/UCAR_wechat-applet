@@ -1,5 +1,6 @@
 <template>
   <div class="type-actionSheet-wrap" :class="{'open': checkOpenTypeDialog}">
+    <div class="mask" @click="showTypeDialog(false)"></div>
     <div class="content-wrap">
       <div class="content-panel header-panel">
         <div class="img-box">
@@ -7,7 +8,16 @@
         </div>
         <div class="title-box">
           <i class="iconfont icon-close" @click="showTypeDialog(false)">&#xe711;</i>
-          <p class="price"><span class="logo">¥</span> {{getSelectedPrice}}</p>
+          <p class="price">
+            <span class="original-price" :class="{'hasDiscount': checkDiscount}">
+              <span class="logo">¥</span> {{getPrice}}
+            </span>
+            <span class="discount-price" v-if="checkDiscount">
+              优惠价 <span class="logo">
+                {{getDiscountPrice}}
+              </span>
+            </span>
+          </p>
           <p class="stock">库存{{selectedType.stock}}件</p>
           <p class="info">已选：{{selectedType.content}}</p>
         </div>
@@ -27,13 +37,19 @@
           </div>
         </div>
       </div>
+      <div class="content-panel numPicker-panel">
+        <div class="header">
+          <span>购买数量</span>
+          <span class="right-box"><num-picker :min="1" :max="selectedType.stock" :num.sync="num"></num-picker></span>
+        </div>
+      </div>
       <div class="content-panel dialog-footer">
         <div class="goods-detail-btn btn-panel" v-if="parentType === 'goodsDetail'">
           <span class="confirm-btn" @click="handlerSelectedType">确定</span>
         </div>
         <div class="shopping-cart-btn btn-panel" v-if="parentType === 'shoppingCart'">
           <span class="left-btn" @click="handlerSelectedType">确定</span>
-          <span class="right-btn">购买</span>
+          <span class="right-btn" @click="toOrderConfirm">购买</span>
         </div>
       </div>
     </div>
@@ -41,7 +57,11 @@
 </template>
 
 <script>
+import numPicker from '../numPicker/numPicker'
 export default {
+  components: {
+    numPicker
+  },
   props: {
     parentType: {
       type: String,
@@ -53,7 +73,8 @@ export default {
   data () {
     return {
       types: [],
-      selectedType: {}
+      selectedType: {},
+      num: 0
     }
   },
   onUnload () {
@@ -62,6 +83,7 @@ export default {
   watch: {
     checkOpenTypeDialog () {
       this.types = JSON.parse(JSON.stringify(this.$store.getters['Goods/goods'].type))
+      this.num = this.$store.getters['Goods/goods'].num
       this.selectedType = this.types[0]
       this.types.map(item => {
         if (item.isSelected) {
@@ -72,11 +94,32 @@ export default {
     }
   },
   computed: {
+    checkDiscount () {
+      if (this.selectedType.discountPrice) {
+        return true
+      } else {
+        return false
+      }
+    },
+    getPrice () {
+      if (JSON.stringify(this.selectedType) === '{}') {
+        return 0.00
+      } else {
+        return this.selectedType.price.toFixed(2)
+      }
+    },
+    getDiscountPrice () {
+      if (JSON.stringify(this.selectedType) === '{}') {
+        return 0.00
+      } else {
+        return this.selectedType.discountPrice.toFixed(2)
+      }
+    },
     getSelectedPrice () {
       if (JSON.stringify(this.selectedType) === '{}') {
         return 0
       } else {
-        return this.selectedType.discountPrice ? this.selectedType.discountPrice : this.selectedType.price
+        return this.selectedType.discountPrice ? this.selectedType.discountPrice.toFixed(2) : this.selectedType.price.toFixed(2)
       }
     },
     getImgSrc () {
@@ -100,6 +143,7 @@ export default {
     },
     handlerSelectedType () {
       this.$store.commit('Goods/SET_GOODSTYPE', this.types)
+      this.$store.commit('Goods/SET_NUM', this.num)
       this.showTypeDialog(false)
       // mpvue.navigateTo({ url: '/pages/' + this.parentType + '/main' })
     },
@@ -112,6 +156,14 @@ export default {
           item.isSelected = false
         }
       })
+    },
+    toOrderConfirm () {
+      let goods = JSON.parse(JSON.stringify(this.$store.getters['Goods/goods']))
+      goods.type = this.selectedType
+      goods.num = this.num
+      console.log(goods)
+      this.$store.commit('Order/SET_GOODSLIST', [goods])
+      mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
     }
   }
 }
@@ -133,9 +185,15 @@ export default {
       bottom: 0;
     }
   }
+  .mask {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
   .content-wrap {
     transition: all 0.6s;
-    transition-delay: 1s;
     position: absolute;
     bottom: -1000px;
     left: 0;
@@ -173,9 +231,16 @@ export default {
           .price {
             font-size: 16px;
             color: #ff6421;
+            .original-price {
+              margin-right: 4px;
+              &.hasDiscount {
+                font-size: 14px;
+                color: #777;
+                text-decoration: line-through;
+              }
+            }
             .logo {
-              font-size: 12px;
-              margin-right: 5px;
+              margin-right: 2px;
             }
           }
           .stock {
@@ -199,21 +264,30 @@ export default {
         display: flex;
         flex-wrap: wrap;
         padding-bottom: 20px;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
         .type-item-box {
           font-size: 24rpx;
-          padding: 6rpx 8rpx;
+          padding: 6px 8px;
           border-radius: 6rpx;
           margin-right: 12rpx;
           margin-bottom: 6px;
           background-color: #eee;
           border: 2rpx solid #eee;
           color: #666;
-
           &.selected {
             border: 1px solid #ff6421;
             color: #ff6421;
             background-color: #ffeee7;
+          }
+        }
+      }
+      &.numPicker-panel {
+        .header {
+          display: flex;
+          align-items: center;
+          .right-box {
+            flex-grow: 1;
+            text-align: right;
           }
         }
       }

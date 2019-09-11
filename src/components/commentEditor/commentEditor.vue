@@ -34,6 +34,14 @@
 
 <script>
 export default {
+  props: {
+    goods: {
+      type: Object,
+      default () {
+        return {}
+      }
+    }
+  },
   data () {
     return {
       goodsId: undefined,
@@ -102,22 +110,28 @@ export default {
 }
 .comment-form {
   .comment-panel {
-    padding: 0px 10px;
     box-sizing: border-box;
     &:first-child .panel-content {
       border: none;
     }
     &.btn-panel {
-      position: fixed;
-      bottom: 0px;
       width: 100%;
+      text-align: center;
+      padding-bottom: 0;
       .sendComment-btn {
-        border-radius: 2px;
-        border: none;
-        color: #fff;
-        background-color: #1abc9c;
+        border-radius: 40rpx;
+        display: inline-block;
+        margin: 0 auto;
+        padding: 0px 20px;
+        font-size: 14px;
+        background-color: #fff;
+        color: #ff6421;
+        border: 1px solid #ff6421;
+        border-radius: 40rpx;
+        line-height: 36px;
         &:active {
-          background-color: #16a085;
+          color: #ec4e09;
+          border-color: #ec4e09;
         }
         &::after {
           border: none
@@ -150,7 +164,7 @@ export default {
       }
       input, textarea {
         border: none;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 30px;
         color: #666;
       }

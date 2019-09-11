@@ -20,6 +20,9 @@ export default {
     },
     SET_GOODSTYPE (state, type) {
       state.goods.type = type
+    },
+    SET_NUM (state, num) {
+      state.goods.num = num
     }
   },
   actions: {

@@ -88,11 +88,11 @@ export default {
       }
     }
   },
-  mounted () {
+  onLoad () {
     this.getGoodsList()
   },
   onUnload () {
-    // this.init()
+    this.init()
   },
   computed: {
     getTotalNum () {
@@ -112,8 +112,11 @@ export default {
   },
   methods: {
     init () {
-      this.goodsList = []
-      this.num = 0
+      this.order.remark = ''
+      this.order.goodsList = []
+      // this.orderId = ''
+      console.log('orderConfirm页面销毁')
+      this.$store.commit('Order/INIT_ORDER')
     },
     toGoodsDetail (goodsItem) {
       let that = this
@@ -148,7 +151,8 @@ export default {
       })
     },
     getGoodsList () {
-      this.order.goodsList = this.$store.getters['Order/goodsList']
+      this.order.goodsList = JSON.parse(JSON.stringify(this.$store.getters['Order/goodsList']))
+      console.log('确认订单获取到的商品列表：', this.order.goodsList)
     }
   }
 }

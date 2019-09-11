@@ -41,7 +41,6 @@ export default {
   border: none;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
   padding: 5px;
   .grid-box {
     padding: 5px;

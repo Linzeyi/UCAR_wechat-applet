@@ -4,7 +4,19 @@
       <com-swiper :imgList="getImgList"></com-swiper>
     </div>
     <div class="panel-box title-box">
-      <p class="price-panel"><span class="price"><span class="logo">¥</span>{{getGoodsPrice}}</span></p>
+      <p class="price-panel" v-if="!checkSelectedType">
+        <span class="price">
+          <span class="logo">¥</span>{{getGoodsPriceSection}}
+        </span>
+      </p>
+      <p class="price-panel" v-else>
+        <span class="price">
+          <span class="logo">¥</span>{{getCurrentPrice}}
+        </span>
+      </p>
+      <p class="price-panel original-price" v-if="checkSelectedType && checkDiscount">
+        原价 ¥ {{getOriginalPrice}}
+      </p>
       <h2 class="goods-title">{{goods.title}}<span class="score">{{goods.score}}</span></h2>
     </div>
     <div class="panel-box">
@@ -92,12 +104,13 @@ export default {
   },
   computed: {
     getImgList () {
+      let imgList = this.goods.type[0].imgList
       this.goods.type.map(item => {
         if (item.isSelected) {
-          return item.imgList
+          imgList = item.imgList
         }
       })
-      return this.goods.type[0].imgList
+      return imgList
     },
     checkSelectedType () {
       let arr = this.goods.type
@@ -117,6 +130,34 @@ export default {
       }
       return {}
     },
+    checkDiscount () {
+      let selectedType = this.getSelectedType
+      if (selectedType.discountPrice) {
+        return true
+      } else {
+        return false
+      }
+    },
+    getCurrentPrice () {
+      if (this.checkSelectedType) {
+        let selectedType = this.getSelectedType
+        if (selectedType.discountPrice) {
+          return selectedType.discountPrice.toFixed(2)
+        } else {
+          return selectedType.price.toFixed(2)
+        }
+      } else {
+        return 0.00
+      }
+    },
+    getOriginalPrice () {
+      if (this.checkSelectedType) {
+        let selectedType = this.getSelectedType
+        return selectedType.price.toFixed(2)
+      } else {
+        return 0.00
+      }
+    },
     getGoodsSales () {
       let sales = 0
       this.goods.type.map(item => {
@@ -124,7 +165,7 @@ export default {
       })
       return sales
     },
-    getGoodsPrice () {
+    getGoodsPriceSection() {
       let minPrice = 0
       let maxPrice = 0
       this.goods.type.map(item => {
@@ -137,7 +178,7 @@ export default {
         }
       })
       if (minPrice === maxPrice) {
-        return minPrice
+        return minPrice.toFixed(2)
       } else {
         return minPrice + '-' + maxPrice
       }
@@ -156,6 +197,9 @@ export default {
   .title-box {
     // border-bottom: 1px solid #ddd;
     .price-panel {
+      &:last-child {
+        margin-bottom: 10px;
+      }
       .price {
         font-size: 22px;
         color: #ff6421;
@@ -163,6 +207,12 @@ export default {
           font-size: 14px;
           margin-right: 5px;
         }
+      }
+      &.original-price {
+        font-size: 12px;
+        font-weight: 400;
+        color: #888;
+        text-decoration: line-through;
       }
     }
     .goods-title {
