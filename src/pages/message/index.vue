@@ -86,7 +86,19 @@ export default {
     // 展示已读消息
     showReaded (index) {
       this.readedMessage[index].isShow = !this.readedMessage[index].isShow
+    },
+    // 获取新消息
+    getMessageList () {
+      wx.showNavigationBarLoading()
+      setTimeout(() => {
+        wx.stopPullDownRefresh()
+        wx.hideNavigationBarLoading()
+      }, 2000)
     }
+  },
+  // 下拉刷新
+  onPullDownRefresh () {
+    this.getMessageList()
   }
 }
 </script>

@@ -12,7 +12,7 @@ export function formatTime (date) {
   const minute = date.getMinutes()
   const second = date.getSeconds()
 
-  const t1 = [year, month, day].map(formatNumber).join('/')
+  const t1 = [year, month, day].map(formatNumber).join('-')
   const t2 = [hour, minute, second].map(formatNumber).join(':')
   return `${t1} ${t2}`
 }
@@ -28,7 +28,8 @@ export function getHMSTime (date) {
 export const regularRule = {
   phone: /^(13[0-9]|14[5|7]|15[0-9]|17[0-9]|18[0-9])\d{8}$/,
   money: /^[0-9]+(\.[0-9]{1,2})*$/,
-  mail: /^\w+@[a-zA-Z0-9]{2,10}\.(com|cn)$/
+  mail: /^\w+@[a-zA-Z0-9]{2,10}\.(com|cn)$/,
+  postCode: /^([0-9]{6})|0$/
 }
 
 export function navigateTo(url) {

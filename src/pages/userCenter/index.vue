@@ -1,6 +1,6 @@
 <template>
   <div class="userCenter-wrap">
-    <div class="user-info">
+    <div class="user-info" @click="routeTo('personalSettings')">
       <div>
         <img src="../../../static/images/user.png" alt="" class="user-icon">
       </div>
@@ -18,7 +18,7 @@
     <div class="weui-cells">
       <div class="weui-cell" @click="routeTo('wallet')">
         <div class="weui-cell__hd">
-          <i class="iconfont">&#xe697;</i>
+          <i class="iconfont">&#xe62b;</i>
         </div>
         <div class="weui-cell__bd">
           <p>我的钱包</p>
@@ -29,7 +29,7 @@
       </div>
       <div class="weui-cell" @click="routeTo('order')">
         <div class="weui-cell__hd">
-          <i class="iconfont">&#xe643;</i>
+          <i class="iconfont">&#xe602;</i>
         </div>
         <div class="weui-cell__bd">
           <p>我的订单</p>
@@ -62,6 +62,7 @@
       </div>
     </div>
     <button class="weui-btn" @click="routeTo('search')" style="margin-top: 20px;">搜索</button>
+    <button class="weui-btn" @click="routeTo('selectAddress')" style="margin-top: 20px;">选择地址</button>
   </div>
 </template>
 
@@ -106,6 +107,12 @@ export default {
           break
         case 'order':
           mpvue.navigateTo({ url: '/pages/myOrders/main' })
+          break
+        case 'selectAddress':
+          mpvue.navigateTo({ url: '/pages/selectAddress/main' })
+          break
+        case 'personalSettings':
+          mpvue.navigateTo({ url: '/pages/personalSettings/main' })
           break
       }
     }

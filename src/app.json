@@ -19,6 +19,7 @@
     "pages/myOrders/main",
     "pages/orderDetail/main",
     "pages/goodsComments/main",
+    "pages/selectAddress/main",
     "pages/updatePassword/main"
   ],
   "window": {
