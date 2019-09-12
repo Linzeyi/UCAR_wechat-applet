@@ -79,9 +79,6 @@ export default {
       messageNum: 2 // 消息数
     }
   },
-  created () {
-
-  },
   computed: {
     // 电话号码加密
     encodePhone () {

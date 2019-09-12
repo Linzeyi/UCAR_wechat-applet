@@ -9,6 +9,7 @@ import Order from './modules/order/index'
 import ShoppingCart from './modules/shoppingCart/index'
 import UserInfo from './modules/userInfo/index'
 import Comment from './modules/comment/index'
+import Message from './modules/message/index'
 
 Vue.use(Vuex)
 
@@ -21,7 +22,8 @@ const store = new Vuex.Store({
     Order,
     ShoppingCart,
     UserInfo,
-    Comment
+    Comment,
+    Message
   }
 })
 

@@ -32,7 +32,8 @@
           class="weui-input"
           :class="{'clear': formData.postCode.length > 0 && focus === 'postCode'}" 
           v-model="formData.postCode"
-          placeholder="请输入邮政编码" 
+          placeholder="自动根据区域生成"
+          disabled="true"
           pattern="[0-9]{6}"
           @focus="focus = 'postCode'"
           @blur="focus = undefined">

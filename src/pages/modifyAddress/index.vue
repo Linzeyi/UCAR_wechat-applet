@@ -1,5 +1,5 @@
 <template>
-  <div class="modifyAddress-wrap">
+  <div class="modifyAddress-wrap" v-if="formData">
     <div class="weui-cells weui-cells_form" @submit="submitForm('submit')">
       <div class="weui-cell">
         <div class="weui-cell__hd">姓名</div>
@@ -31,7 +31,8 @@
           type="number" 
           class="weui-input" 
           :class="{'clear': formData.postCode.length > 0 && focus === 'postCode'}"
-          placeholder="请输入邮政编码" 
+          placeholder="自动根据区域生成" 
+          disabled="true"
           pattern="[0-9]{6}" 
           v-model="formData.postCode"
           @focus="focus = 'postCode'"
@@ -89,6 +90,12 @@ export default {
       focus: undefined // 用于判断目前聚焦的input
     }
   },
+  onLoad (option) {
+    var addressList = this.$store.getters['UserCenter/addressList']
+    this.formData = addressList.find(item => {
+      return item.addressId + '' === option.addressId
+    })
+  },
   computed: {
     formCanSubmit () {
       let obj = this.formData
@@ -129,6 +136,7 @@ export default {
 
     // 提交表单
     submitForm (str) {
+      console.log(this.formData)
       if (this.formCanSubmit && this.validateForm()) {
         console.log('提交！')
       }
@@ -171,9 +179,6 @@ export default {
         this.formData.postCode = e.mp.detail.postcode
       }
     }
-  },
-  onLoad (option) {
-    this.formData = JSON.parse(option.address)
   }
 }
 </script>

@@ -9,13 +9,16 @@ export default {
     orderNum: undefined, // 订单条数
     message: undefined, // 消息条数
     defaultAddress: addressList[0],
-    selectedAddress: {},
+    selectedAddress: undefined,
     addressList: addressList
   },
   getters: {
     defaultAddress: state => state.defaultAddress,
     selectedAddress: state => {
       let addr = state.selectedAddress
+      if (!addr) {
+        addr = state.defaultAddress
+      }
       if (addr.region) {
         addr.address = addr.region.toString().replace(/,/g, '') + addr.address
       }

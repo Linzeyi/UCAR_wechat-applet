@@ -37,39 +37,12 @@
 </template>
 
 <script>
+import { addressList } from '@/fake.js'
+
 export default {
   data () {
     return {
-      addressList: [{
-        addressId: 0,
-        receiverName: 'Thomas',
-        receiverPhone: '13015768195',
-        encodePhone: '130****8195',
-        postCode: '3500095',
-        region: ['广东省', '中山市', '石岐区街道'],
-        address: '兴中道体育场',
-        isDefault: true
-      },
-      {
-        addressId: 1,
-        receiverName: '阿徽超级帅',
-        receiverPhone: '13073827938',
-        encodePhone: '130****7938',
-        postCode: '361001',
-        region: ['福建省', '厦门市', '思明区'],
-        address: '展鸿路1号',
-        isDefault: false
-      },
-      {
-        addressId: 2,
-        receiverName: 'John',
-        receiverPhone: '13015768195',
-        encodePhone: '130****8195',
-        postCode: '3500095',
-        region: ['香港特别行政区', '香港特别行政区', '屯门区'],
-        address: '屯门市中心',
-        isDefault: false
-      }],
+      addressList: addressList,
       currentDefault: 0
     }
   },
@@ -126,7 +99,7 @@ export default {
       if (type === 'add') {
         mpvue.navigateTo({ url: '/pages/addAddress/main' })
       } else if (type === 'modify') {
-        mpvue.navigateTo({ url: '/pages/modifyAddress/main?address=' + JSON.stringify(this.addressList[index]) })
+        mpvue.navigateTo({ url: '/pages/modifyAddress/main?addressId=' + this.addressList[index].addressId })
       }
     }
   }
@@ -203,7 +176,6 @@ export default {
       box-shadow: 0 0.01px 3px rgb(221, 221, 221);
       font-size: 0.35rem;
       padding: 8px 15px;
-      border-radius: 15px;
       .receiver-name {
         margin-right: 8px;
       }

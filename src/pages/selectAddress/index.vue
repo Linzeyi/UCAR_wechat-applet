@@ -27,16 +27,14 @@
 </template>
 
 <script>
-import { addressList } from '@/fake.js'
-
 export default {
   data () {
     return {
-      addressList: addressList,
+      addressList: this.$store.state.UserCenter.addressList,
       selected: 0 // 记录选中了哪条地址
     }
   },
-  created () {
+  onLoad () {
     let obj = this.addressList
     for (let i = 0; i < obj.length; i++) {
       if (obj[i].isDefault) {
@@ -57,8 +55,9 @@ export default {
       }
     },
     confirm () {
-      this.$store.state.UserCenter.selectedAddress = this.addressList[this.selected]
-      // console.log(this.$store.getters['UserCenter/selectedAddress'])
+      let store = this.$store.state.UserCenter
+      store.selectedAddress = store.addressList[this.selected]
+      mpvue.navigateBack()
     }
   }
 }

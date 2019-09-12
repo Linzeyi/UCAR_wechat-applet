@@ -1,11 +1,11 @@
 <template>
   <div class="message-wrap page">
-    <div class="weui-panel" v-for="(item, index) in unreadMessage" :key="index">
-      <div class="weui-panel__hd title" @click="showUnread(index)">
-        <i class="iconfont red-point" v-if="item.isRead">&#xe606;</i>
+    <div class="panel" v-for="(item, index) in unreadMessage" :key="index">
+      <div class="panel__hd title" @click="showUnread(index)" :class="{'unshow': !item.isShow, 'show': item.isShow}">
+        <i class="iconfont red-point" v-if="!item.isReaded">&#xe606;</i>
         <p>{{ item.title }}</p>
       </div>
-      <div class="weui-panel__bd" v-if="item.isShow">
+      <div class="panel__bd" v-if="item.isShow">
         <div class="weui-media-box">
           <p class="weui-media-box__desc">
             {{ item.desc }}
@@ -17,11 +17,11 @@
         </div>
       </div>
     </div>
-    <div class="weui-panel" v-for="(item, index) in readedMessage" :key="index">
-      <div class="weui-panel__hd title" @click="showReaded(index)">
+    <div class="panel" v-for="(item, index) in readedMessage" :key="index">
+      <div class="panel__hd title" @click="showReaded(index)" :class="{'unshow': !item.isShow, 'show': item.isShow}">
         <p>{{ item.title }}</p>
       </div>
-      <div class="weui-panel__bd" v-if="item.isShow">
+      <div class="panel__bd" v-if="item.isShow">
         <div class="weui-media-box">
           <p class="weui-media-box__desc">
             {{ item.desc }}
@@ -48,7 +48,7 @@ export default {
           date: '2019年9月6日',
           time: '10:00:00',
           isShow: false,
-          isRead: true
+          isReaded: false
         },
         {
           title: '第二条未读消息',
@@ -56,7 +56,7 @@ export default {
           date: '2018年9月6日',
           time: '08:00:00',
           isShow: false,
-          isRead: true
+          isReaded: false
         }
       ],
       readedMessage: [
@@ -81,7 +81,7 @@ export default {
     // 展示未读消息
     showUnread (index) {
       this.unreadMessage[index].isShow = !this.unreadMessage[index].isShow
-      this.unreadMessage[index].isRead = false
+      this.unreadMessage[index].isReaded = true
     },
     // 展示已读消息
     showReaded (index) {
@@ -110,16 +110,30 @@ export default {
 .page {
   background: #f3f3f375;
   font-family: @baoWoFont;
-  .title {
-    display: flex;
-    align-items: center;
-    .red-point {
-      color: #e8073c;
-      margin-right: 8px;
+  height: 100%;
+  padding: 5px 10px;
+  .panel {
+    border-radius: 10px;
+    background-color: #ffffff;
+    margin: 10px 0;
+    .title {
+      display: flex;
+      align-items: center;
+      .red-point {
+        color: #e8073c;
+        margin-right: 8px;
+      }
+      p {
+        font-size: @large-font;
+        color: rgb(51, 51, 51);
+      }
     }
-    p {
-      font-size: @large-font;
-      color: rgb(51, 51, 51);
+    .unshow {
+      padding: 15px 0 15px 20px;
+    }
+    .show {
+      margin: 10px 0 0 10px;
+      padding: 15px 0 0 10px;
     }
   }
 }
