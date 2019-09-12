@@ -14,6 +14,14 @@
         </p>
       </div>
     </div>
+    <div class="loading-footer">
+      <p v-if="!isLoading">
+        下拉显示更多
+      </p>
+      <p v-else>
+        加载中...
+      </p>
+    </div>
   </div>
 </template>
 
@@ -33,8 +41,24 @@ export default {
       }
     }
   },
+  data () {
+    return {
+      isLoading: false
+    }
+  },
   onLoad () {
 
+  },
+  async onReachBottom () {
+    let that = this
+    console.log('触底')
+    if (!this.isLoading) {
+      this.isLoading = true
+      setTimeout(function () {
+        console.log('结束')
+        that.isLoading = false
+      }, 1500)
+    }
   },
   methods: {
     toGoodsDetail (goods) {
@@ -94,6 +118,15 @@ export default {
           }
         }
       }
+    }
+  }
+  .loading-footer {
+    width: 100%;
+    p {
+      text-align: center;
+      padding: 15px 0 20px;
+      font-size: 14px;
+      color: #888;
     }
   }
 }

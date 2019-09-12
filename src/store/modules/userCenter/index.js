@@ -9,7 +9,7 @@ export default {
     orderNum: undefined, // 订单条数
     message: undefined, // 消息条数
     defaultAddress: addressList[0],
-    selectedAddress: {},
+    selectedAddress: addressList[0],
     addressList: addressList
   },
   getters: {

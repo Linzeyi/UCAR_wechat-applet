@@ -1,5 +1,5 @@
 <template>
-  <div class="goodsDetail">
+  <div class="goodsDetail" :class="{'invalid': checkInvalid}">
     <div class="tab-navbar">
       <div class="flex-box">
           <div class="tab-navbar-item" 
@@ -20,13 +20,16 @@
         </swiper-item>
       </swiper>
     </div>
+    <div class="invalid-tips">
+      该商品已下架
+    </div>
     <div class="tab-footer lzy-footer">
       <div class="left-box" :class="{'small': getTotalPrice >= 100000}">
         <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
       </div>
       <div class="right-box">
-        <button class="shoppingCart-btn" @click="addToShoppingCart">加入购物车</button>
-        <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm">立即购买</button>
+        <button class="shoppingCart-btn" @click="addToShoppingCart" :disabled="checkInvalid">加入购物车</button>
+        <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm" :disabled="checkInvalid">立即购买</button>
       </div>
     </div>
     <type-dialog :parentType="'goodsDetail'"></type-dialog>
@@ -56,8 +59,15 @@ export default {
     }
   },
   computed: {
+    checkInvalid () {
+      if (this.goods.hasOwnProperty('isValid')) {
+        return !this.goods.isValid
+      } else {
+        return false
+      }
+    },
     getTotalPrice () {
-      if (!this.checkSelectedType) {
+      if (!this.checkSelectedType || this.checkInvalid) {
         return 0
       } else {
         return (this.getSelectedTypePrice * (this.goods.num ? this.goods.num : 0)).toFixed(2)
@@ -194,6 +204,8 @@ export default {
     background-color: #fff;
     border: none;
     align-items: center;
+    height: 45px;
+    line-height: 45px;
     .flex-box {
       display: flex;
       position: relative;
@@ -223,7 +235,7 @@ export default {
   }
   .tab-content {
     flex-shrink: 0;
-    height: calc(100% - 62px - 50px);
+    height: calc(100% - 45px - 70px);
     swiper {
       height: 100%;
       swiper-item {
@@ -236,6 +248,9 @@ export default {
         overflow-y: auto;
       }
     }
+  }
+  .invalid-tips {
+    display: none;
   }
   .tab-footer {
     .left-box {
@@ -286,6 +301,45 @@ export default {
           background-color: #ff6421;
           &:active {
             background-color: #ec4e09;
+          }
+        }
+      }
+    }
+  }
+  &.invalid {
+    /deep/ .type-box, /deep/ .shop-box {
+      display: none;
+    }
+    .tab-content {
+      height: calc(100% - 45px - 70px - 45px);
+    }
+    .invalid-tips {
+      display: block;
+      width: 100%;
+      position: fixed;
+      bottom: 70px;
+      height: 45px;
+      line-height: 45px;
+      background-color: #888;
+      color: #fff;
+      text-align: center;
+    }
+    .tab-footer {
+      .right-box {
+        button {
+          &.shoppingCart-btn {
+            color: #fcc868;
+            background-color: orange;
+            &:active {
+              background-color: orange;
+            }
+          }
+          &.toOrderConfirm-btn {
+            color: #fda27b;
+            background-color: #ff6421;
+            &:active {
+              background-color: #ff6421;
+            }
           }
         }
       }

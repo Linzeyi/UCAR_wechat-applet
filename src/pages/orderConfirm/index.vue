@@ -5,14 +5,14 @@
         <div class="left-box">
           <i class="iconfont icon-address">&#xe613;</i>
         </div>
-        <div class="content-box">
+        <div class="content-box" @click="toEditAddress">
           <p>
-            <span class="name">{{order.addressInfo.name}}</span>
-            <span class="phone">{{order.addressInfo.phone}}</span>
-            <span class="type" v-if="order.addressInfo.isDefault">默认</span>
+            <span class="name">{{getAddress.receiverName}}</span>
+            <span class="phone">{{getAddress.receiverPhone}}</span>
+            <span class="type" v-if="getAddress.isDefault">默认</span>
           </p>
           <p>
-            {{order.addressInfo.address}}
+            {{getAddress.address}}
           </p>
         </div>
         <div class="right-box">
@@ -95,6 +95,10 @@ export default {
     this.init()
   },
   computed: {
+    getAddress () {
+      console.log(this.$store.getters['UserCenter/selectedAddress'])
+      return this.$store.getters['UserCenter/selectedAddress']
+    },
     getTotalNum () {
       let num = 0
       this.order.goodsList.map(item => {
@@ -117,6 +121,9 @@ export default {
       // this.orderId = ''
       console.log('orderConfirm页面销毁')
       this.$store.commit('Order/INIT_ORDER')
+    },
+    toEditAddress () {
+      mpvue.navigateTo({ url: '/pages/selectAddress/main' })
     },
     toGoodsDetail (goodsItem) {
       let that = this
@@ -144,6 +151,7 @@ export default {
           if (res.confirm) {
             that.order.createTime = that.Utils.formatTime(new Date())
             that.order.status = 0
+            that.order.addressInfo = that.getAddress
             that.$store.commit('Order/SET_ORDER', that.order)
             mpvue.navigateTo({ url: '/pages/orderDetail/main' })
           }

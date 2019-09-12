@@ -44,7 +44,7 @@ button {
   }
 }
 .lzy-list-wrap {
-  height: calc(100% - 64px);
+  height: calc(100% - 70px);
   overflow-y: auto;
 }
 .lzy-footer {
@@ -57,6 +57,8 @@ button {
   right: 0;
   box-sizing: border-box;
   padding: 15px 10px;
+  height: 70px;
+  line-height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -69,13 +71,12 @@ button {
     text-align: right;
     flex-grow: 1;
     font-size: 12px;
-    height: 38px;
-    line-height: 38px;
+    line-height: 40px;
     button {
       display: inline-block;
       vertical-align: top;
-      height: 38px;
-      line-height: 38px;
+      height: 40px;
+      line-height: 40px;
       font-size: 14px;
       margin-left: 10px;
       border-radius: 10px;

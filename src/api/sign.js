@@ -22,6 +22,7 @@ const SignApi = {
       `cid=${cid}`,
       `q=${q}`
     ]
+    console.log('sign入参:' + `${signArr.join(';')}${accountKey}`)
     return CryptoApi.md5Sign(`${signArr.join(';')}${accountKey}`)
   },
 
