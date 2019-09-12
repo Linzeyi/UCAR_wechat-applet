@@ -8,9 +8,9 @@
       </div>
       <div class="input-item">
         <span>密码</span>
-        <span class="switch-button">
+        <div class="switch-button">
           <switch-button @click="showPassword = !showPassword"></switch-button>
-        </span>
+        </div>
         <input
           v-if="showPassword"
           type="text"
