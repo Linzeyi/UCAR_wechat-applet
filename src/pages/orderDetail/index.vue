@@ -60,11 +60,11 @@
       </div>
       <div class="content-panel">
         <span class="title">收货人</span>
-        <span>{{order.addressInfo.name}}</span>
+        <span>{{order.addressInfo.receiverName}}</span>
       </div>
       <div class="content-panel">
         <span class="title">联系方式</span>
-        <span>{{order.addressInfo.phone}}</span>
+        <span>{{order.addressInfo.receiverPhone}}</span>
       </div>
       <div class="content-panel">
         <span class="title">收货地址</span>

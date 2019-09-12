@@ -40,7 +40,7 @@
         </p>
       </div>
     </div>
-    <div class="panel-box">
+    <div class="panel-box type-box">
       <div class="panel">
         <p @click="showTypeDialog">
           <span class="panel-title">选择</span>

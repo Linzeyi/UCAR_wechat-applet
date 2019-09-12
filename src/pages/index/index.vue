@@ -8,7 +8,7 @@
           <i class="iconfont icon-more">&#xe601;</i> 更多
         </span>
       </div>
-      <goods-grid-list :goodsList="goodsList"></goods-grid-list>
+      <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
     </div>
   </div>
 </template>
@@ -40,6 +40,10 @@ export default {
   },
   onLoad () {
     this.getRecommentGoodsList()
+    // this.$http.get('/action/test', {
+    //   username: 123,
+    //   password: 123
+    // })
   },
   async onPullDownRefresh() {
     console.log('下拉刷新')
