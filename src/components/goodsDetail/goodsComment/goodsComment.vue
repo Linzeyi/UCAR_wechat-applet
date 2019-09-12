@@ -25,21 +25,26 @@
     <div class="comment-list-wrap">
       <div class="comment-list">
         <div class="list-panel" v-for="(item, index) in commentList" :key="index">
-          <div class="top-panel">
-            <p>
-              <span class="title">{{item.title}}</span>
-              <span class="date">{{item.sendTime}}</span>
-            </p>
-            <p>
-              <span class="star" v-for="(starItem, starIndex) in 5" :key="starIndex" :class="{'stared': starIndex + 1 <= item.score}">
-                <i class="iconfont icon-star">&#xe623;</i>
-                <i class="iconfont icon-stared">&#xe624;</i>
-              </span>
-              <span class="sender">{{item.sender.name}}</span>
-            </p>
+          <div class="left-box">
+            <div class="img-box">
+              <image :src="item.sender.avatar" alt="用户头像" mode="aspectFit"></image>
+            </div>
           </div>
-          <div class="content-panel">
-            <text>{{item.content}}</text>
+          <div class="info-box">
+            <p class="name-score">
+              <span class="name">{{item.sender.name}}</span>
+              <span class="score">
+                <span class="star" v-for="(starItem, starIndex) in 5" :key="starIndex" :class="{'stared': starIndex + 1 <= item.score}">
+                  <i class="iconfont icon-star">&#xe623;</i>
+                  <i class="iconfont icon-stared">&#xe624;</i>
+                </span>
+              </span>
+            </p>
+            <p class="type">
+              已购：{{item.type}}
+            </p>
+            <p class="content">{{item.content}}</p>
+            <p class="date">{{item.sendTime}}</p>
           </div>
         </div>
       </div>
@@ -80,38 +85,31 @@ export default {
       ],
       commentList: [
         {
-          title: '口角是非科技时艾弗森',
           content: '伤口恢复上课接电话跟接口，萨和苏高，是大国来说都很高科技阿花克里塞蒂格好，是大国和雕塑高忽低过！阿空加后付款时光，萨的感觉很健康啊？？？',
           sender: {
-            name: 'ads噶'
+            avatar: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1568203213364&di=1f26bdec512e7c8ebcd548d12f293879&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20180126%2F2a2d78a3e7c047bab01e3f3142da5497.jpeg',
+            name: '捷克斯洛伐克'
           },
+          type: '新i5 8G 512G固态 95%屏占比',
           sendTime: this.Utils.getYMDTime(new Date()),
           score: 4
         },
         {
-          title: '阿是尚方宝剑',
           content: '伤阿双方山高水低噶蛋糕是224，阿双方萨方式1范德萨发蛋糕。啊2442看看是否就是会计法。',
           sender: {
-            name: 'qtwr'
+            avatar: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1568203238618&di=03ef9ccca7858b45874e30a9827b59b0&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201808%2F23%2F20180823154729_ZzrQX.thumb.700_0.jpeg',
+            name: '克里斯'
           },
+          type: '新i7 8G 512G固态 95%屏占比',
           sendTime: this.Utils.getYMDTime(new Date()),
           score: 2
         }
-      ],
-      myScore: -1,
-      myComment: ''
+      ]
     }
   },
   computed: {
   },
-  onUnload () {
-    this.init()
-  },
   methods: {
-    init () {
-      this.myScore = -1
-      this.myComment = ''
-    },
     selectScore (index) {
       this.myScore = index + 1
       wx.showToast({
@@ -119,9 +117,6 @@ export default {
         icon: 'success',
         duration: 2000
       })
-    },
-    toEditComment () {
-      mpvue.navigateTo({ url: '/pages/commentEditor/main?id=' + this.$root.$mp.query.id })
     }
   }
 
@@ -150,10 +145,14 @@ export default {
   padding: 10px 15px;
   background-color: #fff;
   .statistics-wrap {
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    box-shadow: 0 6rpx 20rpx 0 #ddd;
+    border-radius: 5px;
+    overflow: hidden;
     h1 {
-      font-size: 30px;
+      font-size: 22px;
+      color: #888;
       font-weight: 600;
       margin-bottom: 5px;
     }
@@ -180,7 +179,7 @@ export default {
         flex-grow: 1;
         padding:  0 5px 0 0;
         .progress-box {
-          padding-top: 4px;
+          padding-top: 9px;
           box-sizing: border-box;
           height: 52px;
           .progress-panel {
@@ -264,36 +263,80 @@ export default {
     .comment-list {
       padding: 10px 0;
       .list-panel {
-        padding: 15px;
-        border-radius: 6px;
-        background-color: #eee;
-        margin-bottom: 10px;
+        background-color: #fff;
+        margin-bottom: 6px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
         &:last-child {
           margin: 0;
         }
-        .top-panel {
+        .left-box {
+          .img-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            text-align: center;
+            image {
+              width: 100%;
+              height: 100%;
+              margin: 0 auto;
+            }
+          }
+        }
+        .info-box {
+          flex-grow: 1;
+          padding-left: 10px;
+          box-sizing: border-box;
           p {
             font-size: 12px;
-            line-height: 34rpx;
-            color: #555;
-            .star {
-              .iconfont {
-                font-size: 20rpx;
-                &.icon-stared {
-                  color: tomato;
+            &.name-score {
+              margin-bottom: 10px;
+              display: flex;
+              justify-content: space-between;
+              .name {
+                flex-grow: 1;
+              }
+              .score {
+                .star {
+                  .iconfont {
+                    font-size: 10px;
+                    color: orangered;
+                  }
+                  .icon-star {
+                    display: inline;
+                  }
+                  .icon-stared {
+                    display: none;
+                  }
+                  &.stared {
+                    .icon-star {
+                      display: none;
+                    }
+                    .icon-stared {
+                      display: inline;
+                    }
+                  }
                 }
               }
             }
-            .date, .sender {
-              color: #aaa;
-              float: right;
+            &.type {
+              font-size: 11px;
+              color: #888;
+              padding: 2px 5px;
+              background-color: #eee;
+              border-radius: 2px;
             }
-          }
-          margin-bottom: 5px;
-        }
-        .content-panel {
-          text {
-            font-size: 12px;
+            &.content {
+              margin-top: 10px;
+            }
+            &.date {
+              margin-top: 5px;
+              font-size: 11px;
+              color: #888;
+              text-align: right;
+            }
           }
         }
       }

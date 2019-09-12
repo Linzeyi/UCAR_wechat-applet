@@ -15,13 +15,8 @@
       </div>
     </div>
     <div class="comment-panel">
-      <div class="panel-content ipt-content">
-        <input type="text" v-model="title" placeholder="标题">
-      </div>
-    </div>
-    <div class="comment-panel">
       <div class="panel-content text-content">
-        <textarea v-model="content" placeholder="评论（选填）" maxlength="400" auto-height></textarea>
+        <textarea v-model="content" placeholder="评论内容" maxlength="400" auto-height></textarea>
       </div>
     </div>
     <div class="comment-panel btn-panel">
@@ -45,7 +40,6 @@ export default {
   data () {
     return {
       goodsId: undefined,
-      title: '',
       content: '',
       score: 0
     }
@@ -174,6 +168,7 @@ export default {
       textarea {
         width: 100%;
         text-indent: 5px;
+        padding: 10px 0;
       }
     }
   }

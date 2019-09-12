@@ -1,13 +1,13 @@
 <template>
-  <span class="wrap" :class="{captcha: !captchaActive}">
+  <div class="wrap" :class="{captcha: !captchaActive}">
     <span v-if="captchaActive === false" @click.stop="captchaClick">发送验证码</span>
     <span v-else>倒计时{{captcha}}</span>
-  </span>
+  </div>
 </template>
 
 <script>
 export default {
-  mounted() {
+  onUnload() {
     this.resetCaptcha();
   },
   data() {

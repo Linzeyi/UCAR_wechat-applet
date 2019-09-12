@@ -33,7 +33,33 @@
                 </div>
               </div>
             </movable-view>
-            <button class="delete-btn" @click="deleteItem(goodsItem, goodsIndex)">删除</button>
+            <button class="delete-btn" @click="deleteItem(goodsList, goodsItem, goodsIndex)">删除</button>
+          </movable-area>
+        </div>
+      </div>
+      <div class="invalid-goods-list">
+        <div class="header">
+          <span class="title">失效商品{{invalidGoodsList.length}}件</span>
+        </div>
+        <div class="invalid-goods-box" v-for="(unGoodsItem, unGoodsIndex) in invalidGoodsList" :key="unGoodsIndex">
+          <movable-area class="movable-area">
+            <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
+              <div class="left-box">
+                <div class="tips-box">
+                  <span class="invalid-tips">失效</span>
+                </div>
+                <div class="img-box" v-for="(typeItem, typeIndex) in unGoodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
+                  <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit"></image>
+                </div>
+              </div>
+              <div class="content-box">
+                <div class="info-box">
+                  <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.title}}</p>
+                  <p class="invalid-msg">{{unGoodsItem.invalidMsg}}</p>
+                </div>
+              </div>
+            </movable-view>
+            <button class="delete-btn" @click="deleteItem(invalidGoodsList, unGoodsItem, unGoodsIndex)">删除</button>
           </movable-area>
         </div>
       </div>
@@ -68,7 +94,8 @@ export default {
   data () {
     return {
       isAllSelected: false,
-      goodsList: []
+      goodsList: [],
+      invalidGoodsList: []
     }
   },
   computed: {
@@ -107,7 +134,7 @@ export default {
     }
   },
   onLoad () {
-    this.goodsList = this.$store.getters['ShoppingCart/goodsList']
+    this.getShoppingCartGoodsList()
   },
   async onPullDownRefresh() {
     console.log('下拉刷新')
@@ -116,6 +143,17 @@ export default {
     // wx.stopPullDownRefresh()
   },
   methods: {
+    getShoppingCartGoodsList () {
+      let goodsList = this.$store.getters['ShoppingCart/goodsList']
+      console.log(goodsList)
+      goodsList.map(item => {
+        if (item.isValid) {
+          this.goodsList.push(item)
+        } else {
+          this.invalidGoodsList.push(item)
+        }
+      })
+    },
     handlerShowTypeDialog (goodsItem) {
       this.$store.commit('Goods/SET_GOODS', goodsItem)
       this.showTypeDialog(true)
@@ -123,8 +161,8 @@ export default {
     showTypeDialog (flag) {
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
     },
-    deleteItem (item, index) {
-      this.goodsList.splice(index, 1)
+    deleteItem (list, item, index) {
+      list.splice(index, 1)
     },
     toGoodsDetail (goodsItem) {
       this.$store.commit('Goods/SET_GOODS', goodsItem)
@@ -181,10 +219,10 @@ export default {
   box-sizing: border-box;
   padding: 10px 0;
   background-color: #f3f3f3;
-  .select-box {
+  .select-box, .tips-box {
     width: 40px;
-    text-align: center;
     .iconfont {
+      margin-left: 5px;
       font-size: 21px;
       color: #ddd;
       &.icon-select-fill {
@@ -193,18 +231,13 @@ export default {
     }
   }
   .goods-list-wrap {
-    height: 100%;
-    padding: 0 10px;
+    padding: 0 10px 30px 10px;
     box-sizing: border-box;
-    .goods-list {
-      height: 100%;
-      .goods-box {
-        overflow: hidden;
+    .goods-list, .invalid-goods-list {
+      .goods-box, .invalid-goods-box {
         padding: 10px;
-        border-radius: 10px;
-        margin-bottom: 10px;
         box-sizing: border-box;
-        background-color: #fff;
+        overflow: hidden;
         .movable-area {
           position: relative;
           left: -55px;
@@ -249,53 +282,11 @@ export default {
                 box-sizing: border-box;
                 p {
                   font-size: 12px;
-                  margin-bottom: 4px;
                   &.title {
-                    color: #333;
                     display: -webkit-box;
                     -webkit-box-orient: vertical;
                     -webkit-line-clamp: 2;
                     overflow: hidden;
-                  }
-                  &.type {
-                    display: none;
-                    font-size: 10px;
-                    padding: 2px 4px;
-                    background-color: #f6f6f6;
-                    border-radius: 4px;
-                    color: #999;
-                    &.isSelected {
-                      display: block;
-                    }
-                  }
-                  .price {
-                    font-size: 12px;
-                    color: #ff6421;
-                    .logo {
-                      font-size: 10px;
-                      margin-right: 5px;
-                    }
-                  }
-                  &.bottom-p {
-                    display: none;
-                    margin-top: 5px;
-                    height: 30px;
-                    position: relative;
-                    padding: 0;
-                    &.isSelected {
-                      display: block;
-                    }
-                    .price {
-                      display: inline-block;
-                      height: 30px;
-                      line-height: 30px;
-                      vertical-align: top;
-                    }
-                    .numPicker-box {
-                      padding: 5px 0;
-                      float: right;
-                      top: 0;
-                    }
                   }
                 }
               }
@@ -318,6 +309,100 @@ export default {
               background-color: #ec4e09;
             }
           }
+        }
+      }
+    }
+    .goods-list {
+      margin-bottom: 10px;
+      .goods-box {
+        border-radius: 10px;
+        background-color: #fff;
+        margin-bottom: 10px;
+        .content-box {
+          width: 100%;
+          p {
+            font-size: 12px;
+            margin-bottom: 4px;
+            &.title {
+              color: #333;
+            }
+            &.type {
+              display: none;
+              font-size: 10px;
+              padding: 2px 4px;
+              background-color: #f6f6f6;
+              border-radius: 4px;
+              color: #999;
+              &.isSelected {
+                display: block;
+              }
+            }
+            .price {
+              font-size: 12px;
+              color: #ff6421;
+              .logo {
+                font-size: 10px;
+                margin-right: 5px;
+              }
+            }
+            &.bottom-p {
+              display: none;
+              margin-top: 5px;
+              height: 30px;
+              position: relative;
+              padding: 0;
+              &.isSelected {
+                display: block;
+              }
+              .price {
+                display: inline-block;
+                height: 30px;
+                line-height: 30px;
+                vertical-align: top;
+              }
+              .numPicker-box {
+                padding: 5px 0;
+                float: right;
+                top: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+    .invalid-goods-list {
+      padding-bottom: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: #fff;
+      .header {
+        padding: 15px 10px 5px;
+        font-size: 14px;
+        text-indent: 5px;
+        color: #555;
+        margin-bottom: 10px;
+      }
+      .invalid-goods-box {
+        .left-box {
+          .tips-box {
+            .invalid-tips {
+              font-size: 20rpx;
+              color: #fff;
+              width: 88%;
+              border-radius: 16rpx;
+              // padding: 2rpx 0;
+              background-color: #999;
+              display: inline-block;
+              text-align: center;
+            }
+          }
+        }
+        .title {
+          margin-bottom: 15px;
+          color: #888;
+        }
+        .invalid-msg {
+          color: #333;
         }
       }
     }

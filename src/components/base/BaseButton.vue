@@ -19,5 +19,6 @@ export default {};
   text-align: center;
   color: white;
   font-size: 30rpx;
+  font-weight: bold;
 }
 </style>

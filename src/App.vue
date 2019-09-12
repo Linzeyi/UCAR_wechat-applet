@@ -1,6 +1,6 @@
 <script>
 export default {
-  created () {
+  created() {
     // 调用API从本地缓存中获取数据
     /*
      * 平台 api 差异的处理方式:  api 方法统一挂载到 mpvue 名称空间, 平台判断通过 mpvuePlatform 特征字符串
@@ -10,24 +10,27 @@ export default {
      * 支付宝(蚂蚁)：mpvue === my, mpvuePlatform === 'my'
      */
 
-    let logs
-    if (mpvuePlatform === 'my') {
-      logs = mpvue.getStorageSync({key: 'logs'}).data || []
-      logs.unshift(Date.now())
+    let logs;
+    if (mpvuePlatform === "my") {
+      logs = mpvue.getStorageSync({ key: "logs" }).data || [];
+      logs.unshift(Date.now());
       mpvue.setStorageSync({
-        key: 'logs',
+        key: "logs",
         data: logs
-      })
+      });
     } else {
-      logs = mpvue.getStorageSync('logs') || []
-      logs.unshift(Date.now())
-      mpvue.setStorageSync('logs', logs)
+      logs = mpvue.getStorageSync("logs") || [];
+      logs.unshift(Date.now());
+      mpvue.setStorageSync("logs", logs);
     }
+
+    // 初始化系统信息
+    this.$store.dispatch('SystemInfo/InitSystemInfo')
   },
-  log () {
-    console.log(`log at:${Date.now()}`)
+  log() {
+    console.log(`log at:${Date.now()}`);
   }
-}
+};
 </script>
 
 <style lang="less">
@@ -35,12 +38,13 @@ page {
   height: 100%;
 }
 button {
-  &::before, &::after {
+  &::before,
+  &::after {
     border: none;
   }
 }
 .lzy-list-wrap {
-  height: calc(100% - 64px);
+  height: calc(100% - 70px);
   overflow-y: auto;
 }
 .lzy-footer {
@@ -53,6 +57,8 @@ button {
   right: 0;
   box-sizing: border-box;
   padding: 15px 10px;
+  height: 70px;
+  line-height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -65,13 +71,12 @@ button {
     text-align: right;
     flex-grow: 1;
     font-size: 12px;
-    height: 38px;
-    line-height: 38px;
+    line-height: 40px;
     button {
       display: inline-block;
       vertical-align: top;
-      height: 38px;
-      line-height: 38px;
+      height: 40px;
+      line-height: 40px;
       font-size: 14px;
       margin-left: 10px;
       border-radius: 10px;

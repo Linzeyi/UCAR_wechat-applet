@@ -10,6 +10,7 @@ import ShoppingCart from './modules/shoppingCart/index'
 import UserInfo from './modules/userInfo/index'
 import Comment from './modules/comment/index'
 import Message from './modules/message/index'
+import SystemInfo from './modules/systemInfo/index'
 
 Vue.use(Vuex)
 
@@ -23,7 +24,8 @@ const store = new Vuex.Store({
     ShoppingCart,
     UserInfo,
     Comment,
-    Message
+    Message,
+    SystemInfo
   }
 })
 

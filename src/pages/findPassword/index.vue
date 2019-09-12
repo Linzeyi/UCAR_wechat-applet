@@ -3,21 +3,14 @@
     <img src="http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg" alt="头像" />
     <div class="form">
       <div class="input-item">
-        <img src="/static/images/u162.svg" />
+        <span>账号</span>
         <input type="text" placeholder="输入手机号码" v-model="form.phone" />
       </div>
       <div class="input-item">
-        <img src="/static/images/u163.svg" />
-        <div class="captcha">
-          <captcha></captcha>
-        </div>
-        <input type="text" placeholder="短信验证码" maxlength="8" v-model="form.captcha" />
-      </div>
-      <div class="input-item">
-        <img src="/static/images/u109.svg" />
-        <span class="switch-button">
+        <span>密码</span>
+        <div class="switch-button">
           <switch-button @click="showPassword = !showPassword"></switch-button>
-        </span>
+        </div>
         <input
           v-if="showPassword"
           type="text"
@@ -26,6 +19,13 @@
           maxlength="20"
         />
         <input v-else type="password" placeholder="设置登录密码" v-model="form.password" maxlength="20" />
+      </div>
+      <div class="input-item">
+        <div class="captcha">
+          <captcha></captcha>
+        </div>
+        <span>验证码</span>
+        <input type="text" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
       </div>
     </div>
     <base-button @click="handleSubmit">确定</base-button>
@@ -39,6 +39,12 @@ import SwitchButton from "@/components/switchButton/SwitchButton";
 import BaseButton from "@/components/base/BaseButton";
 import BaseMessage from "@/components/base/BaseMessage";
 export default {
+  onUnload() {
+    this.form.phone = "";
+    this.form.captcha = "";
+    this.form.password = "";
+    this.showPassword = false;
+  },
   data() {
     return {
       form: {
@@ -87,11 +93,14 @@ export default {
   position: fixed;
   right: 0;
   z-index: 3;
+  top: 8rpx;
 }
+
 .captcha {
   position: fixed;
   right: 0;
   z-index: 3;
+  top: 8rpx;
 }
 .wrap {
   height: 100%;
@@ -114,25 +123,27 @@ export default {
   .form {
     width: 80%;
     margin-bottom: 90rpx;
-    transform: scale(1);
 
     .input-item {
       transform: scale(1);
       margin-bottom: 60rpx;
       border-bottom: 2rpx solid rgb(228, 228, 228);
-    }
 
-    .input-item > input {
-      text-align: center;
-      min-height: 40rpx;
-      padding-left: 90rpx;
-      padding-right: 90rpx;
-    }
-
-    .input-item > img {
-      position: fixed;
-      width: 40rpx;
-      height: 40rpx;
+      & > input {
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: 50rpx;
+        line-height: 40rpx;
+        min-height: 40rpx;
+        height: 40rpx;
+        font-size: 30rpx;
+      }
+      & > span {
+        display: inline-block;
+        width: 100rpx;
+        line-height: 40rpx;
+        vertical-align: middle;
+      }
     }
   }
 

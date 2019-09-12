@@ -7,6 +7,9 @@
 
 <script>
 export default {
+  onUnload() {
+    this.checkboxActive = false
+  },
   data() {
     return {
       checkboxActive: false

@@ -47,6 +47,7 @@ fly.interceptors.request.use(request => {
     uid,
     accountKey
   })
+  console.log('sign:' + sign)
   const queryData = { // 最终的请求体
     // uid,
     q,
