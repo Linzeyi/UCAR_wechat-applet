@@ -3,22 +3,29 @@
     <img :src="avatarUrl" alt="头像" />
     <div class="form">
       <div class="input-item">
-        <img src="/static/images/u110.svg" />
+        <span>账号</span>
         <input type="text" placeholder="手机号" v-model="form.phone" />
       </div>
       <div class="input-item">
-        <img src="/static/images/u109.svg" />
-        <span class="switch-button">
+        <div class="switch-button">
           <switch-button @click="showPassword = !showPassword"></switch-button>
-        </span>
-        <input v-if="showPassword" type="text" placeholder="密码" v-model="form.password" maxlength="20"/>
-        <input v-else type="password" placeholder="密码" v-model="form.password" maxlength="20"/>
+        </div>
+        <span>密码</span>
+        <input
+          v-if="showPassword"
+          type="text"
+          placeholder="密码"
+          v-model="form.password"
+          maxlength="20"
+        />
+        <input v-else type="password" placeholder="密码" v-model="form.password" maxlength="20" />
       </div>
       <div class="forget">
         <base-text @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</base-text>
       </div>
     </div>
     <base-button @click="handleSubmit">登录</base-button>
+    <div class="place-holder"></div>
     <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
     <base-message></base-message>
   </div>
@@ -72,6 +79,7 @@ export default {
   position: fixed;
   right: 0;
   z-index: 3;
+  top: 8rpx;
 }
 .wrap {
   height: 100%;
@@ -80,6 +88,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-size: 30rpx;
 
   & > img {
     display: block;
@@ -99,21 +108,28 @@ export default {
       margin-bottom: 60rpx;
       border-bottom: 2rpx solid rgb(228, 228, 228);
       & > input {
-        text-align: center;
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: 50rpx;
+        line-height: 40rpx;
         min-height: 40rpx;
-        padding-left: 90rpx;
-        padding-right: 90rpx;
+        height: 40rpx;
         font-size: 30rpx;
       }
-      & > img {
-        position: fixed;
-        width: 40rpx;
-        height: 40rpx;
+      & > span {
+        display: inline-block;
+        width: 100rpx;
+        line-height: 40rpx;
+        vertical-align: middle
       }
+
     }
   }
   .forget {
     text-align: right;
+  }
+  .place-holder {
+    height: 40rpx;
   }
 }
 </style>
