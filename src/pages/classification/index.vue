@@ -1,25 +1,23 @@
 <template>
   <div class="wrap">
-    <scroll-view
-      class="scroll-left"
-      scroll-y
-      scroll-with-animation
-      @scroll="scrollHandle"
-      :scroll-top="scrollTop"
-    >
+    <scroll-view class="scroll-left" scroll-y scroll-with-animation :scroll-top="scrollTop">
       <div
         v-for="(item, idx) in classList"
-        :class="{'class-item': true ,active: isActive === idx}"
+        :class="{'class-item': true ,active: selectClassIndex === idx}"
         @click="clickItem(idx)"
-        :key="item.id"
+        :key="item.type"
       >
-        <div class="high-light" v-show="isActive === idx"></div>
-        <span>{{item.id}}</span>
+        <div class="high-light" v-show="selectClassIndex === idx"></div>
+        <span>{{item.name}}</span>
       </div>
     </scroll-view>
-    <scroll-view scroll-y style="height: 100%" @scroll="scrollHandle">
-      <div class="right-panel">
-        <img v-for="item in images" :src="item.url" :key="item.id" />
+    <scroll-view class="scroll-right" scroll-y scroll-with-animation @scroll="scrollHandle">
+      <div class="scroll-right-lable">
+        <span>{{classList[selectClassIndex].name}}</span>
+      </div>
+      <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
+      <div class="scroll-right-bottom">
+        <span>———— (┬＿┬)到底啦 ————</span>
       </div>
     </scroll-view>
   </div>
@@ -27,6 +25,7 @@
 
 <script>
 import GoodsGridList from "@/components/goodsGridList/goodsGridList";
+import { classList } from "@/fake.js";
 export default {
   components: {
     GoodsGridList
@@ -36,63 +35,14 @@ export default {
       itemHeight: 0,
       halfWindowHeight: 0,
       scrollTop: 0,
-      isActive: null,
-      classList: [
-        { id: "1", name: "品类一" },
-        { id: "2", name: "品类二" },
-        { id: "3", name: "品类三" },
-        { id: "4", name: "品类四" },
-        { id: "5", name: "品类四" },
-        { id: "6", name: "品类四" },
-        { id: "7", name: "品类四" },
-        { id: "8", name: "品类四" },
-        { id: "9", name: "品类四" },
-        { id: "10", name: "品类四" },
-        { id: "11", name: "品类四" },
-        { id: "12", name: "品类四" },
-        { id: "13", name: "品类四" },
-        { id: "14", name: "品类四" },
-        { id: "15", name: "品类四" },
-        { id: "16", name: "品类四" },
-        { id: "17", name: "品类四" },
-        { id: "18", name: "品类四" },
-        { id: "19", name: "品类四" }
-      ],
-      images: [
-        { id: "1", url: "" },
-        { id: "2", url: "" },
-        { id: "3", url: "" },
-        { id: "4", url: "" },
-        { id: "5", url: "" },
-        { id: "6", url: "" },
-        { id: "7", url: "" },
-        { id: "8", url: "" },
-        { id: "9", url: "" },
-        { id: "10", url: "" },
-        { id: "11", url: "" },
-        { id: "12", url: "" },
-        { id: "13", url: "" },
-        { id: "14", url: "" },
-        { id: "15", url: "" },
-        { id: "16", url: "" },
-        { id: "17", url: "" },
-        { id: "18", url: "" },
-        { id: "19", url: "" },
-        { id: "20", url: "" },
-        { id: "21", url: "" },
-        { id: "22", url: "" },
-        { id: "23", url: "" },
-        { id: "24", url: "" },
-        { id: "25", url: "" },
-        { id: "26", url: "" },
-        { id: "27", url: "" },
-        { id: "28", url: "" },
-        { id: "29", url: "" },
-        { id: "30", url: "" }
-      ]
+      selectClassIndex: 0,
+      goodsList: [],
+      classList: []
     };
   },
-  mounted() {
+  created() {
+    this.goodsList = this.$store.getters["Goods/goodsList"];
+    this.classList = classList;
     const systemInfo = this.$store.getters["SystemInfo/systemInfo"];
     const windowWidth = systemInfo.windowWidth;
     const windowHeight = systemInfo.windowHeight;
@@ -105,7 +55,7 @@ export default {
       console.log(e.mp.detail);
     },
     clickItem(index) {
-      this.isActive = index;
+      this.selectClassIndex = index;
       this.selectMiddle(index);
     },
     selectMiddle(index) {
@@ -125,14 +75,14 @@ export default {
 .active {
   background-color: white;
   color: rgb(26, 188, 156);
-  font-size: 36rpx;
+  font-size: 30rpx;
 }
 
 .wrap {
   width: 100%;
   height: 100%;
   display: flex;
-  font-size: 30rpx;
+  font-size: 25rpx;
 }
 .scroll-left {
   background-color: rgb(230, 230, 230);
@@ -157,17 +107,23 @@ export default {
     }
   }
 }
-.right-panel {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-content: flex-start;
 
-  img {
-    height: 140rpx;
-    width: 140rpx;
-    margin: 20rpx;
-    border: 2rpx solid black;
+.scroll-right {
+  .scroll-right-lable {
+    display: inline-block;
+    height: 100rpx;
+    line-height: 100rpx;
+    font-size: 30rpx;
+    font-weight: bold;
+    padding-left: 10rpx;
+  }
+
+  .scroll-right-bottom {
+    opacity: 0.6;
+    text-align: center;
+    height: 100rpx;
+    line-height: 100rpx;
+    font-size: 30rpx;
   }
 }
 </style>

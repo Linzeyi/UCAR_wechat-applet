@@ -4,7 +4,7 @@
     <div class="form">
       <div class="input-item">
         <img src="/static/images/u110.svg" />
-        <input type="text" placeholder="账号" v-model="form.phone" />
+        <input type="text" placeholder="手机号" v-model="form.phone" />
       </div>
       <div class="input-item">
         <img src="/static/images/u109.svg" />

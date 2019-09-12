@@ -882,9 +882,34 @@ const addressList = [{
   isDefault: false
 }]
 
+const classList = [
+  {type: 0, name: '手机数码'},
+  {type: 1, name: '女装内衣'},
+  {type: 2, name: '家用电器'},
+  {type: 3, name: '鞋靴箱包'},
+  {type: 4, name: '运动户外'},
+  {type: 5, name: '电脑办公'},
+  {type: 6, name: '美妆护肤'},
+  {type: 7, name: '个护清洁'},
+  {type: 8, name: '生活充值'},
+  {type: 9, name: '家居建材'},
+  {type: 10, name: '母婴童装'},
+  {type: 11, name: '玩具乐器'},
+  {type: 12, name: '生活美食'},
+  {type: 13, name: '酒水饮料'},
+  {type: 14, name: '汽车生活'},
+  {type: 15, name: '海囤全球'},
+  {type: 16, name: '图书音像'},
+  {type: 17, name: '宠物园艺'},
+  {type: 18, name: '礼品鲜花'},
+  {type: 19, name: '珠宝饰品'},
+  {type: 20, name: 'TNT炸弹'}
+]
+
 export {
   goodsList,
   shoppingCartGoodsList,
   orderList,
-  addressList
+  addressList,
+  classList
 }
