@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  mounted() {
+  onUnload() {
     this.resetCaptcha();
   },
   data() {

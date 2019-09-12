@@ -4,7 +4,6 @@
       class="scroll-left"
       scroll-y
       scroll-with-animation
-      @scroll="scrollHandle"
       :scroll-top="scrollTop"
     >
       <div
@@ -18,8 +17,8 @@
       </div>
     </scroll-view>
     <scroll-view scroll-y style="height: 100%" @scroll="scrollHandle">
-      <div class="right-panel">
-        <img v-for="item in images" :src="item.url" :key="item.id" />
+      <div class="scroll-right">
+        <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
       </div>
     </scroll-view>
   </div>
@@ -37,6 +36,7 @@ export default {
       halfWindowHeight: 0,
       scrollTop: 0,
       isActive: null,
+      goodsList: [],
       classList: [
         { id: "1", name: "品类一" },
         { id: "2", name: "品类二" },
@@ -93,6 +93,7 @@ export default {
     };
   },
   mounted() {
+    this.goodsList = this.$store.getters['Goods/goodsList']
     const systemInfo = this.$store.getters["SystemInfo/systemInfo"];
     const windowWidth = systemInfo.windowWidth;
     const windowHeight = systemInfo.windowHeight;
@@ -157,7 +158,7 @@ export default {
     }
   }
 }
-.right-panel {
+.scroll-right {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;

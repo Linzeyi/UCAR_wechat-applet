@@ -11,7 +11,7 @@
         <div class="captcha">
           <captcha></captcha>
         </div>
-        <input type="text" placeholder="短信验证码" maxlength="8" v-model="form.captcha" />
+        <input type="text" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
       </div>
       <div class="input-item">
         <img src="/static/images/u109.svg" />
