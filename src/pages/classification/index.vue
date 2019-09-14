@@ -1,39 +1,49 @@
 <template>
-  <div class="wrap">
-    <scroll-view class="scroll-left" scroll-y scroll-with-animation :scroll-top="scrollTop">
-      <div
-        v-for="(item, idx) in classList"
-        :class="{'class-item': true ,active: selectClassIndex === idx}"
-        @click="clickItem(idx)"
-        :key="item.type"
-      >
-        <div class="high-light" v-show="selectClassIndex === idx"></div>
-        <span>{{item.name}}</span>
+  <div style="height: 100%">
+     <base-navigation-bar name="分类">
+      <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
+    </base-navigation-bar>
+    <base-custom-box>
+      <div class="wrap">
+        <scroll-view class="scroll-left" scroll-y scroll-with-animation :scroll-top="scrollTop">
+          <div
+            v-for="(item, idx) in classList"
+            :class="{'class-item': true ,active: selectClassIndex === idx}"
+            @click="clickItem(idx)"
+            :key="item.type"
+          >
+            <div class="high-light" v-show="selectClassIndex === idx"></div>
+            <span>{{item.name}}</span>
+          </div>
+        </scroll-view>
+        <scroll-view class="scroll-right" scroll-y scroll-with-animation @scroll="scrollHandle">
+          <div class="scroll-right-lable">
+            <span>{{classList[selectClassIndex].name}}</span>
+          </div>
+          <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
+          <div class="scroll-right-bottom">
+            <span>———— (┬＿┬)到底啦 ————</span>
+          </div>
+        </scroll-view>
       </div>
-    </scroll-view>
-    <scroll-view class="scroll-right" scroll-y scroll-with-animation @scroll="scrollHandle">
-      <div class="scroll-right-lable">
-        <span>{{classList[selectClassIndex].name}}</span>
-      </div>
-      <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
-      <div class="scroll-right-bottom">
-        <span>———— (┬＿┬)到底啦 ————</span>
-      </div>
-    </scroll-view>
+    </base-custom-box>
   </div>
 </template>
 
 <script>
 import GoodsGridList from "@/components/goodsGridList/goodsGridList";
+import BaseCustomBox from "@/components/base/BaseCustomBox";
+import BaseNavigationBar from "@/components/base/BaseNavigationBar";
 import { classList } from "@/fake.js";
 export default {
   components: {
-    GoodsGridList
+    GoodsGridList,
+    BaseCustomBox,
+    BaseNavigationBar
   },
   data() {
     return {
       itemHeight: 0,
-      halfWindowHeight: 0,
       scrollTop: 0,
       selectClassIndex: 0,
       goodsList: [],
@@ -41,14 +51,10 @@ export default {
     };
   },
   created() {
-    this.goodsList = this.$store.getters["Goods/goodsList"];
     this.classList = classList;
-    const systemInfo = this.$store.getters["SystemInfo/systemInfo"];
-    const windowWidth = systemInfo.windowWidth;
-    const windowHeight = systemInfo.windowHeight;
-    const scale = windowWidth / 750;
+    this.goodsList = this.$store.getters["Goods/goodsList"];
+    const scale = this.$store.getters["SystemInfo/scale"];
     this.itemHeight = 100 * scale;
-    this.halfWindowHeight = windowHeight / 2;
   },
   methods: {
     scrollHandle(e) {
@@ -60,9 +66,11 @@ export default {
     },
     selectMiddle(index) {
       index += 1;
+      const sysHeight = this.$store.getters["SystemInfo/usableHeight"];
+      const halfWindowHeight = sysHeight / 2;
       const selectMiddleHeight = this.itemHeight * (index - 0.5);
-      if (selectMiddleHeight > this.halfWindowHeight) {
-        this.scrollTop = selectMiddleHeight - this.halfWindowHeight;
+      if (selectMiddleHeight > halfWindowHeight) {
+        this.scrollTop = selectMiddleHeight - halfWindowHeight;
       } else {
         this.scrollTop = 0;
       }
@@ -79,7 +87,6 @@ export default {
 }
 
 .wrap {
-  width: 100%;
   height: 100%;
   display: flex;
   font-size: 25rpx;
