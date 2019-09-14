@@ -1,17 +1,15 @@
 <template>
-  <div class="wrap" :style="{'height': customNavHeight}">
-    <div class="navigation-bar" :style="{'height': customNavHeight}">
-      <div
-        class="slot-button"
-        :style="{'top': buttonTop, 'left': buttonLeft, 'height': buttonHeight, 'line-height': buttonHeight}"
-      >
-        <slot></slot>
-      </div>
-      <div
-        class="nav-name"
-        :style="{'margin-top':buttonTop,'height': buttonHeight, 'line-height': buttonHeight}"
-      >{{name}}</div>
+  <div class="navigation-bar" :style="{'height': customNavHeight}">
+    <div
+      class="nav-icon"
+      :style="{'top': buttonTop, 'left': buttonLeft, 'height': buttonHeight, 'line-height': buttonHeight}"
+    >
+      <slot></slot>
     </div>
+    <div
+      class="nav-name"
+      :style="{'margin-top':buttonTop,'height': buttonHeight, 'line-height': buttonHeight}"
+    >{{name}}</div>
   </div>
 </template>
 
@@ -48,22 +46,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.wrap {
+.navigation-bar {
   text-align: center;
-  .navigation-bar {
-    transform: scale(1);
+  transform: scale(1);
+  .nav-icon {
     position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    .slot-button {
-      position: fixed;
-    }
+  }
 
-    .nav-name {
-      display: inline-block;
-      font-size: 12px;
-    }
+  .nav-name {
+    display: inline-block;
+    font-size: 12px;
   }
 }
 </style>
