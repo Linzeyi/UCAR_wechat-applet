@@ -1,8 +1,6 @@
 <template>
-  <div class="wrap">
-    <div class="custom-content" :style="{height: getUsableHeight+'px'}">
-      <slot></slot>
-    </div>
+  <div class="custom-content" :style="{height: getUsableHeight+'px'}">
+    <slot></slot>
   </div>
 </template>
 
@@ -17,10 +15,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.wrap {
-  height: 100%;
-  .custom-content {
-    overflow: scroll;
-  }
+.custom-content {
+  overflow: scroll;
 }
 </style>
