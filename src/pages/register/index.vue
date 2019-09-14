@@ -7,9 +7,9 @@
         <input type="text" placeholder="手机号" v-model="form.phone" />
       </div>
       <div class="input-item">
-        <span class="switch-button">
+        <div class="switch-button">
           <switch-button @click="showPassword = !showPassword"></switch-button>
-        </span>
+        </div>
         <span>密码</span>
         <input
           v-if="showPassword"

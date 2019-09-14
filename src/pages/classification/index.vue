@@ -112,6 +112,7 @@ export default {
   .scroll-right-lable {
     display: inline-block;
     height: 100rpx;
+    color: #555;
     line-height: 100rpx;
     font-size: 30rpx;
     font-weight: bold;
