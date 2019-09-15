@@ -55,7 +55,7 @@ export default {
 
   .nav-name {
     display: inline-block;
-    font-size: 12px;
+    font-weight: bold;
   }
 }
 </style>
