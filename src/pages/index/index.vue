@@ -51,7 +51,7 @@ export default {
   },
   onLoad () {
     this.getRecommentGoodsList()
-    // this.$http.get('/action/getPopularSearch')
+    this.$http.get('/action/getPopularSearch')
   },
   async onPullDownRefresh() {
     console.log('下拉刷新')
