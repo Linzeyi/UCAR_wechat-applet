@@ -1,7 +1,7 @@
 <template>
 <div style="height: 100%">
   <base-navigation-bar name="我的订单">
-    <i class="iconfont icon-home" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
+    <i class="iconfont icon-back" @click="Utils.switchTab('/pages/userCenter/main')">&#xe625;</i>
   </base-navigation-bar>
   <base-custom-box>
     <div class="myOrders-wrap">
