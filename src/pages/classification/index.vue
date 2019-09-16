@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%">
      <base-navigation-bar name="分类">
-      <i class="iconfont" style="font-size: medium" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
+      <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
     </base-navigation-bar>
     <base-custom-box>
       <div class="wrap">

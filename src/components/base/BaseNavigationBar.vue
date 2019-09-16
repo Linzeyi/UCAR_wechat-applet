@@ -2,13 +2,13 @@
   <div class="navigation-bar" :style="{'height': customNavHeight}">
     <div
       class="nav-icon"
-      :style="{'top': buttonTop, 'left': buttonLeft, 'height': buttonHeight, 'line-height': buttonHeight}"
+      :style="{'top': iconTop, 'left': iconLeft, 'height': iconHeight, 'line-height': iconHeight}"
     >
       <slot></slot>
     </div>
     <div
-      class="nav-name"
-      :style="{'margin-top':buttonTop,'height': buttonHeight, 'line-height': buttonHeight}"
+      class="nav-title"
+      :style="{'margin-top':iconTop,'height': iconHeight, 'line-height': iconHeight}"
     >{{name}}</div>
   </div>
 </template>
@@ -32,13 +32,13 @@ export default {
     customNavHeight() {
       return this.$store.getters["SystemInfo/customNavHeight"] + "px";
     },
-    buttonTop() {
+    iconTop() {
       return this.menuInfo.top + "px";
     },
-    buttonLeft() {
-      return this.systemInfo.windowWidth - this.menuInfo.right + "px";
+    iconLeft() {
+      return 8 + this.systemInfo.windowWidth - this.menuInfo.right + "px";
     },
-    buttonHeight() {
+    iconHeight() {
       return this.menuInfo.height + "px";
     }
   }
@@ -51,11 +51,16 @@ export default {
   transform: scale(1);
   .nav-icon {
     position: fixed;
+
+    & /deep/ i {
+      font-size: large;
+    }
   }
 
-  .nav-name {
+  .nav-title {
     display: inline-block;
     font-weight: bold;
+    font-size: large;
   }
 }
 </style>
