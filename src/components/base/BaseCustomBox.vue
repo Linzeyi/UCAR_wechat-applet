@@ -20,5 +20,6 @@ export default {
 <style lang="less" scoped>
 .custom-content {
   transform: scale(1);
+  overflow: hidden;
 }
 </style>

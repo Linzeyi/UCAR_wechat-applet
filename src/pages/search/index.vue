@@ -40,7 +40,7 @@
         </div>
       </div>
       <div class="weui-grids" v-if="searchContent.length > 0">
-        <goodsGridList :goodsList="goodsList"></goodsGridList>
+        <goodsGridList :goodsList="goodsList" :col="2"></goodsGridList>
       </div>
     </div>
   </div>
@@ -48,6 +48,7 @@
 
 <script>
 import goodsGridList from '@/components/goodsGridList/goodsGridList'
+import { goodsList } from '@/fake.js'
 
 export default {
   components: {
@@ -60,62 +61,7 @@ export default {
       isShowSearchPage: false, // 控制搜索副页展示
       isShowSearchResult: false, // 控制搜索结果显示，与显示推荐搜索互斥
       searchContent: '', // 搜索栏内容
-      goodsList: [
-        {
-          id: 1421,
-          name: '商品一',
-          src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
-          price: 188
-        },
-        {
-          id: 21,
-          name: '商品一',
-          src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
-          price: 188
-        },
-        {
-          id: 532,
-          name: '商品一',
-          src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
-          price: 188
-        },
-        {
-          id: 152,
-          name: '商品一',
-          src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
-          price: 188
-        },
-        {
-          id: 84,
-          name: '商品一',
-          src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
-          price: 188
-        },
-        {
-          id: 762,
-          name: '商品一',
-          src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
-          price: 188
-        },
-        {
-          id: 153,
-          name: '商品一',
-          src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
-          price: 188
-        },
-        {
-          id: 943,
-          name: '商品一',
-          src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
-          price: 188
-        },
-        {
-          id: 1136,
-          name: '商品一',
-          src: 'https://images.unsplash.com/photo-1491832541507-17ee9fc8d164?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1566&q=80',
-          price: 188
-        }
-      ]
+      goodsList: goodsList
     }
   },
   methods: {
