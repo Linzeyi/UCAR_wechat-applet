@@ -20,7 +20,7 @@ export default {
   },
   created() {
     this.menuInfo = this.$store.getters["SystemInfo/menuInfo"];
-    this.systemInfo = this.$store.getters["SystemInfo/systemInfo"];
+    this.systemInfo = wx.getSystemInfoSync();
   },
   data() {
     return {

@@ -8,7 +8,10 @@
 export default {
   computed: {
     getUsableHeight() {
-      return this.$store.getters["SystemInfo/usableHeight"];
+      const systemInfo = wx.getSystemInfoSync();
+      const customNavHeight = this.$store.getters["SystemInfo/customNavHeight"]
+      const usableHeight = systemInfo.windowHeight - customNavHeight
+      return usableHeight;
     }
   }
 };
