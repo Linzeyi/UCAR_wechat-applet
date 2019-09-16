@@ -1,7 +1,7 @@
 <template>
-  <div class="modifyAddress-wrap" v-if="formData" style="height: 100%">
-    <BaseNavigationBar name="分类">
-      <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
+  <div class="modifyAddress-wrap" v-if="formData">
+    <BaseNavigationBar name="修改地址">
+      <i class="iconfont" @click="back">&#xe625;</i>
     </BaseNavigationBar>
     <BaseCustomBox>
       <div class="weui-cells weui-cells_form" @submit="submitForm('submit')">
@@ -109,21 +109,8 @@ export default {
     })
   },
   onUnload () {
-    // let that = this
-    wx.showModal({
-      title: '保存地址',
-      content: '是否保存地址',
-      cancelText: '不保存',
-      confirmText: '保存'
-      // success () {
-      //   if (that.formCanSubmit && that.validateForm()) {
-      //     mpvue.navigateBack()
-      //   } else {}
-      // },
-      // fail () {
-      //   mpvue.redirectTo({ url: '/pages/address/main' })
-      // }
-    })
+    this.formData = undefined
+    this.focus = undefined
   },
   computed: {
     formCanSubmit () {
@@ -153,11 +140,11 @@ export default {
     // 表单验证
     validateForm () {
       if (!this.Utils.regularRule.phone.test(this.formData.receiverPhone)) {
-        this.showToast('请输入正确的手机号')
+        this.showToast('请输入正确的手机号', 'none')
         return false
       }
       if (!this.Utils.regularRule.postCode.test(this.formData.postCode)) {
-        this.showToast('请输入正确的邮政编码')
+        this.showToast('请输入正确的邮政编码', 'none')
         return false
       }
       return true
@@ -165,17 +152,24 @@ export default {
 
     // 提交表单
     submitForm (str) {
-      console.log(this.formData)
-      if (this.formCanSubmit && this.validateForm()) {
-        console.log('提交！')
+      // 检验表单是否有空
+      if (this.formCanSubmit) {
+        // 检验表单内容合法性
+        if (this.validateForm()) {
+          console.log('提交！')
+          mpvue.navigateBack()
+          this.showToast('修改成功', 'success')
+        }
+      } else {
+        this.showToast('地址信息未填写完整', 'none')
       }
     },
 
     // toast提示
-    showToast (text) {
+    showToast (text, type) {
       wx.showToast({
         title: text,
-        icon: 'none',
+        icon: type,
         duration: 2000
       })
     },
@@ -201,12 +195,35 @@ export default {
         }
       }
     },
+
+    // 区域选择器
     regionPick: function (e) {
       console.log('picker发送选择改变，携带值为', e.mp.detail)
       this.formData.region = e.mp.detail.value
       if (e.mp.detail.postcode) {
         this.formData.postCode = e.mp.detail.postcode
       }
+    },
+
+    // 页面返回
+    back () {
+      let that = this
+      wx.showModal({
+        title: '保存地址',
+        content: '是否保存地址',
+        cancelText: '不保存',
+        confirmText: '保存',
+        success (res) {
+          if (res.confirm) {
+            that.submitForm()
+          } else if (res.cancel) {
+            mpvue.redirectTo({ url: '/pages/address/main' })
+          }
+        },
+        fail () {
+          mpvue.redirectTo({ url: '/pages/address/main' })
+        }
+      })
     }
   }
 }
@@ -219,6 +236,7 @@ export default {
 .modifyAddress-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
+  height: 100%;
   .weui-cells {
     margin-top: 0;
     .weui-cell {

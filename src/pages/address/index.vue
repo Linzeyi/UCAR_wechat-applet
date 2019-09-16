@@ -24,7 +24,7 @@
               <i class="iconfont edit">&#xe66e;</i>
             </div>
             <div class="delete" @click="deleteAddress(index)">
-              <i class="iconfont delete">&#xe625;</i>
+              <i class="iconfont delete">&#xe637;</i>
             </div>
           </div>
         </movable-area>
