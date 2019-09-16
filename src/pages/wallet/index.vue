@@ -35,6 +35,12 @@ export default {
     confirm () {
       if (this.Utils.regularRule.money.test(this.amount)) {
         console.log('充值！')
+      } else {
+        wx.showToast({
+          title: '请输入正确的金额，至多输入7位数字和两位小数',
+          icon: 'none',
+          duration: 2000
+        })
       }
     }
   }

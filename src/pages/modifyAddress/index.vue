@@ -1,89 +1,99 @@
 <template>
-  <div class="modifyAddress-wrap" v-if="formData">
-    <div class="weui-cells weui-cells_form" @submit="submitForm('submit')">
-      <div class="weui-cell">
-        <div class="weui-cell__hd">姓名</div>
-        <input 
-          type="text" 
-          class="weui-input" 
-          :class="{'clear': formData.receiverName.length > 0 && focus === 'name'}" 
-          placeholder="请输入姓名" 
-          v-model="formData.receiverName"
-          @focus="focus = 'name'"
-          @blur="focus = undefined">
-        <i class="iconfont clear-icon" @click="clearInput(1)">&#xe600;</i>
-      </div>
-      <div class="weui-cell">
-        <div class="weui-cell__hd">手机号码</div>
-        <input 
-          type="number" 
-          class="weui-input"
-          :class="{'clear': formData.receiverPhone.length > 0 && focus === 'phone'}"
-          placeholder="请输入手机号码" 
-          v-model="formData.receiverPhone"
-          @focus="focus = 'phone'"
-          @blur="focus = undefined">
-        <i class="iconfont clear-icon" @click="clearInput(2)">&#xe600;</i>
-      </div>
-      <div class="weui-cell">
-        <div class="weui-cell__hd">邮政编码</div>
-        <input 
-          type="number" 
-          class="weui-input" 
-          :class="{'clear': formData.postCode.length > 0 && focus === 'postCode'}"
-          placeholder="自动根据区域生成" 
-          disabled="true"
-          pattern="[0-9]{6}" 
-          v-model="formData.postCode"
-          @focus="focus = 'postCode'"
-          @blur="focus = undefined">
-        <i class="iconfont clear-icon" @click="clearInput(3)">&#xe600;</i>
-      </div>
-      <div class="weui-cell region" @click="chooseRegion">
-        <div class="weui-cell__hd">所在区域</div>
-        <picker 
-          class="auth-pick-tip region-picker" 
-          mode="region" 
-          :value="formData.region" 
-          :custom-item="customItem" 
-          @change="regionPick">
-          <div v-if="!formData.region.length" class="region-picker-placeholder">请选择区域</div>
-          <view v-if="formData.region.length">
-            {{formData.region[0]}}，{{formData.region[1]}}，{{formData.region[2]}}
-          </view>
-        </picker>
-        <div class="weui-cell__ft">
-          <i class="iconfont">&#xe601;</i>
+  <div class="modifyAddress-wrap" v-if="formData" style="height: 100%">
+    <base-navigation-bar name="分类">
+      <i class="iconfont" style="font-size: medium" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
+    </base-navigation-bar>
+    <base-custom-box>
+      <div class="weui-cells weui-cells_form" @submit="submitForm('submit')">
+        <div class="weui-cell">
+          <div class="weui-cell__hd">姓名</div>
+          <input 
+            type="text" 
+            class="weui-input" 
+            :class="{'clear': formData.receiverName.length > 0 && focus === 'name'}" 
+            placeholder="请输入姓名" 
+            v-model="formData.receiverName"
+            @focus="focus = 'name'"
+            @blur="focus = undefined">
+          <i class="iconfont clear-icon" @click="clearInput(1)">&#xe600;</i>
+        </div>
+        <div class="weui-cell">
+          <div class="weui-cell__hd">手机号码</div>
+          <input 
+            type="number" 
+            class="weui-input"
+            :class="{'clear': formData.receiverPhone.length > 0 && focus === 'phone'}"
+            placeholder="请输入手机号码" 
+            v-model="formData.receiverPhone"
+            @focus="focus = 'phone'"
+            @blur="focus = undefined">
+          <i class="iconfont clear-icon" @click="clearInput(2)">&#xe600;</i>
+        </div>
+        <div class="weui-cell">
+          <div class="weui-cell__hd">邮政编码</div>
+          <input 
+            type="number" 
+            class="weui-input" 
+            :class="{'clear': formData.postCode.length > 0 && focus === 'postCode'}"
+            placeholder="自动根据区域生成" 
+            disabled="true"
+            pattern="[0-9]{6}" 
+            v-model="formData.postCode"
+            @focus="focus = 'postCode'"
+            @blur="focus = undefined">
+          <i class="iconfont clear-icon" @click="clearInput(3)">&#xe600;</i>
+        </div>
+        <div class="weui-cell region" @click="chooseRegion">
+          <div class="weui-cell__hd">所在区域</div>
+          <picker 
+            class="auth-pick-tip region-picker" 
+            mode="region" 
+            :value="formData.region" 
+            :custom-item="customItem" 
+            @change="regionPick">
+            <div v-if="!formData.region.length" class="region-picker-placeholder">请选择区域</div>
+            <view v-if="formData.region.length">
+              {{formData.region[0]}}，{{formData.region[1]}}，{{formData.region[2]}}
+            </view>
+          </picker>
+          <div class="weui-cell__ft">
+            <i class="iconfont">&#xe601;</i>
+          </div>
+        </div>
+        <div class="weui-cell">
+          <div class="weui-cell__hd">详细地址</div>
+          <input 
+            type="text" 
+            class="weui-input"
+            :class="{'clear': formData.address.length > 0 && focus === 'address'}"
+            placeholder="请输入街道，门牌等详细地址" 
+            v-model="formData.address"
+            @focus="focus = 'address'"
+            @blur="focus = undefined">
+          <i class="iconfont clear-icon" @click="clearInput(4)">&#xe600;</i>
         </div>
       </div>
-      <div class="weui-cell">
-        <div class="weui-cell__hd">详细地址</div>
-        <input 
-          type="text" 
-          class="weui-input"
-          :class="{'clear': formData.address.length > 0 && focus === 'address'}"
-          placeholder="请输入街道，门牌等详细地址" 
-          v-model="formData.address"
-          @focus="focus = 'address'"
-          @blur="focus = undefined">
-        <i class="iconfont clear-icon" @click="clearInput(4)">&#xe600;</i>
+      <div class="isDefault" @click="setDefault">
+        <i class="iconfont icon-select-no tick" v-if="!formData.isDefault">&#xe656;</i>
+        <i class="iconfont icon-select-fill tick" v-else>&#xe655;</i>
+        <span>设为默认地址</span>
       </div>
-    </div>
-    <div class="isDefault" @click="setDefault">
-      <i class="iconfont icon-select-no tick" v-if="!formData.isDefault">&#xe656;</i>
-      <i class="iconfont icon-select-fill tick" v-else>&#xe655;</i>
-      <span>设为默认地址</span>
-    </div>
-    <button 
-      class="weui-btn btn-save" 
-      @click="submitForm"
-      :style="formCanSubmit ? 'opacity: 1' : 'opacity: 0.5'">
-      保存</button>
+      <button 
+        class="weui-btn btn-save" 
+        @click="submitForm"
+        :style="formCanSubmit ? 'opacity: 1' : 'opacity: 0.5'">
+        保存</button>
+    </base-custom-box>
   </div>
 </template>
 
 <script>
+import BaseNavigationBar from "@/components/base/BaseNavigationBar";
+
 export default {
+  compoents: {
+    BaseNavigationBar
+  },
   data () {
     return {
       formData: undefined, // 收件地址表单
@@ -94,6 +104,23 @@ export default {
     var addressList = this.$store.getters['UserCenter/addressList']
     this.formData = addressList.find(item => {
       return item.addressId + '' === option.addressId
+    })
+  },
+  onUnload () {
+    // let that = this
+    wx.showModal({
+      title: '保存地址',
+      content: '是否保存地址',
+      cancelText: '不保存',
+      confirmText: '保存'
+      // success () {
+      //   if (that.formCanSubmit && that.validateForm()) {
+      //     mpvue.navigateBack()
+      //   } else {}
+      // },
+      // fail () {
+      //   mpvue.redirectTo({ url: '/pages/address/main' })
+      // }
     })
   },
   computed: {
