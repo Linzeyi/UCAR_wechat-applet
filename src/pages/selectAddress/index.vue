@@ -31,17 +31,24 @@ export default {
   data () {
     return {
       addressList: this.$store.state.UserCenter.addressList,
+      selectedAddress: this.$store.state.UserCenter.selectedAddress,
       selected: 0 // 记录选中了哪条地址
     }
   },
   onLoad () {
-    let obj = this.addressList
-    for (let i = 0; i < obj.length; i++) {
-      if (obj[i].isDefault) {
+    let that = this
+    let addr = this.addressList
+    let hasSelected = Boolean(this.selectedAddress)
+    for (let i = 0; i < addr.length; i++) {
+      console.log(hasSelected, addr[i].isDefault)
+      if (!hasSelected && addr[i].isDefault) {
         this.selected = i
-        obj[i].isSelected = true
+        addr[i].isSelected = true
+      } else if (hasSelected && that.selectedAddress.addressId === addr[i].addressId) {
+        this.selected = i
+        addr[i].isSelected = true
       } else {
-        obj[i].isSelected = false
+        addr[i].isSelected = false
       }
     }
   },
