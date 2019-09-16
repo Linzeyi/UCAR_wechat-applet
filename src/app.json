@@ -31,33 +31,38 @@
   "tabBar": {
     "color": "#999",
     "backgroundColor": "#fafafa",
-    "selectedColor": "#333",
+    "selectedColor": "#d81e06",
     "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/main",
         "iconPath": "static/tabs/home.png",
-        "selectedIconPath": "static/tabs/home-active.png"
+        "selectedIconPath": "static/tabs/home-active.png",
+        "text": "首页"
       },
       {
         "pagePath": "pages/classification/main",
-        "iconPath": "static/tabs/orders.png",
-        "selectedIconPath": "static/tabs/orders-active.png"
+        "iconPath": "static/tabs/classification.png",
+        "selectedIconPath": "static/tabs/classification-active.png",
+        "text": "分类"
       },
       {
         "pagePath": "pages/shoppingCart/main",
-        "iconPath": "static/tabs/orders.png",
-        "selectedIconPath": "static/tabs/orders-active.png"
+        "iconPath": "static/tabs/shoppingCart.png",
+        "selectedIconPath": "static/tabs/shoppingCart-active.png",
+        "text": "购物车"
       },
       {
         "pagePath": "pages/userCenter/main",
-        "iconPath": "static/tabs/orders.png",
-        "selectedIconPath": "static/tabs/orders-active.png"
+        "iconPath": "static/tabs/userCenter.png",
+        "selectedIconPath": "static/tabs/userCenter-active.png",
+        "text": "个人中心"
       },
       {
         "pagePath": "pages/login/main",
-        "iconPath": "static/tabs/orders.png",
-        "selectedIconPath": "static/tabs/orders-active.png"
+        "iconPath": "static/tabs/home.png",
+        "selectedIconPath": "static/tabs/home-active.png",
+        "text": "登录"
       }
     ],
     "position": "bottom"

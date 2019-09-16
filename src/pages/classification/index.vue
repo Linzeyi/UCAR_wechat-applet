@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%">
-     <base-navigation-bar name="分类">
-      <i class="iconfont" style="font-size: medium" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
+    <base-navigation-bar name="分类">
+      <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
     </base-navigation-bar>
     <base-custom-box>
       <div class="wrap">
@@ -43,6 +43,8 @@ export default {
   },
   data() {
     return {
+      systemInfo: {},
+      customNavHeight: 0,
       itemHeight: 0,
       scrollTop: 0,
       selectClassIndex: 0,
@@ -51,6 +53,8 @@ export default {
     };
   },
   created() {
+    this.systemInfo = wx.getSystemInfoSync();
+    this.customNavHeight = this.$store.getters["SystemInfo/customNavHeight"];
     this.classList = classList;
     this.goodsList = this.$store.getters["Goods/goodsList"];
     const scale = this.$store.getters["SystemInfo/scale"];
@@ -66,8 +70,8 @@ export default {
     },
     selectMiddle(index) {
       index += 1;
-      const sysHeight = this.$store.getters["SystemInfo/usableHeight"];
-      const halfWindowHeight = sysHeight / 2;
+      const usableHeight = this.systemInfo.windowHeight - this.customNavHeight;
+      const halfWindowHeight = usableHeight / 2;
       const selectMiddleHeight = this.itemHeight * (index - 0.5);
       if (selectMiddleHeight > halfWindowHeight) {
         this.scrollTop = selectMiddleHeight - halfWindowHeight;

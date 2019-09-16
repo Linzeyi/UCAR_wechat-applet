@@ -1,63 +1,72 @@
 <template>
-  <div class="myOrders-wrap">
-    <div class="tab-panel">
-      <div 
-      class="tab-item" 
-      v-for="(item, index) in typeTabList" 
-      :key="index" 
-      :class="{'on': item.key == selectTypeKey}" 
-      @click="selectTypeKey = item.key">
-        <span>{{item.name}}</span>
-      </div>
-    </div>
-    <div class="order-list-wrap">
-      <div class="order-box" v-for="(orderItem, orderIndex) in orderList" :key="orderIndex">
-        <div class="header">
-          <div class="left-box">
-            <span class="order-id">订单编号：{{orderItem.orderId}}</span>
-          </div>
-          <div class="right-box">
-            <span class="status">{{getStatusList[orderItem.status]}}</span>
-          </div>
+<div style="height: 100%">
+  <base-navigation-bar name="我的订单">
+    <i class="iconfont icon-back" @click="Utils.switchTab('/pages/userCenter/main')">&#xe625;</i>
+  </base-navigation-bar>
+  <base-custom-box>
+    <div class="myOrders-wrap">
+      <div class="tab-panel">
+        <div 
+        class="tab-item" 
+        v-for="(item, index) in typeTabList" 
+        :key="index" 
+        :class="{'on': item.key == selectTypeKey}" 
+        @click="selectTypeKey = item.key">
+          <span>{{item.name}}</span>
         </div>
-        <div class="goods-list">
-          <div class="goods-box" v-for="(goodsItem, goodsIndex) in orderItem.goodsList" :key="goodsIndex">
-            <div class="flex-box">
-              <div class="left-box">
-                <div class="img-box">
-                  <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
-                </div>
-              </div>
-              <div class="content-box">
-                <p class="title">{{goodsItem.title}}</p>
-                <p class="type">{{goodsItem.type.title}}:{{goodsItem.type.content}}</p>
-              </div>
-              <div class="right-box">
-                <p class="price">
-                  <span class="logo">¥</span>{{goodsItem.type.price}}
-                </p>
-                <p class="num">x{{goodsItem.num}}</p>
-              </div>
+      </div>
+      <div class="order-list-wrap">
+        <div class="order-box" v-for="(orderItem, orderIndex) in orderList" :key="orderIndex">
+          <div class="header">
+            <div class="left-box">
+              <span class="order-id">订单编号：{{orderItem.orderId}}</span>
+            </div>
+            <div class="right-box">
+              <span class="status">{{getStatusList[orderItem.status]}}</span>
             </div>
           </div>
-          <div class="computed-info">
-            <span class="num">共{{orderItem.goodsList.length}}件商品，</span>
-            合计：<span class="price"><span class="logo">¥</span><comTotalPrice :goodsList="orderItem.goodsList"></comTotalPrice></span>
-          </div>
-          <div class="goods-footer">
-            <span class="option-btn" @click="toOrderDetail(orderItem)">查看订单</span>
-            <span class="option-btn" v-if="orderItem.status <= 1 ">取消订单</span>
-            <span class="option-btn" v-if="orderItem.status === 0">去支付</span>
-            <span class="option-btn" @click="toGoodsComments(orderItem)">评价</span>
+          <div class="goods-list">
+            <div class="goods-box" v-for="(goodsItem, goodsIndex) in orderItem.goodsList" :key="goodsIndex">
+              <div class="flex-box">
+                <div class="left-box">
+                  <div class="img-box">
+                    <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
+                  </div>
+                </div>
+                <div class="content-box">
+                  <p class="title">{{goodsItem.title}}</p>
+                  <p class="type">{{goodsItem.type.title}}:{{goodsItem.type.content}}</p>
+                </div>
+                <div class="right-box">
+                  <p class="price">
+                    <span class="logo">¥</span>{{goodsItem.type.price}}
+                  </p>
+                  <p class="num">x{{goodsItem.num}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="computed-info">
+              <span class="num">共{{orderItem.goodsList.length}}件商品，</span>
+              合计：<span class="price"><span class="logo">¥</span><comTotalPrice :goodsList="orderItem.goodsList"></comTotalPrice></span>
+            </div>
+            <div class="goods-footer">
+              <span class="option-btn" @click="toOrderDetail(orderItem)">查看订单</span>
+              <span class="option-btn" v-if="orderItem.status <= 1 ">取消订单</span>
+              <span class="option-btn" v-if="orderItem.status === 0">去支付</span>
+              <span class="option-btn" @click="toGoodsComments(orderItem)">评价</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </base-custom-box>
+</div>
 </template>
 
 <script>
-import comTotalPrice from '../../components/myOrders/totalPrice'
+import BaseCustomBox from "@/components/base/BaseCustomBox"
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
+import comTotalPrice from '@/components/myOrders/totalPrice'
 
 export default {
   data () {
@@ -192,7 +201,12 @@ export default {
     }
   },
   components: {
-    comTotalPrice
+    comTotalPrice,
+    BaseCustomBox,
+    BaseNavigationBar
+  },
+  onShow () {
+    console.log('onShow')
   },
   onLoad () {
     this.init()
@@ -230,6 +244,7 @@ export default {
 .myOrders-wrap {
   height: 100%;
   background-color: #f3f3f3;
+  position: relative;
   .tab-panel {
     position: fixed;
     left: 0;

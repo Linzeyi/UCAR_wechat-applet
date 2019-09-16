@@ -1,20 +1,29 @@
 <template>
-  <div class="home-wrap">
-    <com-swiper :imgList="imgList"></com-swiper>
-    <div class="goodsList-panel">
-      <div class="header">
-        <span class="panel-title">热门推荐</span>
-        <span class="more-btn" @click="switchTab('/pages/classification/main')">
-          <i class="iconfont icon-more">&#xe601;</i> 更多
-        </span>
+  <div style="height: 100%">
+    <base-navigation-bar name="首页">
+      <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
+    </base-navigation-bar>
+    <base-custom-box>
+      <div class="home-wrap">
+        <com-swiper :imgList="imgList"></com-swiper>
+        <div class="goodsList-panel">
+          <div class="header">
+            <span class="panel-title">热门推荐</span>
+            <span class="more-btn" @click="switchTab('/pages/classification/main')">
+              <i class="iconfont icon-more">&#xe601;</i> 更多
+            </span>
+          </div>
+          <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
+        </div>
       </div>
-      <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
-    </div>
+    </base-custom-box>
   </div>
 </template>
 
 <script>
 
+import BaseCustomBox from "@/components/base/BaseCustomBox"
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 import comSwiper from '@/components/comSwiper/comSwiper'
 import goodsGridList from '@/components/goodsGridList/goodsGridList'
 
@@ -36,14 +45,16 @@ export default {
   },
   components: {
     comSwiper,
-    goodsGridList
+    goodsGridList,
+    BaseCustomBox,
+    BaseNavigationBar
   },
   onLoad () {
     this.getRecommentGoodsList()
-    // this.$http.get('/action/test', {
-    //   username: 123,
-    //   password: 123
-    // })
+    this.$http.get('/action/test', {
+      username: 'lzy',
+      password: 123
+    })
   },
   async onPullDownRefresh() {
     console.log('下拉刷新')

@@ -1,9 +1,9 @@
 <template>
   <div class="modifyAddress-wrap" v-if="formData" style="height: 100%">
-    <base-navigation-bar name="分类">
-      <i class="iconfont" style="font-size: medium" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
-    </base-navigation-bar>
-    <base-custom-box>
+    <BaseNavigationBar name="分类">
+      <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
+    </BaseNavigationBar>
+    <BaseCustomBox>
       <div class="weui-cells weui-cells_form" @submit="submitForm('submit')">
         <div class="weui-cell">
           <div class="weui-cell__hd">姓名</div>
@@ -83,16 +83,18 @@
         @click="submitForm"
         :style="formCanSubmit ? 'opacity: 1' : 'opacity: 0.5'">
         保存</button>
-    </base-custom-box>
+    </BaseCustomBox>
   </div>
 </template>
 
 <script>
 import BaseNavigationBar from "@/components/base/BaseNavigationBar";
+import BaseCustomBox from "@/components/base/BaseCustomBox";
 
 export default {
-  compoents: {
-    BaseNavigationBar
+  components: {
+    BaseNavigationBar,
+    BaseCustomBox
   },
   data () {
     return {
@@ -217,31 +219,34 @@ export default {
 .modifyAddress-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
-  .weui-cell {
-    display: flex;
-    & :nth-child(1) {
-      flex: 2.3;
+  .weui-cells {
+    margin-top: 0;
+    .weui-cell {
+      display: flex;
+      & :nth-child(1) {
+        flex: 2.3;
+      }
+      & :nth-child(2) {
+        flex: 6;
+      }
     }
-    & :nth-child(2) {
-      flex: 6;
+    .clear-icon {
+      visibility: hidden;
+      line-height: 36px;
+      flex: 0.8;
+      text-align: center;
     }
-  }
-  .clear-icon {
-    visibility: hidden;
-    line-height: 36px;
-    flex: 0.8;
-    text-align: center;
-  }
-  input.clear + .clear-icon {
-    visibility: visible;
-  }
-  .region {
-    .region-picker-placeholder {
-      color: rgb(131, 131, 131);
-      font-family: 'PingFangSC';
+    input.clear + .clear-icon {
+      visibility: visible;
     }
-    .region-picker {
-      margin: 10px 0;
+    .region {
+      .region-picker-placeholder {
+        color: rgb(131, 131, 131);
+        font-family: 'PingFangSC';
+      }
+      .region-picker {
+        margin: 10px 0;
+      }
     }
   }
   .isDefault {

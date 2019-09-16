@@ -1,11 +1,11 @@
 <template>
   <div class="orderConfirm-wrap lzy-list-wrap">
     <div class="order-panel">
-      <div class="address-box lzy-flex-box">
+      <div class="address-box lzy-flex-box" @click="toEditAddress">
         <div class="left-box">
           <i class="iconfont icon-address">&#xe613;</i>
         </div>
-        <div class="content-box" @click="toEditAddress">
+        <div class="content-box">
           <p>
             <span class="name">{{getAddress.receiverName}}</span>
             <span class="phone">{{getAddress.receiverPhone}}</span>
@@ -88,6 +88,9 @@ export default {
       }
     }
   },
+  onShow () {
+    console.log('onShow')
+  },
   onLoad () {
     this.getGoodsList()
   },
@@ -98,6 +101,9 @@ export default {
     getAddress () {
       console.log(this.$store.getters['UserCenter/selectedAddress'])
       return this.$store.getters['UserCenter/selectedAddress']
+    },
+    toEditAddress () {
+      mpvue.navigateTo({ url: '/pages/selectAddress/main' })
     },
     getTotalNum () {
       let num = 0

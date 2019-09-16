@@ -36,6 +36,10 @@ export function navigateTo(url) {
   mpvue.navigateTo({url})
 }
 
+export function switchTab(url) {
+  mpvue.switchTab({url})
+}
+
 export default {
   formatNumber,
   formatTime,

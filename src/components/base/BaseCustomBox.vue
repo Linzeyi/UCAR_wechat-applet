@@ -8,7 +8,10 @@
 export default {
   computed: {
     getUsableHeight() {
-      return this.$store.getters["SystemInfo/usableHeight"];
+      const systemInfo = wx.getSystemInfoSync();
+      const customNavHeight = this.$store.getters["SystemInfo/customNavHeight"]
+      const usableHeight = systemInfo.windowHeight - customNavHeight
+      return usableHeight;
     }
   }
 };
@@ -16,6 +19,6 @@ export default {
 
 <style lang="less" scoped>
 .custom-content {
-  overflow: scroll;
+  transform: scale(1);
 }
 </style>
