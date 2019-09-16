@@ -44,16 +44,20 @@
         <span>注销</span>
         <i class="iconfont icon-size">&#xe601;</i>
       </div>
-      <div @click="$store.commit('BaseComponent/SET_SHOWACTIONSHEET', true)">出现</div>
+      <div @click="showActionSheet = true">出现</div>
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
-    <base-action-sheet v-if="showActionSheet"></base-action-sheet>
+    <base-action-sheet :show.sync="showActionSheet">
+      <div class="action-sheet-item">微信头像</div>
+      <div class="action-sheet-item">从相册选择</div>
+      <div class="action-sheet-item">拍照</div>
+    </base-action-sheet>
   </div>
 </template>
 
 <script>
-import mpToast from 'mpvue-weui/src/toast';
-import BaseActionSheet from '@/components/base/BaseActionSheet'
+import mpToast from "mpvue-weui/src/toast";
+import BaseActionSheet from "@/components/base/BaseActionSheet";
 export default {
   components: {
     mpToast,
@@ -67,13 +71,9 @@ export default {
       email: "",
       isGenderActive: true,
       index: null,
-      showToast: false
+      showToast: false,
+      showActionSheet: false
     };
-  },
-  computed: {
-    showActionSheet() {
-      return this.$store.getters["BaseComponent/showActionSheet"]
-    }
   },
   methods: {
     previewImage() {
@@ -137,6 +137,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.action-sheet-item {
+  height: 120rpx;
+  line-height: 120rpx;
+  text-align: center;
+  font-size: 35rpx;
+  border-bottom: 2rpx solid rgb(228, 228, 228);
+}
+
 .icon-cancel {
   color: rgb(138, 138, 138);
 }
@@ -177,7 +185,7 @@ export default {
 
     span {
       vertical-align: middle;
-      color: #FD6432;
+      color: #fd6432;
       font-size: 35rpx;
       font-weight: bold;
     }
