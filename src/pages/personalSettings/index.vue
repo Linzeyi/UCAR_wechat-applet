@@ -44,16 +44,20 @@
         <span>注销</span>
         <i class="iconfont icon-size">&#xe601;</i>
       </div>
+      <div @click="$store.commit('BaseComponent/SET_SHOWACTIONSHEET', true)">出现</div>
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
+    <base-action-sheet v-if="showActionSheet"></base-action-sheet>
   </div>
 </template>
 
 <script>
 import mpToast from 'mpvue-weui/src/toast';
+import BaseActionSheet from '@/components/base/BaseActionSheet'
 export default {
   components: {
-    mpToast
+    mpToast,
+    BaseActionSheet
   },
   data() {
     return {
@@ -65,6 +69,11 @@ export default {
       index: null,
       showToast: false
     };
+  },
+  computed: {
+    showActionSheet() {
+      return this.$store.getters["BaseComponent/showActionSheet"]
+    }
   },
   methods: {
     previewImage() {
