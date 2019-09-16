@@ -1,95 +1,106 @@
 <template>
-  <div class="shoppingCart-wrap lzy-list-wrap">
-    <div class="goods-list-wrap">
-      <div class="goods-list">
-        <div class="goods-box" v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex">
-          <movable-area class="movable-area">
-            <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
-              <div class="left-box">
-                <div class="select-box" @click="selectGoods(goodsItem)">
-                  <i class="iconfont icon-select-no" v-if="!goodsItem.isSelected">&#xe656;</i>
-                  <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
-                </div>
-                <div class="img-box" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                  <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit"></image>
-                </div>
-              </div>
-              <div class="content-box">
-                <div class="info-box">
-                  <p class="title" @click="toGoodsDetail(goodsItem)">{{goodsItem.title}}</p>
-                  <p class="type" 
-                  v-for="(typeItem, typeIndex) in goodsItem.type" 
-                  :key="typeIndex" 
-                  :class="{'isSelected': typeItem.isSelected}"
-                  @click="handlerShowTypeDialog(goodsItem)">
-                    {{typeItem.title}}:{{typeItem.content}}
-                  </p>
-                  <p class="bottom-p" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                    <span class="price"><span class="logo">¥</span>{{(typeItem.discountPrice ? typeItem.discountPrice : typeItem.price )* goodsItem.num}}</span>
-                    <span class="numPicker-box">
-                      <num-picker :min="1" :isSmall="true" :max="typeItem.stock" :num.sync="goodsItem.num"></num-picker>
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </movable-view>
-            <button class="delete-btn" @click="deleteItem(goodsList, goodsItem, goodsIndex)">删除</button>
-          </movable-area>
+  <div style="height: 100%">
+    <base-navigation-bar name="购物车">
+      <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
+    </base-navigation-bar>
+    <base-custom-box>
+      <div class="shoppingCart-wrap lzy-list-wrap">
+        <div class="goods-list-wrap">
+          <div class="goods-list">
+            <div class="goods-box" v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex">
+              <movable-area class="movable-area">
+                <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
+                  <div class="left-box">
+                    <div class="select-box" @click="selectGoods(goodsItem)">
+                      <i class="iconfont icon-select-no" v-if="!goodsItem.isSelected">&#xe656;</i>
+                      <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
+                    </div>
+                    <div class="img-box" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
+                      <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit"></image>
+                    </div>
+                  </div>
+                  <div class="content-box">
+                    <div class="info-box">
+                      <p class="title" @click="toGoodsDetail(goodsItem)">{{goodsItem.title}}</p>
+                      <p class="type" 
+                      v-for="(typeItem, typeIndex) in goodsItem.type" 
+                      :key="typeIndex" 
+                      :class="{'isSelected': typeItem.isSelected}"
+                      @click="handlerShowTypeDialog(goodsItem)">
+                        {{typeItem.title}}:{{typeItem.content}}
+                      </p>
+                      <p class="bottom-p" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
+                        <span class="price"><span class="logo">¥</span>{{(typeItem.discountPrice ? typeItem.discountPrice : typeItem.price )* goodsItem.num}}</span>
+                        <span class="numPicker-box">
+                          <num-picker :min="1" :isSmall="true" :max="typeItem.stock" :num.sync="goodsItem.num"></num-picker>
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </movable-view>
+                <button class="delete-btn" @click="deleteItem(goodsList, goodsItem, goodsIndex)">删除</button>
+              </movable-area>
+            </div>
+          </div>
+          <div class="invalid-goods-list">
+            <div class="header">
+              <span class="title">失效商品{{invalidGoodsList.length}}件</span>
+            </div>
+            <div class="invalid-goods-box" v-for="(unGoodsItem, unGoodsIndex) in invalidGoodsList" :key="unGoodsIndex">
+              <movable-area class="movable-area">
+                <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
+                  <div class="left-box">
+                    <div class="tips-box">
+                      <span class="invalid-tips">失效</span>
+                    </div>
+                    <div class="img-box" v-for="(typeItem, typeIndex) in unGoodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
+                      <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit"></image>
+                    </div>
+                  </div>
+                  <div class="content-box">
+                    <div class="info-box">
+                      <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.title}}</p>
+                      <p class="invalid-msg">{{unGoodsItem.invalidMsg}}</p>
+                    </div>
+                  </div>
+                </movable-view>
+                <button class="delete-btn" @click="deleteItem(invalidGoodsList, unGoodsItem, unGoodsIndex)">删除</button>
+              </movable-area>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="invalid-goods-list">
-        <div class="header">
-          <span class="title">失效商品{{invalidGoodsList.length}}件</span>
+        <div class="cart-footer lzy-footer">
+          <div class="left-box">
+            <div class="select-box">
+              <i class="iconfont icon-select-no" v-if="!isAllSelected" @click="selectAll(true)">&#xe656;</i>
+              <i class="iconfont icon-select-fill" v-else  @click="selectAll(false)">&#xe655;</i>
+            </div>
+            <span class="select-title">全选</span>
+          </div>
+          <div class="right-box">
+            <span class="total">合计：</span>
+            <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
+            <button class="to-pay-btn" @click="toOrderConfirm">结算({{getSelectedNum}})</button>
+          </div>
         </div>
-        <div class="invalid-goods-box" v-for="(unGoodsItem, unGoodsIndex) in invalidGoodsList" :key="unGoodsIndex">
-          <movable-area class="movable-area">
-            <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
-              <div class="left-box">
-                <div class="tips-box">
-                  <span class="invalid-tips">失效</span>
-                </div>
-                <div class="img-box" v-for="(typeItem, typeIndex) in unGoodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                  <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit"></image>
-                </div>
-              </div>
-              <div class="content-box">
-                <div class="info-box">
-                  <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.title}}</p>
-                  <p class="invalid-msg">{{unGoodsItem.invalidMsg}}</p>
-                </div>
-              </div>
-            </movable-view>
-            <button class="delete-btn" @click="deleteItem(invalidGoodsList, unGoodsItem, unGoodsIndex)">删除</button>
-          </movable-area>
-        </div>
+        <type-dialog :parentType="'shoppingCart'"></type-dialog>
       </div>
-    </div>
-    <div class="cart-footer lzy-footer">
-      <div class="left-box">
-        <div class="select-box">
-          <i class="iconfont icon-select-no" v-if="!isAllSelected" @click="selectAll(true)">&#xe656;</i>
-          <i class="iconfont icon-select-fill" v-else  @click="selectAll(false)">&#xe655;</i>
-        </div>
-        <span class="select-title">全选</span>
-      </div>
-      <div class="right-box">
-        <span class="total">合计：</span>
-        <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-        <button class="to-pay-btn" @click="toOrderConfirm">结算({{getSelectedNum}})</button>
-      </div>
-    </div>
-    <type-dialog :parentType="'shoppingCart'"></type-dialog>
+    </base-custom-box>
   </div>
 </template>
 
 <script>
+import BaseCustomBox from "@/components/base/BaseCustomBox"
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 import numPicker from '../../components/numPicker/numPicker'
 import typeDialog from '../../components/typeDialog/typeDialog'
 
 export default {
   components: {
     numPicker,
-    typeDialog
+    typeDialog,
+    BaseCustomBox,
+    BaseNavigationBar
   },
   data () {
     return {

@@ -51,10 +51,7 @@ export default {
   },
   onLoad () {
     this.getRecommentGoodsList()
-    this.$http.get('/action/test', {
-      username: 'lzy',
-      password: 123
-    })
+    // this.$http.get('/action/getPopularSearch')
   },
   async onPullDownRefresh() {
     console.log('下拉刷新')

@@ -156,6 +156,12 @@ export default {
   onUnload () {
     this.init()
   },
+  async onPullDownRefresh() {
+    console.log('下拉刷新')
+    console.log(this)
+    // 停止下拉刷新
+    // wx.stopPullDownRefresh()
+  },
   computed: {
     getTotalPrice () {
       let price = 0
@@ -176,6 +182,7 @@ export default {
     init () {
       console.log('orderDetail页面销毁')
       this.$store.commit('Order/INIT_ORDER')
+      this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
     },
     cancelOrder () {
       wx.showModal({

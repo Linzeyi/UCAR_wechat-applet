@@ -32,7 +32,7 @@ Object.assign(fly.config, {
 
 fly.interceptors.request.use(request => {
   // console.log(request)
-  const uid = null
+  const uid = ''
   console.log('accountKey:' + accountKey)
   console.log('key:' + key)
   const data = request.body ? JSON.stringify(request.body) : '' // 需要加密的请求数据，转成字符串
@@ -40,7 +40,7 @@ fly.interceptors.request.use(request => {
   console.log('data:', data)
   // const q = SignApi.getQ(data, accountKey) // 利用请求参数data和密钥key
   const q = data
-  // console.log('q:' + q)
+  console.log('q:' + q)
   const sign = SignApi.getSign({ // 利用cid、q、uid、accountKey生成签名
     cid,
     q,
@@ -48,11 +48,15 @@ fly.interceptors.request.use(request => {
     accountKey
   })
   console.log('sign:' + sign)
-  const queryData = { // 最终的请求体
-    // uid,
-    q,
+  var queryData = { // 最终的请求体
     sign,
     cid
+  }
+  if (uid) {
+    queryData.uid = uid
+  }
+  if (q) {
+    queryData.q = q
   }
   request.body = queryData // 放入请求体
   // console.log('请求体：', queryData)
