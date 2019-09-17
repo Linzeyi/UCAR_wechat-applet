@@ -246,7 +246,7 @@ export default {
 <style lang="less" scoped>
 .orderPay-wrap {
   box-sizing: border-box;
-  padding: 10px 0;
+  padding: 0;
   background-color: #f3f3f3;
   
   .wrap-panel {
