@@ -21,6 +21,7 @@
               placeholder="--"
               v-model="name"
               @blur="focusName=false"
+              @focus="focusName=true"
               :focus="focusName"
             />
             <i class="iconfont icon-cancel" v-show="showCancel[0]" @click.stop="name = ''">&#xe65c;</i>
@@ -34,6 +35,7 @@
               placeholder="--"
               v-model="email"
               @blur="focusEmail=false"
+              @focus="focusEmail=true"
               :focus="focusEmail"
             />
             <i class="iconfont icon-cancel" v-show="showCancel[1]" @click="email = ''">&#xe65c;</i>
@@ -207,19 +209,23 @@ export default {
   background-color: rgb(243, 243, 243);
 }
 .wrap {
-  padding-top: 50rpx;
   font-size: 30rpx;
   background-color: white;
+  padding-top: 30rpx;
 
   .form {
     .form-item {
+      height: 110rpx;
+      line-height: 110rpx;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 30rpx 70rpx;
+      padding: 0 70rpx;
       border-bottom: 2rpx solid rgb(228, 228, 228);
     }
     .form-avatar {
+      height: 130rpx;
+      line-height: 130rpx;
       .avatar-right-box {
         line-height: 100rpx;
         i {
@@ -251,8 +257,7 @@ export default {
         }
         input {
           text-align: right;
-          min-height: 30rpx;
-          width: 360rpx;
+          width: 440rpx;
           display: inline-block;
           font-size: 30rpx;
           vertical-align: middle;
@@ -270,9 +275,7 @@ export default {
         }
         input {
           text-align: right;
-          margin-left: 80rpx;
-          min-height: 30rpx;
-          width: 360rpx;
+          width: 440rpx;
           display: inline-block;
           font-size: 30rpx;
           vertical-align: middle;
