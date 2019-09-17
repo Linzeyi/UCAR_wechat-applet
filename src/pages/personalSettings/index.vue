@@ -5,7 +5,7 @@
         <div class="form-item form-avatar" @click="showAvatarSheet = true">
           <span>头像</span>
           <div class="avatar-right-box">
-            <img :src="avatarUrl" @click="previewImage" mode="aspectFill" />
+            <img :src="avatarUrl" @click.stop="previewImage" mode="aspectFill" />
             <i class="iconfont icon-size">&#xe601;</i>
           </div>
         </div>
@@ -101,7 +101,7 @@ export default {
   methods: {
     previewImage() {
       if (this.avatarUrl === "") {
-        this.chooseImage();
+        this.showAvatarSheet = true
         return;
       }
       const _this = this;
