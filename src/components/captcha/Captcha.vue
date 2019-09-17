@@ -1,12 +1,16 @@
 <template>
   <div class="wrap" :class="{captcha: !captchaActive}">
-    <span v-if="captchaActive === false" @click.stop="captchaClick">发送验证码</span>
+    <span v-if="captchaActive === false" @click.stop="handleCheckPhone">发送验证码</span>
     <span v-else>倒计时{{captcha}}</span>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    phone: String,
+    type: Number
+  },
   onUnload() {
     this.resetCaptcha();
   },
@@ -18,9 +22,13 @@ export default {
     };
   },
   methods: {
-    captchaClick() {
+    sendCaptcha() {
       this.captchaActive = true;
       this.start();
+      this.$http.get("/action/user/getCaptcha", {
+        phone: this.phone,
+        type: this.type
+      });
     },
     start() {
       this.timer = setInterval(() => {
@@ -36,6 +44,14 @@ export default {
       if (this.timer) {
         clearInterval(this.timer);
       }
+    },
+    async handleCheckPhone() {
+      let flag = false;
+      flag = await this.$store.dispatch("UserInfo/checkPhone", this.phone);
+      if (!flag) {
+        return;
+      }
+      this.sendCaptcha()
     }
   }
 };

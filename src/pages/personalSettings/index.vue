@@ -246,7 +246,7 @@ export default {
         input {
           text-align: right;
           min-height: 30rpx;
-          width: 360rpx;
+          width: 450rpx;
           display: inline-block;
           font-size: 30rpx;
           vertical-align: middle;
@@ -266,7 +266,7 @@ export default {
           text-align: right;
           margin-left: 80rpx;
           min-height: 30rpx;
-          width: 360rpx;
+          width: 450rpx;
           display: inline-block;
           font-size: 30rpx;
           vertical-align: middle;

@@ -22,7 +22,7 @@
       </div>
       <div class="input-item">
         <div class="captcha">
-          <captcha></captcha>
+          <captcha :phone="form.phone" :type=3></captcha>
         </div>
         <span>验证码</span>
         <input type="text" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
