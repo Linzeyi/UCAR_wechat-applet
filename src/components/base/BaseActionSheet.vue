@@ -1,13 +1,18 @@
 <template>
   <div class="wrap" v-if="show">
+    <div class="mask" :class="wrapAnimation" @click="animationStatus = false"></div>
     <div
-      class="mask"
-      :class="wrapAnimation"
+      class="action-sheet"
+      :class="actionSheetAnimation"
       @click="animationStatus = false"
       @animationend="closeActionSheet"
-    ></div>
-    <div class="action-sheet" :class="actionSheetAnimation">
-      <slot></slot>
+    >
+      <div class="action-box">
+        <slot></slot>
+      </div>
+      <div class="action-cancel">
+        <span>取消</span>
+      </div>
     </div>
   </div>
 </template>
@@ -39,7 +44,7 @@ export default {
   },
   watch: {
     show(value) {
-      this.animationStatus = value
+      this.animationStatus = value;
     }
   }
 };
@@ -100,7 +105,7 @@ export default {
 .wrap {
   height: 100%;
   .mask {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
@@ -110,14 +115,32 @@ export default {
   }
 
   .action-sheet {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: white;
-    border-top-left-radius: 20rpx;
-    border-top-right-radius: 20rpx;
     z-index: 20;
+    padding: 0 20rpx;
+
+    .action-box {
+      border-radius: 20rpx;
+      background-color: rgb(249, 249, 249);
+    }
+
+    .action-cancel {
+      margin: 20rpx 0;
+      height: 100rpx;
+      line-height: 100rpx;
+      text-align: center;
+      font-size: 40rpx;
+      color: rgb(78, 160, 249);
+      border-radius: 20rpx;
+      background-color: rgb(249, 249, 249);
+
+      &:hover {
+        background-color: rgb(153, 153, 153);
+      }
+    }
   }
 }
 </style>
