@@ -6,57 +6,63 @@
           <span>头像</span>
           <div class="avatar-right-box">
             <img :src="avatarUrl" @click.stop="previewImage" mode="aspectFill" />
-            <i class="iconfont icon-size">&#xe601;</i>
+            <i class="iconfont icon-size">&#xe6ab;</i>
           </div>
         </div>
         <div class="form-item">
           <span>用户ID</span>
           <input type="text" disabled />
         </div>
-        <div class="form-item form-name" @click="focusName=true">
+        <div class="form-item form-name">
           <span>昵称</span>
           <div class="name-right-box">
             <input
               type="text"
               placeholder="--"
               v-model="name"
-              @blur="focusName=false"
-              @focus="focusName=true"
-              :focus="focusName"
+              @focus="focusIndex='name'"
             />
-            <i class="iconfont icon-cancel" v-show="showCancel[0]" @click.stop="name = ''">&#xe65c;</i>
+            <i
+              class="iconfont icon-cancel icon-size"
+              v-if="name !== '' && focusIndex === 'name'"
+              @click.stop="name = ''"
+            >&#xe65c;</i>
+            <i class="iconfont icon-size" v-else>&#xe603;</i>
           </div>
         </div>
-        <div class="form-item form-email" @click="focusEmail=true">
+        <div class="form-item form-email">
           <span>邮箱</span>
           <div class="email-right-box">
             <input
               type="text"
               placeholder="--"
               v-model="email"
-              @blur="focusEmail=false"
-              @focus="focusEmail=true"
-              :focus="focusEmail"
+              @focus="focusIndex='email'"
             />
-            <i class="iconfont icon-cancel" v-show="showCancel[1]" @click="email = ''">&#xe65c;</i>
+            <i
+              class="iconfont icon-cancel icon-size"
+              v-if="email !== '' && focusIndex === 'email'"
+              @click="email = ''"
+            >&#xe65c;</i>
+            <i class="iconfont icon-size" v-else>&#xe603;</i>
           </div>
         </div>
         <div class="form-item form-gender" @click="showGenderSheet=true">
           <span>性别</span>
           <div class="gender">
             <span>{{gender}}</span>
-            <i class="iconfont icon-size">&#xe601;</i>
+            <i class="iconfont icon-size">&#xe6ab;</i>
           </div>
         </div>
       </div>
       <div class="footer">
         <div @click="Utils.navigateTo('/pages/updatePassword/main')">
           <span>修改密码</span>
-          <i class="iconfont icon-size">&#xe601;</i>
+          <i class="iconfont icon-size">&#xe6ab;</i>
         </div>
         <div>
           <span>注销</span>
-          <i class="iconfont icon-size">&#xe601;</i>
+          <i class="iconfont icon-size">&#xe6ab;</i>
         </div>
       </div>
       <div class="save-bottom">
@@ -95,12 +101,11 @@ export default {
       name: "",
       email: "",
       gender: "",
-      showCancel: [false, false],
       showToast: false,
       showAvatarSheet: false,
       showGenderSheet: false,
-      focusName: false,
-      focusEmail: false
+      focusIndex: ''
+
     };
   },
   methods: {
@@ -128,19 +133,6 @@ export default {
         }
       });
     },
-    controlCancelShow() {
-      if (this.name === "" || !this.focusName) {
-        this.showCancel[0] = false;
-      } else {
-        this.showCancel[0] = true;
-      }
-
-      if (this.email === "" || !this.focusEmail) {
-        this.showCancel[1] = false;
-      } else {
-        this.showCancel[1] = true;
-      }
-    },
     getUserInfo(e) {
       const detail = e.mp.detail;
       if (detail.userInfo) {
@@ -149,24 +141,9 @@ export default {
         this.showToast = true;
       }
     }
-  },
-  watch: {
-    name() {
-      this.controlCancelShow();
-    },
-    email() {
-      this.controlCancelShow();
-    },
-    focusEmail() {
-      this.controlCancelShow();
-    },
-    focusName() {
-      this.controlCancelShow();
-    }
   }
 };
 </script>
-
 <style lang="less" scoped>
 @itemHeight: 120rpx;
 .action-sheet-item {
@@ -202,7 +179,7 @@ export default {
   color: rgb(138, 138, 138);
 }
 .icon-size {
-  font-size: 25rpx;
+  font-size: 32rpx;
 }
 .background {
   height: 100%;
@@ -222,15 +199,15 @@ export default {
       justify-content: space-between;
       padding: 0 70rpx;
       border-bottom: 2rpx solid rgb(228, 228, 228);
+
+      i {
+        vertical-align: middle;
+      }
     }
     .form-avatar {
-      height: 130rpx;
-      line-height: 130rpx;
+      height: 140rpx;
+      line-height: 140rpx;
       .avatar-right-box {
-        line-height: 100rpx;
-        i {
-          vertical-align: middle;
-        }
         img {
           height: 100rpx;
           width: 100rpx;
@@ -239,49 +216,24 @@ export default {
         }
       }
     }
-
-    .form-gender {
-      .gender-right-box {
-        i {
-          vertical-align: middle;
-        }
-        span {
-          vertical-align: middle;
-        }
-      }
-    }
     .form-name {
       .name-right-box {
-        span {
-          vertical-align: middle;
-        }
         input {
           text-align: right;
           width: 440rpx;
           display: inline-block;
           font-size: 30rpx;
-          vertical-align: middle;
-        }
-        i {
-          margin-left: 15rpx;
           vertical-align: middle;
         }
       }
     }
     .form-email {
       .email-right-box {
-        span {
-          vertical-align: middle;
-        }
         input {
           text-align: right;
           width: 440rpx;
           display: inline-block;
           font-size: 30rpx;
-          vertical-align: middle;
-        }
-        i {
-          margin-left: 15rpx;
           vertical-align: middle;
         }
       }
