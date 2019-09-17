@@ -16,12 +16,7 @@
         <div class="form-item form-name">
           <span>昵称</span>
           <div class="name-right-box">
-            <input
-              type="text"
-              placeholder="--"
-              v-model="name"
-              @focus="focusIndex='name'"
-            />
+            <input type="text" placeholder="--" v-model="name" @focus="focusIndex='name'" />
             <i
               class="iconfont icon-cancel icon-size"
               v-if="name !== '' && focusIndex === 'name'"
@@ -33,12 +28,7 @@
         <div class="form-item form-email">
           <span>邮箱</span>
           <div class="email-right-box">
-            <input
-              type="text"
-              placeholder="--"
-              v-model="email"
-              @focus="focusIndex='email'"
-            />
+            <input type="text" placeholder="--" v-model="email" @focus="focusIndex='email'" />
             <i
               class="iconfont icon-cancel icon-size"
               v-if="email !== '' && focusIndex === 'email'"
@@ -104,8 +94,7 @@ export default {
       showToast: false,
       showAvatarSheet: false,
       showGenderSheet: false,
-      focusIndex: ''
-
+      focusIndex: ""
     };
   },
   methods: {
@@ -199,8 +188,10 @@ export default {
       justify-content: space-between;
       padding: 0 70rpx;
       border-bottom: 2rpx solid rgb(228, 228, 228);
-
       i {
+        vertical-align: middle;
+      }
+      span {
         vertical-align: middle;
       }
     }
