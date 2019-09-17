@@ -13,28 +13,28 @@
           <span>用户ID</span>
           <input type="text" disabled />
         </div>
-        <div class="form-item form-name">
+        <div class="form-item form-name" @click="focusName=true">
           <span>昵称</span>
           <div class="name-right-box">
             <input
               type="text"
               placeholder="--"
               v-model="name"
-              @focus="index = 0"
-              @blur="index = null"
+              @blur="focusName=false"
+              :focus="focusName"
             />
-            <i class="iconfont icon-cancel" v-show="showCancel[0]" @click="name = ''">&#xe65c;</i>
+            <i class="iconfont icon-cancel" v-show="showCancel[0]" @click.stop="name = ''">&#xe65c;</i>
           </div>
         </div>
-        <div class="form-item form-email">
+        <div class="form-item form-email" @click="focusEmail=true">
           <span>邮箱</span>
           <div class="email-right-box">
             <input
               type="text"
               placeholder="--"
               v-model="email"
-              @focus="index = 1"
-              @blur="index = null"
+              @blur="focusEmail=false"
+              :focus="focusEmail"
             />
             <i class="iconfont icon-cancel" v-show="showCancel[1]" @click="email = ''">&#xe65c;</i>
           </div>
@@ -57,7 +57,9 @@
           <i class="iconfont icon-size">&#xe601;</i>
         </div>
       </div>
-      <div class="save-bottom"><span>保存用户信息</span></div>
+      <div class="save-bottom">
+        <span>保存用户信息</span>
+      </div>
       <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
       <base-action-sheet :show.sync="showGenderSheet">
         <div class="action-sheet-item" @click="gender='男'">男</div>
@@ -91,17 +93,18 @@ export default {
       name: "",
       email: "",
       gender: "",
-      index: null,
       showCancel: [false, false],
       showToast: false,
       showAvatarSheet: false,
-      showGenderSheet: false
+      showGenderSheet: false,
+      focusName: false,
+      focusEmail: false
     };
   },
   methods: {
     previewImage() {
       if (this.avatarUrl === "") {
-        this.showAvatarSheet = true
+        this.showAvatarSheet = true;
         return;
       }
       const _this = this;
@@ -124,13 +127,13 @@ export default {
       });
     },
     controlCancelShow() {
-      if (this.name === "" || this.index !== 0) {
+      if (this.name === "" || !this.focusName) {
         this.showCancel[0] = false;
       } else {
         this.showCancel[0] = true;
       }
 
-      if (this.email === "" || this.index !== 1) {
+      if (this.email === "" || !this.focusEmail) {
         this.showCancel[1] = false;
       } else {
         this.showCancel[1] = true;
@@ -152,7 +155,10 @@ export default {
     email() {
       this.controlCancelShow();
     },
-    index() {
+    focusEmail() {
+      this.controlCancelShow();
+    },
+    focusName() {
       this.controlCancelShow();
     }
   }
@@ -302,7 +308,7 @@ export default {
     right: 0;
     height: 100rpx;
     line-height: 100rpx;
-    color: rgb(148,48,38);
+    color: rgb(148, 48, 38);
     text-align: center;
     background-color: white;
   }
