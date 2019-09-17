@@ -11,7 +11,6 @@ import UserInfo from './modules/userInfo/index'
 import Comment from './modules/comment/index'
 import Message from './modules/message/index'
 import SystemInfo from './modules/systemInfo/index'
-import BaseComponent from './modules/baseComponent/index'
 
 Vue.use(Vuex)
 
@@ -26,8 +25,7 @@ const store = new Vuex.Store({
     UserInfo,
     Comment,
     Message,
-    SystemInfo,
-    BaseComponent
+    SystemInfo
   }
 })
 
