@@ -5,15 +5,17 @@
     </base-navigation-bar>
     <base-custom-box>
       <div class="home-wrap">
-        <com-swiper :imgList="imgList"></com-swiper>
+        <com-swiper :imgList="imgList" :isLink="true"></com-swiper>
         <div class="goodsList-panel">
           <div class="header">
             <span class="panel-title">热门推荐</span>
             <span class="more-btn" @click="switchTab('/pages/classification/main')">
-              <i class="iconfont icon-more">&#xe601;</i> 更多
+              更多
             </span>
           </div>
-          <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
+          <div class="list-content">
+            <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
+          </div>
         </div>
       </div>
     </base-custom-box>
@@ -54,16 +56,19 @@ export default {
   },
   async onPullDownRefresh() {
     console.log('下拉刷新')
-    console.log(this)
+    this.getRecommendGoodsList()
     // 停止下拉刷新
-    // wx.stopPullDownRefresh()
   },
   methods: {
     getRecommendGoodsList () {
       this.$http.get('/action/goods/getRecommendGoodsList').then(res => {
         console.log(res)
+        if (res.data) {
+          this.goodsList = res.data
+        }
+        wx.stopPullDownRefresh()
       })
-      this.goodsList = this.$store.getters['Goods/goodsList']
+      // this.goodsList = this.$store.getters['Goods/goodsList']
     },
     switchTab (url) {
       mpvue.switchTab({ url })
@@ -77,14 +82,17 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+  background-color: #f3f3f3;
   .goodsList-panel {
     width: 100%;
     flex-grow: 1;
-    background-color: #f3f3f3;
+    display: flex;
+    flex-direction: column;
     &:after {
       border-bottom: none;
     }
     .header {
+      z-index: 1;
       background-color: #fff;
       box-shadow: 0 3px 10px 0 #ddd;
       font-weight: 600;
@@ -101,6 +109,9 @@ export default {
       &:after {
         border-bottom: none;
       }
+    }
+    .list-content {
+      flex: 1;
     }
     .weui-panel__bd {
       padding-top: 10px;

@@ -1,47 +1,63 @@
 <template>
-  <div class="goodsDetail" :class="{'invalid': checkInvalid}">
-    <div class="tab-navbar">
-      <div class="flex-box">
-          <div class="tab-navbar-item" 
-            v-for="(item, index) in navbarList" 
-            :key="index" 
-            @click="selectNavTab(index)">
-            <span class="nav-name" :class="{'on': currentTabKey == index}">{{item.name}}</span>
+  <div style="height: 100%">
+    <base-navigation-bar :name="goods.title">
+      <i class="iconfont" @click="backOff">&#xe625;</i>
+    </base-navigation-bar>
+    <base-custom-box>
+      <div class="goodsDetail" :class="{'invalid': checkInvalid}">
+        <div class="tab-navbar">
+          <div class="flex-box">
+              <div class="tab-navbar-item" 
+                v-for="(item, index) in navbarList" 
+                :key="index" 
+                @click="selectNavTab(index)">
+                <span class="nav-name" :class="{'on': currentTabKey == index}">{{item.name}}</span>
+              </div>
           </div>
+        </div>
+        <div class="tab-content">
+          <swiper :current="currentTabKey" @change="changeTabContent">
+            <swiper-item>
+              <goods-info :goods.sync="goods" :num.sync="goods.num"></goods-info>
+            </swiper-item>
+            <swiper-item class="no-bg-color">
+              <goods-comment :goodsId="goods.id"></goods-comment>
+            </swiper-item>
+          </swiper>
+        </div>
+        <div class="invalid-tips">
+          该商品已下架
+        </div>
+        <div class="tab-footer lzy-footer">
+          <div class="left-box" :class="{'small': getTotalPrice >= 100000}">
+            <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
+          </div>
+          <div class="right-box">
+            <button class="shoppingCart-btn" @click="addToShoppingCart" :disabled="checkInvalid">加入购物车</button>
+            <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm" :disabled="checkInvalid">立即购买</button>
+          </div>
+        </div>
+        <type-dialog :parentType="'goodsDetail'"></type-dialog>
       </div>
-    </div>
-    <div class="tab-content">
-      <swiper :current="currentTabKey" @change="changeTabContent">
-        <swiper-item>
-          <goods-info :goods.sync="goods" :num.sync="goods.num"></goods-info>
-        </swiper-item>
-        <swiper-item class="no-bg-color">
-          <goods-comment :goodsId="goods.id"></goods-comment>
-        </swiper-item>
-      </swiper>
-    </div>
-    <div class="invalid-tips">
-      该商品已下架
-    </div>
-    <div class="tab-footer lzy-footer">
-      <div class="left-box" :class="{'small': getTotalPrice >= 100000}">
-        <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-      </div>
-      <div class="right-box">
-        <button class="shoppingCart-btn" @click="addToShoppingCart" :disabled="checkInvalid">加入购物车</button>
-        <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm" :disabled="checkInvalid">立即购买</button>
-      </div>
-    </div>
-    <type-dialog :parentType="'goodsDetail'"></type-dialog>
+    </base-custom-box>
   </div>
 </template>
 
 <script>
-import goodsInfo from '../../components/goodsDetail/goodsInfo/goodsInfo'
-import goodsComment from '../../components/goodsDetail/goodsComment/goodsComment'
-import typeDialog from '../../components/typeDialog/typeDialog'
+import BaseCustomBox from "@/components/base/BaseCustomBox"
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
+import goodsInfo from '@/components/goodsDetail/goodsInfo/goodsInfo'
+import goodsComment from '@/components/goodsDetail/goodsComment/goodsComment'
+import typeDialog from '@/components/typeDialog/typeDialog'
 
 export default {
+  components: {
+    goodsInfo,
+    goodsComment,
+    typeDialog,
+    BaseCustomBox,
+    BaseNavigationBar
+  },
   data () {
     return {
       currentTabKey: 0,
@@ -96,16 +112,13 @@ export default {
       return false
     }
   },
-  onLoad () {
+  onLoad (option) {
+    console.log(option)
+    this.goods.goodsNo = option.goodsNo
     this.goods = this.$store.getters['Goods/goods']
     wx.setNavigationBarTitle({
       title: this.goods.title
     })
-  },
-  components: {
-    goodsInfo,
-    goodsComment,
-    typeDialog
   },
   async onPullDownRefresh() {
     console.log('下拉刷新')
@@ -118,6 +131,9 @@ export default {
       this.currentTabKey = 0
       this.$store.commit('Goods/SET_GOODS', {})
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
+    },
+    backOff () {
+      mpvue.navigateBack({ delta: 1 })
     },
     changeTabContent (e) {
       this.currentTabKey = e.mp.detail.current

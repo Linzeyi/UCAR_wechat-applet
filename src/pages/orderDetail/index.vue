@@ -1,125 +1,138 @@
 <template>
-  <div class="orderPay-wrap lzy-list-wrap">
-    <div class="wrap-panel top-panel">
-      <div class="left-box">
-        <p class="status" v-if="order.status == 0">等待买家付款...</p>
-      </div>
-    </div>
-    <div class="wrap-panel goods-panel">
-      <div class="header">
-        <i class="iconfont icon-goods">&#xe618;</i>
-        <span class="title">选购商品</span>
-      </div>
-      <div class="goods-list">
-        <div class="goods-box" v-for="(goodsItem, goodsIndex) in order.goodsList" :key="goodsIndex">
-          <div class="info-box lzy-flex-box">
-            <div class="left-box">
-              <div class="img-box">
-                <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
+  <div style="height: 100%">
+    <base-navigation-bar name="订单详情">
+      <i class="iconfont" @click="backOff">&#xe625;</i>
+    </base-navigation-bar>
+    <base-custom-box>
+      <div class="orderPay-wrap lzy-list-wrap">
+        <div class="wrap-panel top-panel">
+          <div class="left-box">
+            <p class="status" v-if="order.status == 0">等待买家付款...</p>
+          </div>
+        </div>
+        <div class="wrap-panel goods-panel">
+          <div class="header">
+            <i class="iconfont icon-goods">&#xe618;</i>
+            <span class="title">选购商品</span>
+          </div>
+          <div class="goods-list">
+            <div class="goods-box" v-for="(goodsItem, goodsIndex) in order.goodsList" :key="goodsIndex">
+              <div class="info-box lzy-flex-box">
+                <div class="left-box">
+                  <div class="img-box">
+                    <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
+                  </div>
+                </div>
+                <div class="content-box">
+                  <p class="title">{{goodsItem.title}}</p>
+                  <p class="type">
+                    <span class="type-title">
+                      {{goodsItem.type.title}}:
+                    </span>
+                    <span class="type-item">{{goodsItem.type.content}}；</span>
+                  </p>
+                </div>
+                <div class="right-box">
+                  <p class="price"><span class="logo">¥</span>{{goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price}}</p>
+                  <p class="num">x{{goodsItem.num}}</p>
+                </div>
               </div>
             </div>
-            <div class="content-box">
-              <p class="title">{{goodsItem.title}}</p>
-              <p class="type">
-                <span class="type-title">
-                  {{goodsItem.type.title}}:
-                </span>
-                <span class="type-item">{{goodsItem.type.content}}；</span>
-              </p>
-            </div>
-            <div class="right-box">
-              <p class="price"><span class="logo">¥</span>{{goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price}}</p>
-              <p class="num">x{{goodsItem.num}}</p>
-            </div>
+          </div>
+          <div class="goods-footer">
+            <p class="small-font">
+              <span class="left">商品总价</span>
+              <span class="right">¥ {{getTotalPrice}}</span>
+            </p>
+            <p class="small-font">
+              <span class="left">其他开销</span>
+              <span class="right">无</span>
+            </p>
+            <p class="order-price-font">
+              <span class="left">订单总价</span>
+              <span class="right">¥ {{getTotalPrice}}</span>
+            </p>
+            <p class="total-price-font">
+              <span class="left">需付款</span>
+              <span class="right"><span class="logo">¥</span> {{getTotalPrice}}</span>
+            </p>
+          </div>
+        </div>
+        <div class="wrap-panel address-panel">
+          <div class="header">
+            <i class="iconfont icon-goods">&#xe613;</i>
+            <span class="title">收货信息</span>
+          </div>
+          <div class="content-panel">
+            <span class="title">收货人</span>
+            <span>{{order.addressInfo.receiverName}}</span>
+          </div>
+          <div class="content-panel">
+            <span class="title">联系方式</span>
+            <span>{{order.addressInfo.receiverPhone}}</span>
+          </div>
+          <div class="content-panel">
+            <span class="title">收货地址</span>
+            <span>{{order.addressInfo.address}}</span>
+          </div>
+        </div>
+        <div class="wrap-panel order-info-panel">
+          <div class="header">
+            <i class="iconfont icon-order">&#xe643;</i>
+            <span class="title">订单信息</span>
+          </div>
+          <div class="content-panel">
+            <span class="title">订单编号</span>
+            <span>{{order.orderId}}</span>
+          </div>
+          <div class="content-panel">
+            <span class="title">订单状态</span>
+            <span>{{getStatusList}}</span>
+          </div>
+          <div class="content-panel">
+            <span class="title">创建时间</span>
+            <span>{{order.createTime}}</span>
+          </div>
+          <div class="content-panel">
+            <span class="title">我的备注</span>
+            <span>{{order.remark}}</span>
+          </div>
+        </div>
+        <div class="wrap-panel pay-type-panel">
+          <div class="header">
+            <span class="iconfont icon-pay-type">&#xe60e;</span>
+            <span class="title">支付方式</span>
+          </div>
+          <div class="content-panel" v-for="(item, index) in payTypeList" :key="index">
+            <p class="flex-box">
+              <span class="icon-box" @click="selectPayType = item">
+                <i class="iconfont icon-select-no" v-if="selectPayType.name != item.name">&#xe656;</i>
+                <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
+              </span>
+              <span class="pay-type-name">{{item.name}}</span>
+              <span class="balance"><span class="logo">¥</span> {{item.balance}}</span>
+            </p>
+          </div>
+        </div>
+        <div class="pay-footer lzy-footer">
+          <div class="right-box">
+            <button class="cancel-btn" @click="cancelOrder">取消订单</button>
+            <button class="pay-btn" @click="payOrder">付款</button>
           </div>
         </div>
       </div>
-      <div class="goods-footer">
-        <p class="small-font">
-          <span class="left">商品总价</span>
-          <span class="right">¥ {{getTotalPrice}}</span>
-        </p>
-        <p class="small-font">
-          <span class="left">其他开销</span>
-          <span class="right">无</span>
-        </p>
-        <p class="order-price-font">
-          <span class="left">订单总价</span>
-          <span class="right">¥ {{getTotalPrice}}</span>
-        </p>
-        <p class="total-price-font">
-          <span class="left">需付款</span>
-          <span class="right"><span class="logo">¥</span> {{getTotalPrice}}</span>
-        </p>
-      </div>
-    </div>
-    <div class="wrap-panel address-panel">
-      <div class="header">
-        <i class="iconfont icon-goods">&#xe613;</i>
-        <span class="title">收货信息</span>
-      </div>
-      <div class="content-panel">
-        <span class="title">收货人</span>
-        <span>{{order.addressInfo.receiverName}}</span>
-      </div>
-      <div class="content-panel">
-        <span class="title">联系方式</span>
-        <span>{{order.addressInfo.receiverPhone}}</span>
-      </div>
-      <div class="content-panel">
-        <span class="title">收货地址</span>
-        <span>{{order.addressInfo.address}}</span>
-      </div>
-    </div>
-    <div class="wrap-panel order-info-panel">
-      <div class="header">
-        <i class="iconfont icon-order">&#xe643;</i>
-        <span class="title">订单信息</span>
-      </div>
-      <div class="content-panel">
-        <span class="title">订单编号</span>
-        <span>{{order.orderId}}</span>
-      </div>
-      <div class="content-panel">
-        <span class="title">订单状态</span>
-        <span>{{getStatusList}}</span>
-      </div>
-      <div class="content-panel">
-        <span class="title">创建时间</span>
-        <span>{{order.createTime}}</span>
-      </div>
-      <div class="content-panel">
-        <span class="title">我的备注</span>
-        <span>{{order.remark}}</span>
-      </div>
-    </div>
-    <div class="wrap-panel pay-type-panel">
-      <div class="header">
-        <span class="iconfont icon-pay-type">&#xe60e;</span>
-        <span class="title">支付方式</span>
-      </div>
-      <div class="content-panel" v-for="(item, index) in payTypeList" :key="index">
-        <p class="flex-box">
-          <span class="icon-box" @click="selectPayType = item">
-            <i class="iconfont icon-select-no" v-if="selectPayType.name != item.name">&#xe656;</i>
-            <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
-          </span>
-          <span class="pay-type-name">{{item.name}}</span>
-          <span class="balance"><span class="logo">¥</span> {{item.balance}}</span>
-        </p>
-      </div>
-    </div>
-    <div class="pay-footer lzy-footer">
-      <div class="right-box">
-        <button class="cancel-btn" @click="cancelOrder">取消订单</button>
-        <button class="pay-btn" @click="payOrder">付款</button>
-      </div>
-    </div>
+    </base-custom-box>
   </div>
 </template>
 
 <script>
+import BaseCustomBox from "@/components/base/BaseCustomBox"
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 export default {
+  components: {
+    BaseCustomBox,
+    BaseNavigationBar
+  },
   data () {
     return {
       order: {
@@ -183,6 +196,9 @@ export default {
       console.log('orderDetail页面销毁')
       this.$store.commit('Order/INIT_ORDER')
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
+    },
+    backOff () {
+      mpvue.navigateBack({ delta: 1 })
     },
     cancelOrder () {
       wx.showModal({

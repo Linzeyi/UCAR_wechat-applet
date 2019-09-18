@@ -16,14 +16,24 @@ export default {
       default () {
         return []
       }
+    },
+    isLink: {
+      type: Boolean,
+      default () {
+        return false
+      }
     }
   },
   methods: {
     showImg (item) {
-      wx.previewImage({
-        current: item,
-        urls: this.imgList
-      })
+      if (this.isLink) {
+        mpvue.navigateTo({url: '/pages/goodsDetail/main?goodsId=' + item.goodsId})
+      } else {
+        wx.previewImage({
+          current: item,
+          urls: this.imgList
+        })
+      }
     }
   }
 }
