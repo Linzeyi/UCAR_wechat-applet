@@ -50,7 +50,7 @@ export default {
     BaseNavigationBar
   },
   onLoad () {
-    this.getRecommentGoodsList()
+    this.getRecommendGoodsList()
   },
   async onPullDownRefresh() {
     console.log('下拉刷新')
@@ -59,7 +59,10 @@ export default {
     // wx.stopPullDownRefresh()
   },
   methods: {
-    getRecommentGoodsList () {
+    getRecommendGoodsList () {
+      this.$http.get('/action/goods/getRecommendGoodsList').then(res => {
+        console.log(res)
+      })
       this.goodsList = this.$store.getters['Goods/goodsList']
     },
     switchTab (url) {

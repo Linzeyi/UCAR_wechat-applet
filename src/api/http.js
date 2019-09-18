@@ -71,7 +71,7 @@ fly.interceptors.request.use(request => {
 })
 
 fly.interceptors.response.use(response => {
-  return response.data
+  return response.data.content
 }, err => {
   log(err)
 })

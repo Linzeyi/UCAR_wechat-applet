@@ -23,7 +23,7 @@
       <div class="panel">
         <p>
           <span class="panel-title">商家</span>
-          <span class="store">{{goods.store.name}}</span>
+          <span class="store">自营店</span>
         </p>
       </div>
       <div class="panel">
