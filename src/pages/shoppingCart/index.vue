@@ -32,7 +32,7 @@
                       <p class="bottom-p" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
                         <span class="price"><span class="logo">¥</span>{{(typeItem.discountPrice ? typeItem.discountPrice : typeItem.price )* goodsItem.num}}</span>
                         <span class="numPicker-box">
-                          <num-picker :min="1" :isSmall="true" :max="typeItem.stock" :num.sync="goodsItem.num"></num-picker>
+                          <num-picker :min="1" :isSmall="true" :max="typeItem.stock" :num.sync="goodsItem.num" @changeType="changeType"></num-picker>
                         </span>
                       </p>
                     </div>
@@ -83,7 +83,7 @@
             <button class="to-pay-btn" @click="toOrderConfirm">结算({{getSelectedNum}})</button>
           </div>
         </div>
-        <type-dialog :parentType="'shoppingCart'"></type-dialog>
+        <type-dialog :parentType="'shoppingCart'" @changeType="changeType"></type-dialog>
       </div>
     </base-custom-box>
   </div>
@@ -92,8 +92,8 @@
 <script>
 import BaseCustomBox from "@/components/base/BaseCustomBox"
 import BaseNavigationBar from "@/components/base/BaseNavigationBar"
-import numPicker from '../../components/numPicker/numPicker'
-import typeDialog from '../../components/typeDialog/typeDialog'
+import numPicker from '@/components/numPicker/numPicker'
+import typeDialog from '@/components/typeDialog/typeDialog'
 
 export default {
   components: {
@@ -154,6 +154,15 @@ export default {
     // wx.stopPullDownRefresh()
   },
   methods: {
+    changeType () {
+      wx.showLoading({
+        title: '正在加载',
+        mask: true
+      })
+      setTimeout(function () {
+        wx.hideLoading()
+      }, 1000)
+    },
     getShoppingCartGoodsList () {
       let goodsList = this.$store.getters['ShoppingCart/goodsList']
       console.log(goodsList)

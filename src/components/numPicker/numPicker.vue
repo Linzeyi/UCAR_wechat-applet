@@ -60,6 +60,7 @@ export default {
         this.value = this.min
         this.$emit('update:num', this.min)
       }
+      this.$emit('changeType')
     },
     checkNum (e) {
       let val = e.target.value
@@ -97,6 +98,7 @@ export default {
     reduce () {
       if (this.num > this.min) {
         this.$emit('update:num', this.num - 1)
+        this.$emit('changeType')
       } else {
         wx.showToast({
           title: '数值不能低于' + this.min,
@@ -108,6 +110,7 @@ export default {
     plus () {
       if (this.num !== this.max) {
         this.$emit('update:num', this.num + 1)
+        this.$emit('changeType')
       } else {
         wx.showToast({
           title: '数值不能超过' + this.max,

@@ -9,7 +9,7 @@
     <div
       class="nav-title"
       :style="{'margin-top':iconTop,'height': iconHeight, 'line-height': iconHeight}"
-    >{{name}}</div>
+    >{{handleName}}</div>
   </div>
 </template>
 
@@ -40,6 +40,13 @@ export default {
     },
     iconHeight() {
       return this.menuInfo.height + "px";
+    },
+    handleName() {
+      if (this.name.length > 9) {
+        return this.name.slice(0, 9) + "...";
+      } else {
+        return this.name;
+      }
     }
   }
 };

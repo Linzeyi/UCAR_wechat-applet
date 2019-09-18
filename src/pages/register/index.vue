@@ -22,7 +22,7 @@
       </div>
       <div class="input-item">
         <div class="captcha">
-          <captcha></captcha>
+          <captcha :phone="form.phone" :type=1></captcha>
         </div>
         <span>验证码</span>
         <input type="text" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
@@ -96,8 +96,15 @@ export default {
       if (!flag) {
         return;
       }
-      console.log("验证成功");
+      this.register()
     }
+  },
+  register() {
+    this.$http.post('/action/user/register', {
+      phone: this.form.phone,
+      captcha: this.form.captcha,
+      password: this.form.password
+    })
   }
 };
 </script>

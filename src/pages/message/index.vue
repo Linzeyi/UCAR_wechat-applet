@@ -39,37 +39,6 @@ import { messageList } from '@/fake.js'
 export default {
   data () {
     return {
-      unreadIsShow: false,
-      unreadMessage: [
-        {
-          title: '第一条未读消息',
-          content: '111未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息',
-          dateTime: '2019年9月6日 10:00:00',
-          isShow: false,
-          isRead: false
-        },
-        {
-          title: '第二条未读消息',
-          content: '222未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息',
-          dateTime: '2018年9月6日 08:00:00',
-          isShow: false,
-          isRead: false
-        }
-      ],
-      readedMessage: [
-        {
-          title: '第一条已读消息',
-          content: '111已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息',
-          dateTime: '2019年9月6日 13:03:00',
-          isShow: true
-        },
-        {
-          title: '第二条已读消息',
-          content: '222已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息',
-          dateTime: '2018年9月6日 10:30:00',
-          isShow: true
-        }
-      ],
       messageList: messageList
     }
   },
@@ -81,11 +50,11 @@ export default {
   },
   computed: {
     unreadMessageList () {
-      console.log(this.$store.getters['Message/newMessageList'], 'new message')
+      // console.log(this.$store.getters['Message/newMessageList'], 'new message')
       return this.$store.getters['Message/newMessageList']
     },
     readMessageList () {
-      console.log(this.$store.getters['Message/oldMessageList'], 'old message')
+      // console.log(this.$store.getters['Message/oldMessageList'], 'old message')
       return this.$store.getters['Message/oldMessageList']
     }
   },

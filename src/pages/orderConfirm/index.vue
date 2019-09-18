@@ -1,78 +1,90 @@
 <template>
-  <div class="orderConfirm-wrap lzy-list-wrap">
-    <div class="order-panel">
-      <div class="address-box lzy-flex-box" @click="toEditAddress">
-        <div class="left-box">
-          <i class="iconfont icon-address">&#xe613;</i>
-        </div>
-        <div class="content-box">
-          <p>
-            <span class="name">{{getAddress.receiverName}}</span>
-            <span class="phone">{{getAddress.receiverPhone}}</span>
-            <span class="type" v-if="getAddress.isDefault">默认</span>
-          </p>
-          <p>
-            {{getAddress.address}}
-          </p>
-        </div>
-        <div class="right-box">
-          <i class="iconfont icon-right">&#xe601;</i>
-        </div>
-      </div>
-    </div>
-    <div class="order-panel goods-panel" v-for="(goodsItem, goodsIndex) in order.goodsList" :key="goodsIndex">
-      <div class="goods-box">
-        <div class="header">
-          <span class="header-title">{{goodsItem.store.name}}</span>
-        </div>
-        <div class="info-box lzy-flex-box">
-          <div class="left-box">
-            <div class="img-box">
-              <image :src="goodsItem.type.imgList[0]" alt="商品图片" mode="aspectFit" ></image>
+  <div style="height: 100%">
+    <base-navigation-bar name="确认订单">
+      <i class="iconfont" @click="backOff">&#xe625;</i>
+    </base-navigation-bar>
+    <base-custom-box>
+      <div class="orderConfirm-wrap lzy-list-wrap">
+        <div class="order-panel">
+          <div class="address-box lzy-flex-box" @click="toEditAddress">
+            <div class="left-box">
+              <i class="iconfont icon-address">&#xe613;</i>
+            </div>
+            <div class="content-box">
+              <p>
+                <span class="name">{{getAddress.receiverName}}</span>
+                <span class="phone">{{getAddress.receiverPhone}}</span>
+                <span class="type" v-if="getAddress.isDefault">默认</span>
+              </p>
+              <p>
+                {{getAddress.address}}
+              </p>
+            </div>
+            <div class="right-box">
+              <i class="iconfont icon-right">&#xe601;</i>
             </div>
           </div>
-          <div class="content-box"  @click="toGoodsDetail(goodsItem)">
-            <p class="title">{{goodsItem.title}}</p>
-            <p class="type">
-              <span class="type-title">
-                {{goodsItem.type.title}}:
-              </span>
-              <span class="type-item">{{goodsItem.type.content}}；</span>
-            </p>
+        </div>
+        <div class="order-panel goods-panel" v-for="(goodsItem, goodsIndex) in order.goodsList" :key="goodsIndex">
+          <div class="goods-box">
+            <div class="header">
+            </div>
+            <div class="info-box lzy-flex-box">
+              <div class="left-box">
+                <div class="img-box">
+                  <image :src="goodsItem.type.imgList[0]" alt="商品图片" mode="aspectFit" ></image>
+                </div>
+              </div>
+              <div class="content-box"  @click="toGoodsDetail(goodsItem)">
+                <p class="title">{{goodsItem.title}}</p>
+                <p class="type">
+                  <span class="type-title">
+                    {{goodsItem.type.title}}:
+                  </span>
+                  <span class="type-item">{{goodsItem.type.content}}；</span>
+                </p>
+              </div>
+              <div class="right-box">
+                <p class="price"><span class="logo">¥</span>{{goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price}}</p>
+                <p class="num">x{{goodsItem.num}}</p>
+              </div>
+            </div>
+            <div class="footer">
+              <p>
+                <span class="num">共{{goodsItem.num}}件</span>
+                小记：<span class="price"><span class="logo">¥</span>{{(goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price) * goodsItem.num}}</span>
+              </p>
+            </div>
           </div>
+        </div>
+        <div class="order-panel">
+          <div class="header">
+            <span class="header-title">备注<span class="tips">（非必填）</span></span>
+          </div>
+          <div class="remarks">
+            <textarea v-model="order.remark" placeholder="请输入针对该订单的备注信息..." maxlength="300" auto-height="true"></textarea>
+          </div>
+        </div>
+        <div class="order-footer lzy-footer">
           <div class="right-box">
-            <p class="price"><span class="logo">¥</span>{{goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price}}</p>
-            <p class="num">x{{goodsItem.num}}</p>
+            <span class="num">共{{getTotalNum}}件，</span>
+            合计:<span class="total-price"><span class="logo">¥</span>{{getTotalPrice}}</span>
+            <button class="confirmOrder-btn" @click="toOrderDetail">提交订单</button>
           </div>
         </div>
-        <div class="footer">
-          <p>
-            <span class="num">共{{goodsItem.num}}件</span>
-            小记：<span class="price"><span class="logo">¥</span>{{(goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price) * goodsItem.num}}</span>
-          </p>
-        </div>
       </div>
-    </div>
-    <div class="order-panel">
-      <div class="header">
-        <span class="header-title">备注<span class="tips">（非必填）</span></span>
-      </div>
-      <div class="remarks">
-        <textarea v-model="order.remark" placeholder="请输入针对该订单的备注信息..." maxlength="300" auto-height="true"></textarea>
-      </div>
-    </div>
-    <div class="order-footer lzy-footer">
-      <div class="right-box">
-        <span class="num">共{{getTotalNum}}件，</span>
-        合计:<span class="total-price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-        <button class="confirmOrder-btn" @click="toOrderDetail">提交订单</button>
-      </div>
-    </div>
-  </div>
+    </base-custom-box>
+</div>
 </template>
 
 <script>
+import BaseCustomBox from "@/components/base/BaseCustomBox"
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 export default {
+  components: {
+    BaseCustomBox,
+    BaseNavigationBar
+  },
   data () {
     return {
       order: {
@@ -130,6 +142,19 @@ export default {
     },
     toEditAddress () {
       mpvue.navigateTo({ url: '/pages/selectAddress/main' })
+    },
+    backOff () {
+      wx.showModal({
+        title: '订单未提交',
+        content: '您的订单尚未提交，如果离开此页面将不会保存订单信息，是否继续？',
+        cancelText: '否',
+        confirmText: '是',
+        success (res) {
+          if (res.confirm) {
+            mpvue.navigateBack({ delta: 1 })
+          }
+        }
+      })
     },
     toGoodsDetail (goodsItem) {
       let that = this
