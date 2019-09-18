@@ -1,6 +1,7 @@
 <template>
-  <div class="background">
-    <div class="wrap">
+  <div class="wrap">
+    <div class="settings">
+      <span class="box-title">基础信息</span>
       <div class="form">
         <div class="form-item form-avatar" @click="showAvatarSheet = true;focusIndex=''">
           <span>头像</span>
@@ -45,35 +46,36 @@
           </div>
         </div>
       </div>
-      <div class="footer">
-        <div @click="Utils.navigateTo('/pages/updatePassword/main')">
-          <span>修改密码</span>
-          <i class="iconfont icon-size">&#xe6ab;</i>
-        </div>
-        <div>
-          <span>注销</span>
-          <i class="iconfont icon-size">&#xe6ab;</i>
-        </div>
-      </div>
-      <div class="save-bottom">
-        <span>保存用户信息</span>
-      </div>
-      <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
-      <base-action-sheet :show.sync="showGenderSheet">
-        <div class="action-sheet-item" @click="gender='男'">男</div>
-        <div class="action-sheet-item" @click="gender='女'">女</div>
-        <div class="action-sheet-item" @click="gender='保密'">保密</div>
-      </base-action-sheet>
-      <base-action-sheet :show.sync="showAvatarSheet">
-        <button
-          class="action-sheet-item wx-button"
-          open-type="getUserInfo"
-          @getuserinfo="getUserInfo"
-        >微信头像</button>
-        <div class="action-sheet-item" @click="chooseImage('album')">从相册选择</div>
-        <div class="action-sheet-item" @click="chooseImage('camera')">拍照</div>
-      </base-action-sheet>
     </div>
+    <div class="others">
+      <span class="box-title">其他设置</span>
+      <div @click="Utils.navigateTo('/pages/updatePassword/main')">
+        <span>修改密码</span>
+        <i class="iconfont icon-size">&#xe6ab;</i>
+      </div>
+      <div>
+        <span>注销</span>
+        <i class="iconfont icon-size">&#xe6ab;</i>
+      </div>
+    </div>
+    <div class="save-bottom">
+      <span>保存用户信息</span>
+    </div>
+    <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
+    <base-action-sheet :show.sync="showGenderSheet">
+      <div class="action-sheet-item" @click="gender='男'">男</div>
+      <div class="action-sheet-item" @click="gender='女'">女</div>
+      <div class="action-sheet-item" @click="gender='保密'">保密</div>
+    </base-action-sheet>
+    <base-action-sheet :show.sync="showAvatarSheet">
+      <button
+        class="action-sheet-item wx-button"
+        open-type="getUserInfo"
+        @getuserinfo="getUserInfo"
+      >微信头像</button>
+      <div class="action-sheet-item" @click="chooseImage('album')">从相册选择</div>
+      <div class="action-sheet-item" @click="chooseImage('camera')">拍照</div>
+    </base-action-sheet>
   </div>
 </template>
 
@@ -151,8 +153,8 @@ export default {
     border-bottom-left-radius: 20rpx;
     border-bottom-right-radius: 20rpx;
   }
-  &:hover {
-    background-color: rgb(153, 153, 153);
+  &:active {
+    background-color: rgb(180, 180, 180);
   }
 }
 
@@ -170,64 +172,80 @@ export default {
 .icon-size {
   font-size: 30rpx;
 }
-.background {
-  height: 100%;
-  background-color: rgb(243, 243, 243);
+
+.box-title {
+  margin-top: 15rpx;
+  margin-left: 60rpx;
+  font-weight: bold;
+  font-size: 26rpx;
+  color: rgb(148, 148, 148);
 }
 .wrap {
-  font-size: 30rpx;
-  background-color: white;
-  padding-top: 30rpx;
+  height: 100%;
+  background-color: rgb(243, 243, 243);
+  padding: 20rpx;
 
-  .form {
-    .form-item {
-      height: 110rpx;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 70rpx;
-      border-bottom: 2rpx solid rgb(228, 228, 228);
-      > span {
-        width: 120rpx;
-      }
-      .right-box {
-        > input {
-          width: 440rpx;
-          display: inline-block;
-          text-align: right;
-          font-size: 30rpx;
-          vertical-align: middle;
+  .settings {
+    font-size: 30rpx;
+    background-color: white;
+    border-radius: 20rpx;
+
+    .form {
+      .form-item {
+        height: 110rpx;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 70rpx;
+        border-bottom: 2rpx solid rgb(228, 228, 228);
+
+        &:last-child {
+          border-bottom: 0;
         }
-        > i {
-          vertical-align: -4rpx;
+        > span {
+          width: 120rpx;
+        }
+        .right-box {
+          > input {
+            width: 400rpx;
+            display: inline-block;
+            text-align: right;
+            font-size: 30rpx;
+            vertical-align: middle;
+          }
+          > i {
+            vertical-align: -4rpx;
+          }
         }
       }
-    }
-    .form-avatar {
-      height: 140rpx;
-      .avatar-right-box {
-        img {
-          height: 100rpx;
-          width: 100rpx;
-          border-radius: 50%;
-          vertical-align: middle;
+      .form-avatar {
+        height: 140rpx;
+        .avatar-right-box {
+          img {
+            height: 100rpx;
+            width: 100rpx;
+            border-radius: 50%;
+            vertical-align: middle;
+          }
         }
       }
     }
   }
-
-  .footer {
+  .others {
     margin-top: 60rpx;
     width: 100%;
+    background-color: white;
+    border-radius: 20rpx;
     > div {
-      padding: 30rpx 70rpx;
+      height: 110rpx;
+      padding: 0 70rpx;
       border-bottom: 2rpx solid rgb(228, 228, 228);
       display: flex;
       justify-content: space-between;
       align-items: center;
 
-      &:nth-of-type(1) {
-        border-top: 2rpx solid rgb(228, 228, 228);
+      &:last-child {
+        border-bottom: 0;
       }
     }
   }
@@ -239,9 +257,17 @@ export default {
     right: 0;
     height: 100rpx;
     line-height: 100rpx;
-    color: rgb(148, 48, 38);
     text-align: center;
     background-color: white;
+    &:active {
+      span {
+        display: inline-block;
+        transform: scale(0.9)
+      }
+    }
+    span {
+      color: rgb(148, 48, 38);
+    }
   }
 }
 </style>
