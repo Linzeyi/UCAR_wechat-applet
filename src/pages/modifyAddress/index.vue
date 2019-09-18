@@ -103,10 +103,11 @@ export default {
     }
   },
   onLoad (option) {
-    var addressList = this.$store.getters['UserCenter/addressList']
-    this.formData = addressList.find(item => {
+    let addressList = this.$store.getters['UserCenter/addressList']
+    let addr = addressList.find(item => {
       return item.addressId + '' === option.addressId
     })
+    this.formData = {...addr}
   },
   onUnload () {
     this.formData = undefined
@@ -233,6 +234,7 @@ export default {
 @baoWoBlack: #515151;
 @baoWoRed: #771212;
 @baoWoFont: 'PingFangSC-Light';
+@orange: #ff6421;
 .modifyAddress-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
@@ -275,7 +277,7 @@ export default {
     i {
       margin-right: 5px;
       font-size: 0.8em;
-      color: @baoWoRed;
+      color: @orange;
     }
     span {
       font-size: 0.8em;
@@ -285,7 +287,7 @@ export default {
     position: absolute;
     bottom: 40px;
     color: white;
-    background: @baoWoBlack;
+    background: @orange;
     font-family: @baoWoFont;
     width: 94%;
     left: 50%;

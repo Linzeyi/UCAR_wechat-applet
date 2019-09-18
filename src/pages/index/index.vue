@@ -51,10 +51,6 @@ export default {
   },
   onLoad () {
     this.getRecommentGoodsList()
-    this.$http.get('/action/test', {
-      username: 'lzy',
-      password: 123
-    })
   },
   async onPullDownRefresh() {
     console.log('下拉刷新')

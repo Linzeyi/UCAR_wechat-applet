@@ -2,7 +2,8 @@ import ws from '@/api/socket.js'
 export default {
   namespaced: true,
   state: {
-    socket: undefined
+    socket: undefined,
+    newMessageList: []
   },
   getters: {
     socket: state => {
@@ -10,6 +11,10 @@ export default {
       return state.socket
     }
   },
-  mutations: {},
+  mutations: {
+    ADD_NEW_MESSAGE (state, message) {
+      state.newMessageList.unshift(message)
+    }
+  },
   actions: {}
 }

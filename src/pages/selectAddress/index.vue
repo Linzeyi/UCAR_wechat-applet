@@ -38,9 +38,8 @@ export default {
   onLoad () {
     let that = this
     let addr = this.addressList
-    let hasSelected = Boolean(this.selectedAddress)
+    let hasSelected = Boolean(this.$store.state.UserCenter.selectedAddress)
     for (let i = 0; i < addr.length; i++) {
-      console.log(hasSelected, addr[i].isDefault)
       if (!hasSelected && addr[i].isDefault) {
         this.selected = i
         addr[i].isSelected = true
@@ -64,6 +63,7 @@ export default {
     confirm () {
       let store = this.$store.state.UserCenter
       store.selectedAddress = store.addressList[this.selected]
+      this.selectedAddress = store.selectedAddress
       mpvue.navigateBack()
     }
   }
@@ -73,7 +73,7 @@ export default {
 <style lang="less" scoped>
 @baoWoBlack: rgb(51, 51, 51);
 @baoWoFont: 'PingFangSC-Light';
-
+@orange: #ff6421;
 .selectAddress-wrap {
   background-color: #f3f3f3;
   box-sizing: border-box;
@@ -91,25 +91,28 @@ export default {
       display: flex;
       align-content: center;
       .address-select {
-        flex: 1.6;
+        flex: 1.2;
         display: flex;
         justify-content: center;
         align-items: center;
         .iconfont {
-          font-size: 25px;
-          color: #771212;
+          font-size: 20px;
+          color: @orange;
         }
       }
       .address-info {
         flex: 8;
-        font-size: 17px;
+        font-size: 13px;
         .receiver-name {
           margin-right: 10px;
         }
+        .address {
+          color: #7a7a7a;
+        }
         .default-address {
           display: block;
-          color: #771212;
-          font-size: 16px;
+          color: @orange;
+          font-size: 13px;
         }
       }
     }
@@ -120,7 +123,7 @@ export default {
     width: 94%;
     transform: translate(-50%, 0);
     left: 50%;
-    background-color: @baoWoBlack;
+    background-color: @orange;
     color: #ffffff;
   }
 }

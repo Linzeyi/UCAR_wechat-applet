@@ -161,8 +161,10 @@ export default {
       let goods = JSON.parse(JSON.stringify(this.$store.getters['Goods/goods']))
       goods.type = this.selectedType
       goods.num = this.num
-      console.log(goods)
+      this.$store.commit('Goods/SET_GOODSTYPE', this.types)
+      this.$store.commit('Goods/SET_NUM', this.num)
       this.$store.commit('Order/SET_GOODSLIST', [goods])
+      this.showTypeDialog(false)
       mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
     }
   }

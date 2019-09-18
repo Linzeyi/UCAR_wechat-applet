@@ -129,6 +129,15 @@ export default {
       return true
     }
   },
+  onUnload () {
+    this.formData.receiverName = ''
+    this.formData.receiverPhone = ''
+    this.formData.postCode = ''
+    this.formData.region.length = 0
+    this.formData.address = ''
+    this.formData.isDefault = false
+    this.focus = undefined
+  },
   methods: {
     // 设置默认地址
     setDefault () {
@@ -215,11 +224,8 @@ export default {
           if (res.confirm) {
             that.submitForm()
           } else if (res.cancel) {
-            mpvue.reLaunch({ url: '/pages/address/main' })
+            mpvue.redirectTo({ url: '/pages/address/main' })
           }
-        },
-        fail () {
-          mpvue.redirectTo({ url: '/pages/address/main' })
         }
       })
     }
@@ -231,6 +237,7 @@ export default {
 @baoWoBlack: #515151;
 @baoWoRed: #771212;
 @baoWoFont: 'PingFangSC-Light';
+@orange: #ff6421;
 .addAddress-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
@@ -273,7 +280,7 @@ export default {
     i {
       margin-right: 5px;
       font-size: 0.8em;
-      color: @baoWoRed;
+      color: @orange;
     }
     span {
       font-size: 0.8em;
@@ -283,7 +290,7 @@ export default {
     position: absolute;
     bottom: 40px;
     color: white;
-    background: @baoWoBlack;
+    background: @orange;
     font-family: @baoWoFont;
     width: 94%;
     left: 50%;

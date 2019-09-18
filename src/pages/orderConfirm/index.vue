@@ -95,7 +95,7 @@ export default {
     this.getGoodsList()
   },
   onUnload () {
-    this.init()
+    // this.init()
   },
   computed: {
     getAddress () {
@@ -159,7 +159,7 @@ export default {
             that.order.status = 0
             that.order.addressInfo = that.getAddress
             that.$store.commit('Order/SET_ORDER', that.order)
-            mpvue.navigateTo({ url: '/pages/orderDetail/main' })
+            mpvue.redirectTo({ url: '/pages/orderDetail/main' })
           }
         }
       })

@@ -55,13 +55,13 @@
         </div>
         <div class="weui-cell__bd">
           <p>我的消息</p>
+          <span class="weui-badge">{{ messageNum }}</span>
         </div>
         <span class="weui-cell__ft">
           <p>{{ messageNum }}条<i class="iconfont">&#xe601;</i></p>
         </span>
       </div>
     </div>
-    <button class="weui-btn" @click="routeTo('search')" style="margin-top: 20px;">搜索</button>
     <button class="weui-btn" @click="routeTo('selectAddress')" style="margin-top: 20px;">选择地址</button>
   </div>
 </template>
@@ -86,6 +86,11 @@ export default {
       return str
     }
   },
+  onLoad () {
+    // this.$http.post('/action/user/detail').then(res => {
+    //   console.log(res.content.data, 'userDetail')
+    // })
+  },
   methods: {
     // 跳转页面
     routeTo (type) {
@@ -98,9 +103,6 @@ export default {
           break
         case 'message':
           mpvue.navigateTo({ url: '/pages/message/main' })
-          break
-        case 'search':
-          mpvue.navigateTo({ url: '/pages/search/main' })
           break
         case 'order':
           mpvue.navigateTo({ url: '/pages/myOrders/main' })
@@ -176,6 +178,14 @@ export default {
     .weui-cell__hd .iconfont {
       font-size: 0.5rem;
       margin-right: 9px;
+    }
+    .weui-cell__bd {
+      p {
+        display: inline-block;
+      }
+      .weui-badge {
+        margin-left: 5px;
+      }
     }
     .weui-cell__ft .iconfont {
       font-size: 0.3rem;
