@@ -8,23 +8,44 @@ export default {
     phone: undefined, // 手机号
     orderNum: undefined, // 订单条数
     message: undefined, // 消息条数
-    defaultAddress: addressList[0],
+    defaultAddress: undefined,
     selectedAddress: undefined,
     addressList: addressList
   },
   getters: {
-    defaultAddress: state => state.defaultAddress,
-    selectedAddress: state => {
+    defaultAddress: state => {
+      return state.addressList.find(item => {
+        if (item.isDefault) {
+          state.defaultAddress = item
+          return item
+        }
+      })
+    },
+    selectedAddress: (state, getters) => {
       let addr = state.selectedAddress
       if (!addr) {
-        addr = state.defaultAddress
+        addr = getters.defaultAddress
+        if (!addr) {
+          addr = ''
+          return addr
+        }
       }
-      if (addr.region) {
+      if (addr && addr.region) {
         addr.address = addr.region.toString().replace(/,/g, '') + addr.address
       }
       return addr
     },
-    addressList: state => state.addressList
+    addressList: state => {
+      let addrList = state.addressList
+      for (let i = 0; i < addrList.length; i++) {
+        if (addrList[i].isDefault && i !== 0) {
+          let addr = addrList[0]
+          addrList[0] = addrList[i]
+          addrList[i] = addr
+        }
+      }
+      return addrList
+    }
   },
   mutations: {},
   actions: {

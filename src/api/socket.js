@@ -30,7 +30,8 @@ export function initWebSocket () {
     })
     wx.onSocketMessage(data => {
       console.log('[Socket] 收到一条消息：', data)
-      // 插入到message store的未读信息数组中
+      // todo 处理data，去除‘/’
+      this.$store.commit('Message/ADD_NEW_MESSAGE', data)
     })
     return socket
   } catch (e) {

@@ -24,7 +24,7 @@
               <i class="iconfont edit">&#xe66e;</i>
             </div>
             <div class="delete" @click="deleteAddress(index)">
-              <i class="iconfont delete">&#xe625;</i>
+              <i class="iconfont delete">&#xe637;</i>
             </div>
           </div>
         </movable-area>
@@ -37,13 +37,15 @@
 </template>
 
 <script>
-import { addressList } from '@/fake.js'
-
 export default {
   data () {
     return {
-      addressList: addressList,
       currentDefault: 0
+    }
+  },
+  computed: {
+    addressList () {
+      return this.$store.getters['UserCenter/addressList']
     }
   },
   methods: {
@@ -75,7 +77,6 @@ export default {
 
     // 设置默认地址
     setDefault (index) {
-      let me = this
       let address = this.addressList
       if (!address[index].isDefault) {
         wx.showModal({
@@ -85,9 +86,8 @@ export default {
           cancelText: '取消',
           success: function (res) {
             if (res.confirm) {
+              address[0].isDefault = false
               address[index].isDefault = true
-              address[me.currentDefault].isDefault = false
-              me.currentDefault = index
             }
           }
         })
@@ -111,6 +111,7 @@ export default {
 @baoWoRed: #771212;
 @baoWoFont: 'PingFangSC-Light';
 @sliderX: 60px;
+@orange: #ff6421;
 .address-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
@@ -162,7 +163,7 @@ export default {
           display: flex;
           justify-content: center;
           align-items: center;
-          background-color: @baoWoRed;
+          background-color: @orange;
           height: 50%;
           border-bottom-right-radius: 15px;
           i {
@@ -174,7 +175,7 @@ export default {
     }
     .receiver-info {
       box-shadow: 0 0.01px 3px rgb(221, 221, 221);
-      font-size: 0.35rem;
+      font-size: 13px;
       padding: 8px 15px;
       .receiver-name {
         margin-right: 8px;
@@ -193,9 +194,9 @@ export default {
         flex: 8;
         line-height: 32px;
         .tick {
-          font-size: 0.35rem;
+          font-size: 12px;
           margin-right: 5px;
-          color: @baoWoRed;
+          color: @orange;
           vertical-align: middle;
         }
       }
@@ -207,7 +208,7 @@ export default {
     bottom: 40px;
     i {
       font-size: 1rem;
-      color: @baoWoBlack;
+      color: @orange;
     }
   }
 }

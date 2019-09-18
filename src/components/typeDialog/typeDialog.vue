@@ -144,8 +144,8 @@ export default {
     handlerSelectedType () {
       this.$store.commit('Goods/SET_GOODSTYPE', this.types)
       this.$store.commit('Goods/SET_NUM', this.num)
+      this.$emit('changeType')
       this.showTypeDialog(false)
-      // mpvue.navigateTo({ url: '/pages/' + this.parentType + '/main' })
     },
     selectType (type) {
       this.types.map(item => {
@@ -173,7 +173,7 @@ export default {
 
 <style lang="less" scoped>
 .type-actionSheet-wrap {
-  z-index: 99999999999999999;
+  z-index: 99999999999;
   display: none;
   position: fixed;
   left: 0;

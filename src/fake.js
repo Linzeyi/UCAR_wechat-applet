@@ -906,10 +906,24 @@ const classList = [
   {type: 20, name: 'TNT炸弹'}
 ]
 
+const popularSearch = [
+  {"isDelete": 0, "tagName": "大力", "tagNo": 20, "tagScore": 12},
+  {"isDelete": 0, "tagName": "车贴", "tagNo": 1, "tagScore": 10},
+  {"isDelete": 0, "tagName": "车窗窗帘", "tagNo": 2, "tagScore": 9},
+  {"isDelete": 0, "tagName": "香水", "tagNo": 3, "tagScore": 8},
+  {"isDelete": 0, "tagName": "坐垫", "tagNo": 4, "tagScore": 7},
+  {"isDelete": 0, "tagName": "车载充电器", "tagNo": 5, "tagScore": 6},
+  {"isDelete": 0, "tagName": "asdf", "tagNo": 6, "tagScore": 5},
+  {"isDelete": 0, "tagName": "asdfg", "tagNo": 11, "tagScore": 4},
+  {"isDelete": 0, "tagName": "asdasd", "tagNo": 13, "tagScore": 3},
+  {"isDelete": 0, "tagName": "asdasdasd", "tagNo": 14, "tagScore": 2}
+]
+
 export {
   goodsList,
   shoppingCartGoodsList,
   orderList,
   addressList,
-  classList
+  classList,
+  popularSearch
 }

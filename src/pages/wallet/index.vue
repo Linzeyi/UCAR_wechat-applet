@@ -51,6 +51,7 @@ export default {
 @baoWoBlack: #515151;
 @baoWoRed: #771212;
 @baoWoFont: 'PingFangSC-Light';
+@orange: #ff6421;
 .wallet-wrap {
   font-family: @baoWoFont;
   .recharge-content {
@@ -70,7 +71,7 @@ export default {
       }
       input {
         font-size: 0.5rem;
-        color: @baoWoRed;
+        color: @orange;
       }
     }
   }
@@ -78,7 +79,7 @@ export default {
     position: absolute;
     bottom: 40px;
     color: white;
-    background: @baoWoBlack;
+    background: @orange;
     font-family: @baoWoFont;
     width: 94%;
     left: 50%;

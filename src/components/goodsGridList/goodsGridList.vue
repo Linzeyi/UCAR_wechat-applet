@@ -1,24 +1,24 @@
 <template>
   <div class="goods-grids">
-    <div v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex" class="grid-box" :style="'width: calc(100% / ' + col + ')'">
+    <div v-for="(goodsItem, goodsIndex) in computedGoodsList" :key="goodsIndex" class="grid-box" :style="'width: calc(100% / ' + col + ')'">
       <div class="content-box" @click="toGoodsDetail(goodsItem)">
         <div class="img-box">
-          <image :src="goodsItem.type[0].imgList[0]" :alt="goodsItem.title" mode="widthFix"></image>
+          <image :src="goodsItem.pic" :alt="goodsItem.goodsName" mode="widthFix"></image>
         </div>
-        <p class="title">{{goodsItem.title}}</p>
+        <p class="title">{{goodsItem.goodsName}}</p>
         <p class="label">
           <span class="price">
             <span class="logo">¥</span>
-            {{goodsItem.type[0].discountPrice ? goodsItem.type[0].discountPrice : goodsItem.type[0].price}}
+            {{goodsItem.minPrice === goodsItem.maxPrice ? goodsItem.minPrice : goodsItem.minPrice + '-' + goodsItem.maxPrice}}
           </span>
         </p>
       </div>
     </div>
     <div class="loading-footer">
-      <p v-if="!isLoading">
+      <p v-if="checkMoreShow">
         下拉显示更多
       </p>
-      <p v-else>
+      <p v-if="isLoading">
         加载中...
       </p>
     </div>
@@ -43,27 +43,32 @@ export default {
   },
   data () {
     return {
-      isLoading: false
+      isLoading: false,
+      size: 3
+    }
+  },
+  computed: {
+    computedGoodsList () {
+      return this.goodsList.slice(0, this.size)
+    },
+    checkMoreShow () {
+      return (this.goodsList.length > this.size) && this.isLoading
     }
   },
   onLoad () {
-
   },
   async onReachBottom () {
-    let that = this
-    console.log('触底')
-    if (!this.isLoading) {
+    if (this.checkMoreShow && !this.isLoading) {
+      console.log('触底')
       this.isLoading = true
-      setTimeout(function () {
-        console.log('结束')
-        that.isLoading = false
-      }, 1500)
+      this.size += 2
+      this.isLoading = false
     }
   },
   methods: {
     toGoodsDetail (goods) {
       this.$store.commit('Goods/SET_GOODS', goods)
-      mpvue.navigateTo({ url: '/pages/goodsDetail/main' })
+      mpvue.navigateTo({ url: '/pages/goodsDetail/main?goodsNo=' + goods.goodsNo })
     }
   }
 }
@@ -75,6 +80,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   padding: 5px;
+  background-color: #f3f3f3;
   .grid-box {
     padding: 5px;
     width: calc(100% / 3);
