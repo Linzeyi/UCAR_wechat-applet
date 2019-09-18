@@ -40,11 +40,18 @@ export function switchTab(url) {
   mpvue.switchTab({url})
 }
 
+// 时间戳转时间
+export function timestampTo(time = +new Date()) {
+  var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+  return date.toJSON().substr(0, 19).replace('T', ' ');
+}
+
 export default {
   formatNumber,
   formatTime,
   getYMDTime,
   getHMSTime,
   regularRule,
-  navigateTo
+  navigateTo,
+  timestampTo
 }

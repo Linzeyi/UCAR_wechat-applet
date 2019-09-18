@@ -876,7 +876,7 @@ const addressList = [{
   receiverName: 'John',
   receiverPhone: '13015768195',
   encodePhone: '130****8195',
-  postCode: '3500095',
+  postCode: '0',
   region: ['香港特别行政区', '香港特别行政区', '屯门区'],
   address: '屯门市中心',
   isDefault: false
@@ -919,11 +919,81 @@ const popularSearch = [
   {"isDelete": 0, "tagName": "asdasdasd", "tagNo": 14, "tagScore": 2}
 ]
 
+const messageList = [
+  {
+    content: "尊敬的用户，您获得20点积分，请再接再厉",
+    createEmp: "1",
+    createTime: 1568793573000,
+    id: 36,
+    modifyEmp: "1",
+    modifyTime: 1568793573000,
+    remark: null,
+    status: 0,
+    userId: 1
+  },
+  {
+    content: "您的订单12334232314321已取消",
+    createEmp: "1",
+    createTime: 1568789816000,
+    id: 35,
+    modifyEmp: "1",
+    modifyTime: 1568789816000,
+    remark: null,
+    status: 1,
+    userId: 1
+  },
+  {
+    content: "您的订单12334232314321已取消",
+    createEmp: "1",
+    createTime: 1568789527000,
+    id: 34,
+    modifyEmp: "1",
+    modifyTime: 1568789527000,
+    remark: null,
+    status: 0,
+    userId: 1
+  },
+  {
+    content: "尊敬的用户，您获得每天登录可获得5成长值点成长值，加油哦",
+    createEmp: "1",
+    createTime: 1568784433000,
+    id: 32,
+    modifyEmp: "1",
+    modifyTime: 1568784433000,
+    remark: null,
+    status: 0,
+    userId: 1
+  },
+  {
+    content: "尊敬的用户，您获得5点积分，请再接再厉",
+    createEmp: "1",
+    createTime: 1568784433000,
+    id: 33,
+    modifyEmp: "1",
+    modifyTime: 1568784433000,
+    remark: null,
+    status: 1,
+    userId: 1
+  },
+  {
+    content: "尊敬的用户，您获得5积分，请再接再厉",
+    createEmp: "1",
+    createTime: 1568777921000,
+    id: 31,
+    modifyEmp: "1",
+    modifyTime: 1568777921000,
+    remark: null,
+    status: 0,
+    userId: 1
+  }
+]
+
 export {
   goodsList,
   shoppingCartGoodsList,
   orderList,
   addressList,
   classList,
-  popularSearch
+  popularSearch,
+  messageList
 }

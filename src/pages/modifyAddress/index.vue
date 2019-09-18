@@ -108,6 +108,7 @@ export default {
       return item.addressId + '' === option.addressId
     })
     this.formData = {...addr}
+    this.$store.commit('UserCenter/SET_EDITADDRESS', addr)
   },
   onUnload () {
     this.formData = undefined
@@ -116,20 +117,25 @@ export default {
   computed: {
     formCanSubmit () {
       let obj = this.formData
-      for (const key in obj) {
-        if (key !== 'isDefault') {
-          if (key === 'region') {
-            if (obj[key].length === 0) {
-              return false
-            }
-          } else {
-            if (obj[key] === '') {
-              return false
+      this.$store.commit('UserCenter/ADDR_IS_EIDT', this.formData)
+      if (this.$store.state.UserCenter.isEdited) {
+        for (const key in obj) {
+          if (key !== 'isDefault') {
+            if (key === 'region') {
+              if (obj[key].length === 0) {
+                return false
+              }
+            } else {
+              if (obj[key] === '') {
+                return false
+              }
             }
           }
         }
+        return true
+      } else {
+        return false
       }
-      return true
     }
   },
   methods: {
@@ -158,8 +164,11 @@ export default {
         // 检验表单内容合法性
         if (this.validateForm()) {
           console.log('提交！')
+          // todo 提交修改表单接口
           mpvue.navigateBack()
           this.showToast('修改成功', 'success')
+        } else {
+          console.log('not commit!')
         }
       } else {
         this.showToast('地址信息未填写完整', 'none')
@@ -209,22 +218,24 @@ export default {
     // 页面返回
     back () {
       let that = this
-      wx.showModal({
-        title: '保存地址',
-        content: '是否保存地址',
-        cancelText: '不保存',
-        confirmText: '保存',
-        success (res) {
-          if (res.confirm) {
-            that.submitForm()
-          } else if (res.cancel) {
-            mpvue.redirectTo({ url: '/pages/address/main' })
+      this.$store.commit('UserCenter/ADDR_IS_EIDT', this.formData)
+      if (this.$store.state.UserCenter.isEdited) {
+        wx.showModal({
+          title: '保存地址',
+          content: '是否保存地址',
+          cancelText: '不保存',
+          confirmText: '保存',
+          success (res) {
+            if (res.confirm) {
+              that.submitForm()
+            } else if (res.cancel) {
+              mpvue.navigateBack()
+            }
           }
-        },
-        fail () {
-          mpvue.redirectTo({ url: '/pages/address/main' })
-        }
-      })
+        })
+      } else {
+        mpvue.navigateBack()
+      }
     }
   }
 }

@@ -4,9 +4,9 @@ let socket = {}
 export function initWebSocket () {
   try {
     socket = wx.connectSocket({
-      // url: 'ws://10.112.12.45:8080/trainljsys/websocket'
+      url: 'ws://10.112.12.45:8080/trainljsys/websocket/' + 123,
       // url: 'ws://10.112.11.18:8090',
-      url: 'ws://localhost:8181',
+      // url: 'ws://localhost:8181',
       success () {
         console.log('[Socket] 创建连接…')
         // firstConnect = false
@@ -28,10 +28,10 @@ export function initWebSocket () {
         console.log('[Socket] 连接超时')
       }
     })
-    wx.onSocketMessage(data => {
-      console.log('[Socket] 收到一条消息：', data)
+    wx.onSocketMessage(res => {
+      console.log('[Socket] 收到一条消息：', res.data)
       // todo 处理data，去除‘/’
-      this.$store.commit('Message/ADD_NEW_MESSAGE', data)
+      this.$store.commit('Message/ADD_NEW_MESSAGE', res.data)
     })
     return socket
   } catch (e) {

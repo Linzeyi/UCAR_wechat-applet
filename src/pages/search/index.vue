@@ -51,7 +51,7 @@
 
 <script>
 import goodsGridList from '@/components/goodsGridList/goodsGridList'
-import { goodsList, popularSearch } from '@/fake.js'
+import { goodsList } from '@/fake.js'
 
 export default {
   components: {
@@ -59,8 +59,8 @@ export default {
   },
   data () {
     return {
-      // popularSearch: undefined, // 热门搜索列表
-      popularSearch: popularSearch,
+      popularSearch: undefined, // 热门搜索列表
+      // popularSearch: popularSearch,
       recommendSearch: ['汽车打火机', '德利汽车润滑油', '汽车转向盘'], // 推荐搜索列表
       isShowSearchPage: false, // 控制搜索副页展示
       isShowSearchResult: false, // 控制搜索结果显示，与显示推荐搜索互斥
@@ -70,9 +70,10 @@ export default {
   },
   onLoad () {
     // 获取热门搜索
-    this.$http.get('/action/getPopularSearch').then(res => {
-      // this.popularSearch = JSON.parse(res.content.data.data)
-      console.log(res, 1111)
+    this.$http.get('/action/goods/getPopularSearch').then(res => {
+      let result = res.data.data
+      this.popularSearch = JSON.parse(result)
+      console.log(this.popularSearch, 1111)
     })
   },
   onUnload () {

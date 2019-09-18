@@ -3,7 +3,13 @@
     <div class="address-list">
       <div class="mo-box" v-for="(item, index) in addressList" :key="index">
         <movable-area class="mo-area">
-          <movable-view class="mo-view" x="66" y="0" out-of-bounds="true" direction="horizontal" inertia="true" damping="100">
+          <movable-view 
+            class="mo-view" 
+            x="66" y="0" 
+            out-of-bounds="true" 
+            direction="horizontal" 
+            inertia="true" 
+            damping="100">
             <div class="receiver-info">
               <span class="receiver-name">{{ item.receiverName }}</span>
               <span>{{ item.encodePhone }}</span>
@@ -40,7 +46,8 @@
 export default {
   data () {
     return {
-      currentDefault: 0
+      currentDefault: 0,
+      editScoll: undefined
     }
   },
   computed: {

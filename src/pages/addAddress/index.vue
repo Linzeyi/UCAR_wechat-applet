@@ -212,22 +212,40 @@ export default {
       }
     },
 
+    // 检查表单是否为空
+    formIsEmpty () {
+      for (const key in this.formData) {
+        if (key !== 'isDefault') {
+          if (key !== 'region' && this.formData[key]) {
+            return false
+          } else if (key === 'region' && this.formData[key].length > 0) {
+            return false
+          }
+        }
+      }
+      return true
+    },
+
     // 页面返回
     back () {
       let that = this
-      wx.showModal({
-        title: '保存地址',
-        content: '是否保存地址',
-        cancelText: '不保存',
-        confirmText: '保存',
-        success (res) {
-          if (res.confirm) {
-            that.submitForm()
-          } else if (res.cancel) {
-            mpvue.redirectTo({ url: '/pages/address/main' })
+      if (!this.formIsEmpty()) {
+        wx.showModal({
+          title: '保存地址',
+          content: '是否保存地址',
+          cancelText: '不保存',
+          confirmText: '保存',
+          success (res) {
+            if (res.confirm) {
+              that.submitForm()
+            } else if (res.cancel) {
+              mpvue.navigateBack()
+            }
           }
-        }
-      })
+        })
+      } else {
+        mpvue.navigateBack()
+      }
     }
   }
 }
