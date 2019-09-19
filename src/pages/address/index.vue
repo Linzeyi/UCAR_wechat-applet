@@ -183,7 +183,7 @@ export default {
     .receiver-info {
       box-shadow: 0 0.01px 3px rgb(221, 221, 221);
       font-size: 13px;
-      padding: 8px 15px;
+      padding: 12px 15px;
       .receiver-name {
         margin-right: 8px;
       }
@@ -195,7 +195,7 @@ export default {
     .info-edit {
       display: flex;
       font-size: 0.8em;
-      padding: 8px 18px;
+      padding: 4px 18px;
       align-items: center;
       .default-address {
         flex: 8;

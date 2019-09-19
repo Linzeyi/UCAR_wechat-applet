@@ -55,7 +55,7 @@
         </div>
         <div class="weui-cell__bd">
           <p>我的消息</p>
-          <span class="weui-badge">{{ messageNum }}</span>
+          <span class="weui-badge" style="background-color: #ff6421">{{ newMessageNum }}</span>
         </div>
         <span class="weui-cell__ft">
           <p>{{ messageNum }}条<i class="iconfont">&#xe601;</i></p>
@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import { messageList } from '@/fake.js'
+
 export default {
   data () {
     return {
@@ -76,15 +78,23 @@ export default {
       integral: 135, // 积分
       phone: '13015768195', // 手机号码
       balance: '100.00', // 余额
-      orderNum: 20, // 订单数
-      messageNum: 2 // 消息数
+      orderNum: 20 // 订单数
     }
+  },
+  onLoad () {
+    this.$store.commit('Message/SET_MESSAGE_LIST', messageList)
   },
   computed: {
     // 电话号码加密
     encodePhone () {
       var str = this.phone.slice(0, 3) + '****' + this.phone.slice(7)
       return str
+    },
+    newMessageNum () {
+      return this.$store.getters['Message/newMessageNum']
+    },
+    messageNum () {
+      return this.$store.getters['Message/messageNum']
     }
   },
   methods: {
@@ -112,13 +122,13 @@ export default {
       }
     },
     testApi () {
-      // this.$http.get('/action/message/getAllMessage', { userId: 123 }).then(res => {
-      //   console.log(res, 'all message')
-      // })
+      this.$http.get('/action/message/getAllMessage', { userId: 123 }).then(res => {
+        console.log(res, 'all message')
+      })
       // this.$http.post('/action/message/setMessageReaded', { msgId: 1 }).then(res => {
       //   console.log(res, 'set message readed')
       // })
-      console.log(this.$store.getters['Message/messageList'])
+      // this.$store.commit('Message/INIT_WEBSOCKET')
     }
   }
 }
@@ -127,6 +137,7 @@ export default {
 <style lang="less" scoped>
 @baoWoBlack: rgb(51, 51, 51);
 @baoWoFont: 'PingFangSC-Light';
+@orange: #ff6421;
 .userCenter-wrap {
   color: @baoWoBlack;
   font-family: @baoWoFont;
