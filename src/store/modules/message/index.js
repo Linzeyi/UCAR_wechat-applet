@@ -6,7 +6,8 @@ export default {
   state: {
     socket: undefined,
     messageList: undefined, // status: 0未读 1已读
-    connection: 10 // 断开重新连接次数
+    connection: 10, // 断开重新连接次数
+    setMessageRead: []
   },
   getters: {
     socket: state => state.socket,
@@ -28,6 +29,12 @@ export default {
             Vue.set(item, 'isShow', true)
             return item
           })
+    },
+    messageNum: state => {
+      return state.messageList.length
+    },
+    newMessageNum: (state, getters) => {
+      return getters.newMessageList.length
     }
   },
   mutations: {
@@ -39,9 +46,9 @@ export default {
       try {
         state.socket = wx.connectSocket({
           // todo 123 = uid
-          url: 'ws://10.112.12.45:8080/trainljsys/websocket/' + 123,
+          // url: 'ws://10.112.12.45:8080/trainljsys/websocket/' + 123,
           // url: 'ws://10.112.11.18:8090',
-          // url: 'ws://localhost:8181',
+          url: 'ws://localhost:8181',
           success () {
             console.log('[Socket] 创建连接…')
           }
@@ -65,6 +72,9 @@ export default {
         wx.onSocketMessage(res => {
           console.log('[Socket] 收到一条消息：', res.data)
           // todo 处理data，去除‘/’
+          // 把已读消息更新到store中
+          that.commit('Message/SET_MESSAGE_READ', that.state.Message.setMessageRead)
+          that.state.Message.setMessageRead.length = 0
           that.commit('Message/ADD_NEW_MESSAGE', res.data)
         })
       } catch (e) {
@@ -78,7 +88,17 @@ export default {
       console.log('[Socket] 关闭socket')
     },
     ADD_NEW_MESSAGE (state, message) {
-      state.newMessageList.unshift(message)
+      state.messageList.unshift(JSON.parse(message))
+    },
+    SET_MESSAGE_READ (state, idList) {
+      for (const id of idList) {
+        for (const message of state.messageList) {
+          if (id === message.id) {
+            message.status = 1 - message.status
+          }
+        }
+      }
+      state.setMessageRead.length = 0
     }
   },
   actions: {
