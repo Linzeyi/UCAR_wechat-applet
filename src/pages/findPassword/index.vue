@@ -103,27 +103,25 @@ export default {
   top: 8rpx;
 }
 .wrap {
+  box-sizing: border-box;
   height: 100%;
-  padding: 10rpx;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   font-size: 30rpx;
+  padding: 60rpx 40rpx;
 
   & > img {
     display: block;
     width: 160rpx;
     height: 160rpx;
-    margin-bottom: 140rpx;
     border: 2rpx solid rgb(26, 188, 156);
     border-radius: 50%;
   }
 
   .form {
     width: 80%;
-    margin-bottom: 90rpx;
-
     .input-item {
       transform: scale(1);
       margin-bottom: 60rpx;
@@ -144,20 +142,6 @@ export default {
         line-height: 40rpx;
         vertical-align: middle;
       }
-    }
-  }
-
-  .submit {
-    width: 70%;
-    height: 35rpx;
-    line-height: 35rpx;
-    border-radius: 10rpx;
-    background-color: rgb(26, 188, 156);
-    text-align: center;
-    margin-bottom: 10rpx;
-
-    span {
-      color: white;
     }
   }
 }

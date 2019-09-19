@@ -19,5 +19,9 @@ export default {};
   color: white;
   font-size: 30rpx;
   font-weight: bold;
+
+  &:active {
+    transform: scale(0.9)
+  }
 }
 </style>
