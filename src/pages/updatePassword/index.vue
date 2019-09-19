@@ -50,21 +50,21 @@ export default {
     async handleSubmit() {
       let flag = false;
       flag = await this.$store.dispatch(
-        "UserInfo/checkPassword",
+        "BaseStore/checkPassword",
         this.form.newPassword
       );
       if (!flag) {
         return;
       }
       flag = await this.$store.dispatch(
-        "UserInfo/checkCaptcha",
+        "BaseStore/checkCaptcha",
         this.form.captcha
       );
       if (!flag) {
         return;
       }
       if (this.form.newPassword !== this.form.againPassword) {
-        this.$store.commit("UserInfo/SHOW_TOAST", {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
           type: "error",
           content: "两次密码不一致"
         });

@@ -22,7 +22,7 @@
       </div>
       <div class="input-item">
         <div class="captcha">
-          <captcha :phone="form.phone" :type=1></captcha>
+          <captcha :phone="form.phone" :type="1"></captcha>
         </div>
         <span>验证码</span>
         <input type="text" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
@@ -78,33 +78,36 @@ export default {
   methods: {
     async handleCheck() {
       let flag = false;
-      flag = await this.$store.dispatch("UserInfo/checkPhone", this.form.phone);
-      if (!flag) {
-        return;
-      }
       flag = await this.$store.dispatch(
-        "UserInfo/checkCaptcha",
-        this.form.captcha
+        "BaseStore/checkPhone",
+        this.form.phone
       );
       if (!flag) {
         return;
       }
       flag = await this.$store.dispatch(
-        "UserInfo/checkPassword",
+        "BaseStore/checkPassword",
         this.form.password
       );
       if (!flag) {
         return;
       }
-      this.register()
+      flag = await this.$store.dispatch(
+        "BaseStore/checkCaptcha",
+        this.form.captcha
+      );
+      if (!flag) {
+        return;
+      }
+      this.register();
     }
   },
   register() {
-    this.$http.post('/action/user/register', {
+    this.$http.post("/action/user/register", {
       phone: this.form.phone,
       captcha: this.form.captcha,
       password: this.form.password
-    })
+    });
   }
 };
 </script>

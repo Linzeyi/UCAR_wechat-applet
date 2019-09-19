@@ -60,12 +60,12 @@ export default {
   methods: {
     async handleCheck() {
       let flag = false;
-      flag = await this.$store.dispatch("UserInfo/checkPhone", this.form.phone);
+      flag = await this.$store.dispatch("BaseStore/checkPhone", this.form.phone);
       if (!flag) {
         return;
       }
       flag = await this.$store.dispatch(
-        "UserInfo/checkPassword",
+        "BaseStore/checkPassword",
         this.form.password
       );
       if (!flag) {
@@ -85,6 +85,8 @@ export default {
           data: token
         });
       }
+      const userInfo = result.data.memberInfo
+      this.$store.commit('UserInfo/SET_USERINFO', userInfo)
     }
   }
 };

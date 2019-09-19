@@ -47,7 +47,7 @@ export default {
     },
     async handleCheckPhone() {
       let flag = false;
-      flag = await this.$store.dispatch("UserInfo/checkPhone", this.phone);
+      flag = await this.$store.dispatch("BaseStore/checkPhone", this.phone);
       if (!flag) {
         return;
       }

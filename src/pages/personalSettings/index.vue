@@ -12,16 +12,16 @@
         </div>
         <div class="form-item">
           <span>用户ID</span>
-          <input type="text" disabled />
+          <p>{{id}}</p>
         </div>
         <div class="form-item">
           <span>昵称</span>
           <div class="right-box">
-            <input type="text" placeholder="--" v-model="name" @focus="focusIndex='name'" />
+            <input type="text" placeholder="--" v-model="nickname" @focus="focusIndex='nickname'" />
             <i
               class="iconfont icon-cancel icon-size"
-              v-if="name !== '' && focusIndex === 'name'"
-              @click="name = ''"
+              v-if="nickname !== '' && focusIndex === 'nickname'"
+              @click="nickname = ''"
             >&#xe65c;</i>
             <i class="iconfont icon-size" v-else>&#xe6ab;</i>
           </div>
@@ -41,7 +41,7 @@
         <div class="form-item" @click="showGenderSheet=true;focusIndex=''">
           <span>性别</span>
           <div>
-            <span>{{gender}}</span>
+            <span>{{sex}}</span>
             <i class="iconfont icon-size">&#xe6ab;</i>
           </div>
         </div>
@@ -62,9 +62,9 @@
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
     <base-action-sheet :show.sync="showGenderSheet">
-      <div class="action-sheet-item" @click="gender='男'">男</div>
-      <div class="action-sheet-item" @click="gender='女'">女</div>
-      <div class="action-sheet-item" @click="gender='保密'">保密</div>
+      <div class="action-sheet-item" @click="sex='男'">男</div>
+      <div class="action-sheet-item" @click="sex='女'">女</div>
+      <div class="action-sheet-item" @click="sex='保密'">保密</div>
     </base-action-sheet>
     <base-action-sheet :show.sync="showAvatarSheet">
       <button
@@ -88,15 +88,23 @@ export default {
   },
   data() {
     return {
+      id: "",
       avatarUrl: "",
-      name: "",
+      nickname: "",
       email: "",
-      gender: "",
+      sex: "",
       showToast: false,
       showAvatarSheet: false,
       showGenderSheet: false,
       focusIndex: ""
     };
+  },
+  onShow() {
+    this.id = this.$store.getters["UserInfo/id"];
+    this.avatarUrl = this.$store.getters["UserInfo/avatarUrl"];
+    this.nickname = this.$store.getters["UserInfo/nickname"];
+    this.email = this.$store.getters["UserInfo/email"];
+    this.sex = this.$store.getters["UserInfo/sex"];
   },
   methods: {
     previewImage() {

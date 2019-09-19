@@ -64,19 +64,19 @@ export default {
   methods: {
     async handleSubmit() {
       let flag = false;
-      flag = await this.$store.dispatch("UserInfo/checkPhone", this.form.phone);
+      flag = await this.$store.dispatch("BaseStore/checkPhone", this.form.phone);
       if (!flag) {
         return;
       }
       flag = await this.$store.dispatch(
-        "UserInfo/checkCaptcha",
+        "BaseStore/checkCaptcha",
         this.form.captcha
       );
       if (!flag) {
         return;
       }
       flag = await this.$store.dispatch(
-        "UserInfo/checkPassword",
+        "BaseStore/checkPassword",
         this.form.password
       );
       if (!flag) {

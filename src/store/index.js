@@ -7,10 +7,11 @@ import UserCenter from './modules/userCenter/index'
 import Goods from './modules/goods/index'
 import Order from './modules/order/index'
 import ShoppingCart from './modules/shoppingCart/index'
-import UserInfo from './modules/userInfo/index'
+import BaseStore from './modules/baseStore/index'
 import Comment from './modules/comment/index'
 import Message from './modules/message/index'
 import SystemInfo from './modules/systemInfo/index'
+import UserInfo from './modules/userInfo/index'
 
 Vue.use(Vuex)
 
@@ -22,10 +23,11 @@ const store = new Vuex.Store({
     Goods,
     Order,
     ShoppingCart,
-    UserInfo,
+    BaseStore,
     Comment,
     Message,
-    SystemInfo
+    SystemInfo,
+    UserInfo
   }
 })
 

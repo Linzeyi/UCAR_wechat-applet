@@ -1,9 +1,9 @@
 <template>
   <mp-toast
-    v-model="$store.state.UserInfo.showToast"
-    :type="$store.getters['UserInfo/type']"
-    :content="$store.getters['UserInfo/content']"
-    :duration="$store.getters['UserInfo/duration']"
+    v-model="$store.state.BaseStore.showToast"
+    :type="$store.getters['BaseStore/type']"
+    :content="$store.getters['BaseStore/content']"
+    :duration="$store.getters['BaseStore/duration']"
   ></mp-toast>
 </template>
 
