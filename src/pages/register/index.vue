@@ -40,7 +40,7 @@
         </p>
       </div>
     </div>
-    <base-button @click="handleRegister">注册</base-button>
+    <base-button @click="handleCheck">注册</base-button>
     <base-message></base-message>
   </div>
 </template>
@@ -76,7 +76,7 @@ export default {
     BaseMessage
   },
   methods: {
-    async handleRegister() {
+    async handleCheck() {
       let flag = false;
       flag = await this.$store.dispatch("UserInfo/checkPhone", this.form.phone);
       if (!flag) {
