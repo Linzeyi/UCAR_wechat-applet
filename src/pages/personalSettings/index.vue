@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="settings">
-      <span class="box-title">基础信息</span>
+      <p class="settings-title">基础信息</p>
       <div class="form">
         <div class="form-item form-avatar" @click="showAvatarSheet = true;focusIndex=''">
           <span>头像</span>
@@ -48,7 +48,6 @@
       </div>
     </div>
     <div class="others">
-      <span class="box-title">其他设置</span>
       <div @click="Utils.navigateTo('/pages/updatePassword/main')">
         <span>修改密码</span>
         <i class="iconfont icon-size">&#xe6ab;</i>
@@ -173,23 +172,22 @@ export default {
   font-size: 30rpx;
 }
 
-.box-title {
-  margin-top: 15rpx;
-  margin-left: 60rpx;
-  font-weight: bold;
-  font-size: 26rpx;
-  color: rgb(148, 148, 148);
-}
 .wrap {
   height: 100%;
   background-color: rgb(243, 243, 243);
   padding: 20rpx;
-
+  font-size: 30rpx;
   .settings {
-    font-size: 30rpx;
     background-color: white;
     border-radius: 20rpx;
+    padding-top: 20rpx;
 
+    .settings-title {
+      margin-left: 50rpx;
+      font-weight: bold;
+      font-size: 26rpx;
+      color: rgb(148, 148, 148);
+    }
     .form {
       .form-item {
         height: 110rpx;
@@ -233,7 +231,6 @@ export default {
   }
   .others {
     margin-top: 60rpx;
-    width: 100%;
     background-color: white;
     border-radius: 20rpx;
     > div {
@@ -262,7 +259,7 @@ export default {
     &:active {
       span {
         display: inline-block;
-        transform: scale(0.9)
+        transform: scale(0.9);
       }
     }
     span {
