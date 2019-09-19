@@ -54,5 +54,6 @@ export default {
   getHMSTime,
   regularRule,
   navigateTo,
+  switchTab,
   timestampTo
 }

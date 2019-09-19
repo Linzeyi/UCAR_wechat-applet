@@ -52,7 +52,7 @@
         <span>修改密码</span>
         <i class="iconfont icon-size">&#xe6ab;</i>
       </div>
-      <div>
+      <div @click="logout">
         <span>注销</span>
         <i class="iconfont icon-size">&#xe6ab;</i>
       </div>
@@ -101,6 +101,9 @@ export default {
   },
   onShow() {
     this.id = this.$store.getters["UserInfo/id"];
+    if (this.id === "") {
+      this.Utils.switchTab("/pages/login/main");
+    }
     this.avatarUrl = this.$store.getters["UserInfo/avatarUrl"];
     this.nickname = this.$store.getters["UserInfo/nickname"];
     this.email = this.$store.getters["UserInfo/email"];
@@ -126,6 +129,7 @@ export default {
         sourceType: [type],
         success(res) {
           const tempFilePaths = res.tempFilePaths;
+          console.log(tempFilePaths);
           _this.avatarUrl = tempFilePaths[0];
           _this.upLoadAvatar();
         }
@@ -141,26 +145,34 @@ export default {
       }
     },
     async upLoadAvatar() {
-      const token = wx.getStorageSync('token')
+      const token = wx.getStorageSync("token");
       await wx.uploadFile({
-        url: "https://apiproxytest.ucarinc.com/ucarincapiproxy/action/user/uploadAvatar",
+        url:
+          "https://apiproxytest.ucarinc.com/ucarincapiproxy/action/user/uploadAvatar",
         name: "avatar",
         filePath: this.avatarUrl,
         header: {
           token
         },
         formData: {
-          sign: '4191131821855832366960060265169801929',
-          cid: '007001'
+          sign: "4191131821855832366960060265169801929",
+          cid: "007001"
         }
       });
     },
     saveUserInfo() {
-      this.$http.post('/action/user/modifyInfo', {
+      this.$http.post("/action/user/modifyInfo", {
         nickname: this.nickname,
         email: this.email,
         sex: this.sex
-      })
+      });
+    },
+    logout() {
+      this.$store.commit("UserInfo/REMOVE_USERINFO");
+      wx.removeStorage({
+        key: "token"
+      });
+      this.Utils.switchTab("/pages/login/main");
     }
   }
 };
@@ -274,6 +286,12 @@ export default {
 
       &:last-child {
         border-bottom: 0;
+      }
+      &:active {
+        span {
+          display: inline-block;
+          transform: scale(0.9);
+        }
       }
     }
   }
