@@ -73,8 +73,16 @@ fly.interceptors.request.use(request => {
     if (token) {
       request.headers["token"] = token;
     } else {
+      wx.showToast({
+        title: '请先登录账号',
+        image: '/static/images/login.svg',
+        mask: true,
+        duration: 1500
+      })
       // login页面改为普通page后需改为mpvue.navigateTo
-      mpvue.switchTab({ url: '/pages/login/main' })
+      setTimeout(() => {
+        mpvue.switchTab({ url: '/pages/login/main' })
+      }, 1500)
     }
   }
 
