@@ -43,8 +43,8 @@ export default {
   data() {
     return {
       form: {
-        phone: "",
-        password: ""
+        phone: "18756574249",
+        password: "123456"
       },
       avatarUrl:
         "http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg",
