@@ -4,12 +4,14 @@ export default {
   state: {
     goods: {},
     goodsList: goodsList,
-    isShowTypeDialog: false
+    isShowTypeDialog: false,
+    property: {}
   },
   getters: {
     goodsList: state => state.goodsList,
     goods: state => state.goods,
-    isShowTypeDialog: state => state.isShowTypeDialog
+    isShowTypeDialog: state => state.isShowTypeDialog,
+    property: state => state.property
   },
   mutations: {
     SET_GOODS (state, goods) {
@@ -23,6 +25,9 @@ export default {
     },
     SET_NUM (state, num) {
       state.goods.num = num
+    },
+    SET_PROPERTY (state, property) {
+      state.property = property
     }
   },
   actions: {

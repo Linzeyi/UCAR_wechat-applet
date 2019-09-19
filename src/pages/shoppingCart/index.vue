@@ -16,7 +16,7 @@
                       <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
                     </div>
                     <div class="img-box" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                      <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit"></image>
+                      <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit" @click="showImg(typeItem)"></image>
                     </div>
                   </div>
                   <div class="content-box">
@@ -148,24 +148,34 @@ export default {
     this.getShoppingCartGoodsList()
   },
   async onPullDownRefresh() {
-    console.log('下拉刷新')
-    console.log(this)
+    this.getShoppingCartGoodsList()
     // 停止下拉刷新
     // wx.stopPullDownRefresh()
   },
   methods: {
+    showImg (item) {
+      wx.previewImage({
+        current: item.imgList[0],
+        urls: item.imgList
+      })
+    },
     changeType () {
+      this.getShoppingCartGoodsList()
+    },
+    getShoppingCartGoodsList () {
       wx.showLoading({
         title: '正在加载',
         mask: true
       })
-      setTimeout(function () {
+      this.$http.get('/action/order/getShoppingCartList').then(res => {
+        console.log(res)
         wx.hideLoading()
-      }, 1000)
-    },
-    getShoppingCartGoodsList () {
+        wx.stopPullDownRefresh()
+      })
       let goodsList = this.$store.getters['ShoppingCart/goodsList']
       console.log(goodsList)
+      this.goodsList = []
+      this.invalidGoodsList = []
       goodsList.map(item => {
         if (item.isValid) {
           this.goodsList.push(item)

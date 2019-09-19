@@ -1,5 +1,5 @@
 <template>
-  <div class="type-actionSheet-wrap" :class="{'open': checkOpenTypeDialog}">
+  <div class="property-actionSheet-wrap" :class="{'open': checkOpenTypeDialog}">
     <div class="mask" @click="showTypeDialog(false)"></div>
     <div class="content-wrap">
       <div class="content-panel header-panel">
@@ -18,29 +18,29 @@
               </span>
             </span>
           </p>
-          <p class="stock">库存{{selectedType.stock}}件</p>
-          <p class="info">已选：{{selectedType.content}}</p>
+          <p class="stock">库存{{selectedProperty.stock}}件</p>
+          <p class="info">已选：{{selectedProperty.propertyName}}</p>
         </div>
       </div>
       <div class="content-panel">
         <div class="header">
-          <span>{{selectedType.title}}</span>
+          <span>规格</span>
         </div>
-        <div class="type-list-wrap">
+        <div class="property-list-wrap">
           <div 
-          class="type-item-box" 
-          v-for="(typeItem, typeIndex) in types" 
-          :key="typeIndex" 
-          :class="{'selected': typeItem.isSelected}"
-          @click="selectType(typeItem)">
-            <span>{{typeItem.content}}</span>
+          class="property-item-box" 
+          v-for="(propertyItem, propertyIndex) in propertyList" 
+          :key="propertyIndex" 
+          :class="{'selected': propertyItem.id === selectedProperty.id}"
+          @click="selectType(propertyItem)">
+            <span>{{propertyItem.propertyName}}</span>
           </div>
         </div>
       </div>
       <div class="content-panel numPicker-panel">
         <div class="header">
           <span>购买数量</span>
-          <span class="right-box"><num-picker :min="1" :max="selectedType.stock" :num.sync="num"></num-picker></span>
+          <span class="right-box"><num-picker :min="1" :max="selectedProperty.stock" :num.sync="num"></num-picker></span>
         </div>
       </div>
       <div class="content-panel dialog-footer">
@@ -68,65 +68,92 @@ export default {
       default () {
         return 'goodsDetail'
       }
+    },
+    goodsNo: {
+      type: String,
+      default () {
+        return ''
+      }
+    },
+    property: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
+    pNum: {
+      type: Number,
+      default () {
+        return 1
+      }
     }
   },
   data () {
     return {
-      types: [],
-      selectedType: {},
-      num: 0
+      propertyList: [],
+      num: 1,
+      selectedProperty: {}
     }
   },
   onUnload () {
     this.init()
   },
   watch: {
-    checkOpenTypeDialog () {
-      this.types = JSON.parse(JSON.stringify(this.$store.getters['Goods/goods'].type))
-      this.num = this.$store.getters['Goods/goods'].num
-      this.selectedType = this.types[0]
-      this.types.map(item => {
-        if (item.isSelected) {
-          this.selectedType = item
-        }
-      })
-      this.selectedType.isSelected = true
+    checkOpenTypeDialog (val) {
+      if (val) {
+        this.getPropertyByNo()
+      }
     }
   },
   computed: {
-    checkDiscount () {
-      if (this.selectedType.discountPrice) {
+    checkProperty () {
+      if (JSON.stringify(this.selectedProperty) !== '{}') {
+        console.log('有选中规格！', this.selectedProperty)
         return true
+      } else {
+        console.log('无选中规格！')
+        return false
+      }
+    },
+    checkDiscount () {
+      if (this.checkProperty) {
+        if (this.selectedProperty.discountPrice) {
+          console.log('检测到有优惠价')
+          return true
+        } else {
+          return false
+        }
       } else {
         return false
       }
     },
     getPrice () {
-      if (JSON.stringify(this.selectedType) === '{}') {
-        return 0.00
+      if (this.checkProperty) {
+        return this.selectedProperty.salePrice.toFixed(2)
       } else {
-        return this.selectedType.price.toFixed(2)
+        return 0.00
       }
     },
     getDiscountPrice () {
-      if (JSON.stringify(this.selectedType) === '{}') {
-        return 0.00
+      if (this.checkProperty) {
+        return this.selectedProperty.discountPrice.toFixed(2)
       } else {
-        return this.selectedType.discountPrice.toFixed(2)
+        return 0.00
       }
     },
     getSelectedPrice () {
-      if (JSON.stringify(this.selectedType) === '{}') {
-        return 0
+      if (this.checkProperty) {
+        return this.selectedProperty.discountPrice ? this.selectedProperty.discountPrice.toFixed(2) : this.selectedProperty.salePrice.toFixed(2)
       } else {
-        return this.selectedType.discountPrice ? this.selectedType.discountPrice.toFixed(2) : this.selectedType.price.toFixed(2)
+        return 0
       }
     },
     getImgSrc () {
-      if (JSON.stringify(this.selectedType) === '{}') {
-        return ''
+      if (this.checkProperty) {
+        console.log('规格组件图片显示', this.selectedProperty.picList)
+        return this.selectedProperty.picList[0] ? this.selectedProperty.picList[0] : ''
       } else {
-        return this.selectedType.imgList[0]
+        return ''
       }
     },
     checkOpenTypeDialog () {
@@ -135,35 +162,38 @@ export default {
   },
   methods: {
     init () {
-      this.types = []
-      this.selectedType = {}
+      this.propertyList = []
+      this.property = {}
+    },
+    getPropertyByNo () {
+      this.$http.get('/action/goods/getGoodsPropertyByGoodsNo', {
+        goodsNo: this.goodsNo
+      }).then(res => {
+        console.log('规格数组：', res.data.propertyReList)
+        this.propertyList = res.data.propertyReList
+        this.num = this.pNum ? this.pNum : 1
+        if (JSON.stringify(this.property) === '{}') {
+          this.selectedProperty = this.propertyList[0]
+        } else {
+          this.selectedProperty = this.property
+        }
+      })
     },
     showTypeDialog (flag) {
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
     },
     handlerSelectedType () {
-      this.$store.commit('Goods/SET_GOODSTYPE', this.types)
-      this.$store.commit('Goods/SET_NUM', this.num)
-      this.$emit('changeType')
+      this.$emit('changeType', this.selectedProperty, this.num)
       this.showTypeDialog(false)
     },
-    selectType (type) {
-      this.types.map(item => {
-        if (item.content === type.content) {
-          item.isSelected = true
-          this.selectedType = item
-        } else {
-          item.isSelected = false
-        }
-      })
+    selectType (property) {
+      console.log('选中规格：', property)
+      this.selectedProperty = property
     },
     toOrderConfirm () {
-      let goods = JSON.parse(JSON.stringify(this.$store.getters['Goods/goods']))
-      goods.type = this.selectedType
+      let goods = JSON.parse(JSON.stringify(this.goods))
+      goods.property = this.selectedProperty
       goods.num = this.num
-      this.$store.commit('Goods/SET_GOODSTYPE', this.types)
-      this.$store.commit('Goods/SET_NUM', this.num)
-      this.$store.commit('Order/SET_GOODSLIST', [goods])
       this.showTypeDialog(false)
       mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
     }
@@ -172,7 +202,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.type-actionSheet-wrap {
+.property-actionSheet-wrap {
   z-index: 99999999999;
   display: none;
   position: fixed;
@@ -262,12 +292,12 @@ export default {
           position: absolute;
         }
       }
-      .type-list-wrap {
+      .property-list-wrap {
         display: flex;
         flex-wrap: wrap;
         padding-bottom: 20px;
         margin-bottom: 30px;
-        .type-item-box {
+        .property-item-box {
           font-size: 24rpx;
           padding: 6px 8px;
           border-radius: 6rpx;

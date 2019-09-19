@@ -11,10 +11,10 @@
           <div class="progress-box">
             <div class="progress-panel" v-for="(item, index) in scoreList" :key="index">
               <div class="star-box">
-                <i class="iconfont icon-star" v-for="(scoreItem, scoreIndex) in item.score" :key="scoreIndex">&#xe663;</i>
+                <i class="iconfont icon-star" v-for="(scoreItem, scoreIndex) in (index + 1)" :key="scoreIndex">&#xe663;</i>
               </div>
               <div class="progress">
-                <progress :percent="(item.num / totalComment) * 100" color="#666" stroke-width="4"></progress>
+                <progress :percent="(item / totalComment) * 100" color="#666" stroke-width="4"></progress>
               </div>
             </div>
           </div>
@@ -32,19 +32,19 @@
           </div>
           <div class="info-box">
             <p class="name-score">
-              <span class="name">{{item.sender.name}}</span>
+              <span class="name">{{item.memberNickname}}</span>
               <span class="score">
-                <span class="star" v-for="(starItem, starIndex) in 5" :key="starIndex" :class="{'stared': starIndex + 1 <= item.score}">
+                <span class="star" v-for="(starItem, starIndex) in 5" :key="starIndex" :class="{'stared': starIndex + 1 <= item.goodsScore}">
                   <i class="iconfont icon-star">&#xe623;</i>
                   <i class="iconfont icon-stared">&#xe624;</i>
                 </span>
               </span>
             </p>
             <p class="type">
-              已购：{{item.type}}
+              已购：{{item.goodsPropertyName}}
             </p>
             <p class="content">{{item.content}}</p>
-            <p class="date">{{item.sendTime}}</p>
+            <p class="date">{{item.createTime}}</p>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@
 <script>
 export default {
   props: [
-    'goodsId'
+    'goodsNo'
   ],
   data () {
     return {
@@ -107,9 +107,35 @@ export default {
       ]
     }
   },
-  computed: {
+  watch: {
+    goodsNo: {
+      handler () {
+        this.getCommentList()
+        this.getScoreInfo()
+      },
+      immediate: true
+    }
   },
   methods: {
+    getCommentList () {
+      this.$http.get('/action/comment/getGoodsCommentList', {
+        goodsNo: this.goodsNo
+      }).then(res => {
+        this.commentList = res.data
+        this.commentList.map(item => {
+          item.createTime = this.Utils.getYMDTime(item.createTime)
+        })
+      })
+    },
+    getScoreInfo () {
+      this.$http.get('/action/comment/getGoodsScoreInfo', {
+        goodsNo: this.goodsNo
+      }).then(res => {
+        this.goodsScore = res.data.aveScore
+        this.totalComment = res.data.allNum
+        this.scoreList = res.data.scoreNumList
+      })
+    },
     selectScore (index) {
       this.myScore = index + 1
       wx.showToast({

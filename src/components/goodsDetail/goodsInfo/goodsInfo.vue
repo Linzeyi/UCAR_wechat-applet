@@ -4,7 +4,7 @@
       <com-swiper :imgList="getImgList"></com-swiper>
     </div>
     <div class="panel-box title-box">
-      <p class="price-panel" v-if="!checkSelectedType">
+      <p class="price-panel section-price" v-if="!checkProperty">
         <span class="price">
           <span class="logo">¥</span>{{getGoodsPriceSection}}
         </span>
@@ -14,10 +14,10 @@
           <span class="logo">¥</span>{{getCurrentPrice}}
         </span>
       </p>
-      <p class="price-panel original-price" v-if="checkSelectedType && checkDiscount">
+      <p class="price-panel original-price" v-if="checkDiscount">
         原价 ¥ {{getOriginalPrice}}
       </p>
-      <h2 class="goods-title">{{goods.title}}<span class="score">{{goods.score}}</span></h2>
+      <h2 class="goods-title">{{goods.goodsName}}<span class="score">{{getGoodsScore}}</span></h2>
     </div>
     <div class="panel-box">
       <div class="panel">
@@ -29,39 +29,39 @@
       <div class="panel">
         <p>
           <span class="panel-title">描述</span>
-          <span class="desc">{{goods.desc}}</span>
+          <span class="desc">{{goods.goodsDetail}}</span>
         </p>
       </div>
       <div class="panel">
         <p>
           <span class="panel-title">销量</span>已售
-          <span class="sales">{{getGoodsSales}}</span>
+          <span class="sales">{{goods.sales}}</span>
           件
         </p>
       </div>
     </div>
-    <div class="panel-box type-box">
+    <div class="panel-box property-box">
       <div class="panel">
         <p @click="showTypeDialog">
           <span class="panel-title">选择</span>
-          <span class="select-type" v-if="checkSelectedType">已选：“{{getSelectedType.title + ':' + getSelectedType.content}};”</span>
-          <span class="select-type" v-else>未选择任何规格样式...</span>
+          <span class="select-property" v-if="checkProperty">已选：“{{'规格:' + property.propertyName}};”</span>
+          <span class="select-property" v-else>未选择任何规格样式...</span>
           <i class="iconfont icon-right">&#xe601;</i>
         </p>
       </div>
-      <div class="panel" v-if="checkSelectedType">
+      <div class="panel" v-if="checkProperty">
         <p>
           <span class="panel-title">库存</span>尚余
-          <span class="stock">{{getSelectedType.stock}}</span>
+          <span class="stock">{{property.stock}}</span>
           件
         </p>
       </div>
     </div>
     <div class="panel-box shop-box">
       <div class="panel num-panel">
-        <p v-if="checkSelectedType">
+        <p v-if="checkProperty">
           <span class="panel-title">数量</span>
-          <num-picker :max="getSelectedType.stock" :num.sync="goods.num"></num-picker>
+          <num-picker :max="property.stock" :num.sync="num"></num-picker>
         </p>
         <p v-else>
           <span class="panel-title">数量</span>
@@ -71,7 +71,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import comSwiper from '../../comSwiper/comSwiper'
 import numPicker from '../../numPicker/numPicker'
@@ -81,20 +80,30 @@ export default {
     goods: {
       type: Object,
       default () {
-        return {
-          title: '未定义',
-          store: {
-            name: '无'
-          },
-          text: '',
-          num: 0,
-          type: []
-        }
+        return {}
+      }
+    },
+    num: {
+      type: Number,
+      default () {
+        return 0
+      }
+    },
+    property: {
+      type: Object,
+      default () {
+        return {}
       }
     }
   },
   data () {
     return {
+    }
+  },
+  watch: {
+    num () {
+      console.log('num change')
+      this.$emit('update:num', this.num)
     }
   },
   methods: {
@@ -103,80 +112,67 @@ export default {
     }
   },
   computed: {
+    getGoodsScore () {
+      return this.goods.goodsScore.toFixed(1)
+    },
     getImgList () {
-      let imgList = this.goods.type[0].imgList
-      this.goods.type.map(item => {
-        if (item.isSelected) {
-          imgList = item.imgList
-        }
-      })
-      return imgList
-    },
-    checkSelectedType () {
-      let arr = this.goods.type
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].isSelected) {
-          return true
-        }
+      console.log('商品信息获取图片列表：')
+      if (this.checkProperty) {
+        console.log(this.property.picList)
+        return this.property.picList
+      } else {
+        return this.goods.propertyList[0].picList
       }
-      return false
     },
-    getSelectedType () {
-      let arr = this.goods.type
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].isSelected) {
-          return arr[i]
-        }
+    checkProperty () {
+      if (JSON.stringify(this.property) !== '{}') {
+        console.log('有选中规格！')
+        return true
+      } else {
+        console.log('无选中规格！')
+        return false
       }
-      return {}
     },
     checkDiscount () {
-      let selectedType = this.getSelectedType
-      if (selectedType.discountPrice) {
-        return true
+      if (this.checkProperty) {
+        if (this.property.discountPrice) {
+          return true
+        } else {
+          return false
+        }
       } else {
         return false
       }
     },
     getCurrentPrice () {
-      if (this.checkSelectedType) {
-        let selectedType = this.getSelectedType
-        if (selectedType.discountPrice) {
-          return selectedType.discountPrice.toFixed(2)
-        } else {
-          return selectedType.price.toFixed(2)
-        }
+      if (this.checkProperty) {
+        return this.property.discountPrice ? this.property.discountPrice.toFixed(2) : this.property.salePrice.toFixed(2)
       } else {
         return 0.00
       }
     },
     getOriginalPrice () {
-      if (this.checkSelectedType) {
-        let selectedType = this.getSelectedType
-        return selectedType.price.toFixed(2)
+      if (this.checkProperty) {
+        return this.property.salePrice.toFixed(2)
       } else {
         return 0.00
       }
     },
-    getGoodsSales () {
-      let sales = 0
-      this.goods.type.map(item => {
-        sales += item.sales
-      })
-      return sales
-    },
     getGoodsPriceSection() {
       let minPrice = 0
       let maxPrice = 0
-      this.goods.type.map(item => {
-        let price = item.discountPrice ? item.discountPrice : item.price
-        if (price >= maxPrice) {
-          maxPrice = price
-        }
-        if (price <= minPrice) {
-          minPrice = price
-        }
-      })
+      if (this.goods.hasOwnProperty('propertyList')) {
+        this.goods.propertyList.map(item => {
+          let price = item.discountPrice ? item.discountPrice : item.salePrice
+          if (price >= maxPrice) {
+            maxPrice = price
+          }
+          if (price <= minPrice) {
+            minPrice = price
+          }
+        })
+      }
+      console.log('区间：' + minPrice + '-' + maxPrice)
       if (minPrice === maxPrice) {
         return minPrice.toFixed(2)
       } else {

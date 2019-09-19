@@ -74,10 +74,21 @@ export default {
           duration: 2000
         })
       } else {
-        wx.showToast({
-          title: '成功发表评论',
-          icon: 'success',
-          duration: 2000
+        this.$http.post('/action/comment/sendComment', {
+          goodsNo: 'GD00001',
+          orderNo: 28,
+          goodsPropertyId: 1,
+          goodsPropertyName: '小盒装',
+          content: this.content,
+          goodsScore: this.score
+        }).then(res => {
+          console.log(res)
+          wx.showToast({
+            title: '成功发表评论',
+            icon: 'success',
+            duration: 2000
+          })
+          this.$emit('commentSucceed')
         })
       }
     }

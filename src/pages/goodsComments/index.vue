@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="comment-box">
-        <comment-editor :goods.sync="goodsItem"></comment-editor>
+        <comment-editor :goods.sync="goodsItem" @commentSucceed="commentSucceed"></comment-editor>
       </div>
     </div>
   </div>
@@ -39,6 +39,9 @@ export default {
   methods: {
     init () {
       this.order = this.$store.getters['Comment/order']
+    },
+    commentSucceed () {
+      console.log('评论成功')
     }
   }
 }

@@ -29,13 +29,13 @@
           <div class="goods-box">
             <div class="header">
             </div>
-            <div class="info-box lzy-flex-box">
+            <div class="info-box lzy-flex-box" @click="toGoodsDetail(goodsItem)">
               <div class="left-box">
                 <div class="img-box">
                   <image :src="goodsItem.type.imgList[0]" alt="商品图片" mode="aspectFit" ></image>
                 </div>
               </div>
-              <div class="content-box"  @click="toGoodsDetail(goodsItem)">
+              <div class="content-box">
                 <p class="title">{{goodsItem.title}}</p>
                 <p class="type">
                   <span class="type-title">

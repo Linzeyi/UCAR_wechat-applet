@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <base-navigation-bar :name="goods.title">
+    <base-navigation-bar :name="goods.goodsName ? goods.goodsName : ''">
       <i class="iconfont" @click="backOff">&#xe625;</i>
     </base-navigation-bar>
     <base-custom-box>
@@ -18,10 +18,10 @@
         <div class="tab-content">
           <swiper :current="currentTabKey" @change="changeTabContent">
             <swiper-item>
-              <goods-info :goods.sync="goods" :num.sync="goods.num"></goods-info>
+              <goods-info :goods.sync="goods" :num.sync="num" :property.sync="property" v-if="checkPropertyList"></goods-info>
             </swiper-item>
             <swiper-item class="no-bg-color">
-              <goods-comment :goodsId="goods.id"></goods-comment>
+              <goods-comment :goodsNo="goods.goodsNo"></goods-comment>
             </swiper-item>
           </swiper>
         </div>
@@ -37,7 +37,7 @@
             <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm" :disabled="checkInvalid">立即购买</button>
           </div>
         </div>
-        <type-dialog :parentType="'goodsDetail'"></type-dialog>
+        <type-dialog :parentType="'goodsDetail'" :goodsNo="goods.goodsNo" :property="property" :pNum="num" @changeType="changeType"></type-dialog>
       </div>
     </base-custom-box>
   </div>
@@ -71,66 +71,74 @@ export default {
           name: '评论'
         }
       ],
-      goods: {}
+      goods: {
+      },
+      property: {},
+      num: 1
     }
   },
   computed: {
-    checkInvalid () {
-      if (this.goods.hasOwnProperty('isValid')) {
-        return !this.goods.isValid
+    checkPropertyList () {
+      return this.goods.hasOwnProperty('propertyList')
+    },
+    checkProperty () {
+      if (JSON.stringify(this.property) !== '{}') {
+        console.log('有选中规格！')
+        return true
       } else {
+        console.log('无选中规格！')
         return false
       }
     },
+    checkInvalid () {
+      return this.goods.status === 2
+    },
     getTotalPrice () {
-      if (!this.checkSelectedType || this.checkInvalid) {
+      if (!this.checkProperty || this.checkInvalid) {
         return 0
       } else {
-        return (this.getSelectedTypePrice * (this.goods.num ? this.goods.num : 0)).toFixed(2)
+        console.log(this.num)
+        return (this.getSelectedTypePrice * (this.num ? this.num : 0)).toFixed(2)
       }
     },
     getSelectedTypePrice () {
-      let type = this.getSelectedType
-      return type.discountPrice ? type.discountPrice : type.price
-    },
-    getSelectedType () {
-      let arr = this.goods.type
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].isSelected) {
-          return arr[i]
-        }
+      if (!this.checkProperty) {
+        return 0.00
+      } else {
+        console.log(this.property.discountPrice ? this.property.discountPrice : this.property.salePrice)
+        return this.property.discountPrice ? this.property.discountPrice : this.property.salePrice
       }
-      return {}
-    },
-    checkSelectedType () {
-      let arr = this.goods.type
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].isSelected) {
-          return true
-        }
-      }
-      return false
     }
   },
   onLoad (option) {
     console.log(option)
     this.goods.goodsNo = option.goodsNo
-    this.goods = this.$store.getters['Goods/goods']
-    wx.setNavigationBarTitle({
-      title: this.goods.title
-    })
+    this.getGoodsByNo()
+    // this.goods = this.$store.getters['Goods/goods']
   },
   async onPullDownRefresh() {
-    console.log('下拉刷新')
-    console.log(this)
-    // 停止下拉刷新
-    // wx.stopPullDownRefresh()
+    this.getGoodsByNo()
   },
   methods: {
     init () {
       this.currentTabKey = 0
-      this.$store.commit('Goods/SET_GOODS', {})
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
+    },
+    changeType (property, num) {
+      this.property = property
+      this.num = num
+      console.log('赋值规格后的商品', this.goods)
+    },
+    getGoodsByNo () {
+      this.$http.get('/action/goods/getGoodsDetailByGoodsNo', {
+        goodsNo: this.goods.goodsNo
+      }).then(res => {
+        wx.stopPullDownRefresh()
+        if (res.data) {
+          this.goods = res.data
+          console.log('goods:', this.goods)
+        }
+      })
     },
     backOff () {
       mpvue.navigateBack({ delta: 1 })
@@ -142,14 +150,13 @@ export default {
       this.currentTabKey = index
     },
     addToShoppingCart () {
-      let that = this
       if (this.goods.num === 0) {
         wx.showToast({
           title: '商品数量不能为0',
           icon: 'none',
           duration: 2000
         })
-      } else if (!this.checkSelectedType) {
+      } else if (!this.checkProperty) {
         wx.showToast({
           title: '请选择一个规格类型',
           icon: 'none',
@@ -162,7 +169,6 @@ export default {
           confirmText: '确定',
           success (res) {
             if (res.confirm) {
-              that.$store.commit('ShoppingCart/ADD_GOODS', that.goods)
               wx.showToast({
                 title: '添加成功',
                 icon: 'success',
@@ -177,7 +183,7 @@ export default {
       mpvue.navigateTo({ url: '/pages/shoppingCart/main' })
     },
     toOrderConfirm () {
-      if (this.checkSelectedType) {
+      if (this.checkProperty) {
         if (this.goods.num === 0) {
           wx.showToast({
             title: '商品数量不能为0',
@@ -197,7 +203,6 @@ export default {
             }
             goodsItem.type = selectedType
           })
-          this.$store.commit('Order/SET_GOODSLIST', selectedGoodsList)
           mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
         }
       } else {
