@@ -73,6 +73,7 @@ fly.interceptors.request.use(request => {
     if (token) {
       request.headers["token"] = token;
     } else {
+      // login页面改为普通page后需改为mpvue.navigateTo
       mpvue.switchTab({ url: '/pages/login/main' })
     }
   }
