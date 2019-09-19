@@ -120,9 +120,8 @@ export default {
         display: inline-block;
         width: 100rpx;
         line-height: 40rpx;
-        vertical-align: middle
+        vertical-align: middle;
       }
-
     }
   }
   .forget {

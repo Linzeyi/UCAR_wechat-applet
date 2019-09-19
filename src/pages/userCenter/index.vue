@@ -63,6 +63,7 @@
       </div>
     </div>
     <button class="weui-btn" @click="routeTo('selectAddress')" style="margin-top: 20px;">选择地址</button>
+    <button class="weui-btn" @click="testApi" style="margin-top: 20px;">接口调试</button>
   </div>
 </template>
 
@@ -85,11 +86,6 @@ export default {
       var str = this.phone.slice(0, 3) + '****' + this.phone.slice(7)
       return str
     }
-  },
-  onLoad () {
-    // this.$http.post('/action/user/detail').then(res => {
-    //   console.log(res.content.data, 'userDetail')
-    // })
   },
   methods: {
     // 跳转页面
@@ -114,6 +110,15 @@ export default {
           mpvue.navigateTo({ url: '/pages/personalSettings/main' })
           break
       }
+    },
+    testApi () {
+      // this.$http.get('/action/message/getAllMessage', { userId: 123 }).then(res => {
+      //   console.log(res, 'all message')
+      // })
+      // this.$http.post('/action/message/setMessageReaded', { msgId: 1 }).then(res => {
+      //   console.log(res, 'set message readed')
+      // })
+      console.log(this.$store.getters['Message/messageList'])
     }
   }
 }

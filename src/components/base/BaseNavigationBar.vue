@@ -42,8 +42,8 @@ export default {
       return this.menuInfo.height + "px";
     },
     handleName() {
-      if (this.name.length > 10) {
-        return this.name.slice(0, 6) + "...";
+      if (this.name.length > 9) {
+        return this.name.slice(0, 9) + "...";
       } else {
         return this.name;
       }

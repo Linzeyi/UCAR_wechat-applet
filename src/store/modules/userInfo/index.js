@@ -36,7 +36,7 @@ export default {
         commit('SHOW_TOAST', { type: 'error', content: '验证码不能为空' })
         return
       }
-      if (!/^\d{8}$/.test(captcha)) {
+      if (!/^\d{6}$/.test(captcha)) {
         commit('SHOW_TOAST', { type: 'error', content: '验证码格式错误' })
         return
       }

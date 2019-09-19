@@ -96,8 +96,15 @@ export default {
       if (!flag) {
         return;
       }
-      console.log("验证成功");
+      this.register()
     }
+  },
+  register() {
+    this.$http.post('/action/user/register', {
+      phone: this.form.phone,
+      captcha: this.form.captcha,
+      password: this.form.password
+    })
   }
 };
 </script>

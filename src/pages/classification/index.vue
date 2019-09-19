@@ -10,15 +10,15 @@
             v-for="(item, idx) in classList"
             :class="{'class-item': true ,active: selectClassIndex === idx}"
             @click="clickItem(idx)"
-            :key="item.type"
+            :key="idx"
           >
             <div class="high-light" v-show="selectClassIndex === idx"></div>
-            <span>{{item.name}}</span>
+            <span>{{item}}</span>
           </div>
         </scroll-view>
         <scroll-view class="scroll-right" scroll-y scroll-with-animation @scroll="scrollHandle">
           <div class="scroll-right-lable">
-            <span>{{classList[selectClassIndex].name}}</span>
+            <span>{{classList[selectClassIndex]}}</span>
           </div>
           <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
           <div class="scroll-right-bottom">
@@ -34,7 +34,6 @@
 import GoodsGridList from "@/components/goodsGridList/goodsGridList";
 import BaseCustomBox from "@/components/base/BaseCustomBox";
 import BaseNavigationBar from "@/components/base/BaseNavigationBar";
-import { classList } from "@/fake.js";
 export default {
   components: {
     GoodsGridList,
@@ -55,10 +54,13 @@ export default {
   created() {
     this.systemInfo = wx.getSystemInfoSync();
     this.customNavHeight = this.$store.getters["SystemInfo/customNavHeight"];
-    this.classList = classList;
     this.goodsList = this.$store.getters["Goods/goodsList"];
     const scale = this.$store.getters["SystemInfo/scale"];
     this.itemHeight = 100 * scale;
+  },
+  async onShow() {
+    await this.getAllCategory();
+    await this.getGoodsByCategory();
   },
   methods: {
     scrollHandle(e) {
@@ -67,6 +69,7 @@ export default {
     clickItem(index) {
       this.selectClassIndex = index;
       this.selectMiddle(index);
+      this.getGoodsByCategory();
     },
     selectMiddle(index) {
       index += 1;
@@ -78,6 +81,16 @@ export default {
       } else {
         this.scrollTop = 0;
       }
+    },
+    async getAllCategory() {
+      const result = await this.$http.post("/action/goods/getAllCategory");
+      this.classList = result.data;
+    },
+    async getGoodsByCategory() {
+      const result = await this.$http.post("/action/goods/getGoodsByCategory", {
+        categoryName: this.classList[this.selectClassIndex]
+      });
+      this.goodsList = result.data
     }
   }
 };

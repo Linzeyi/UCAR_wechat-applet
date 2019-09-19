@@ -10,7 +10,9 @@ export default {
     message: undefined, // 消息条数
     defaultAddress: undefined,
     selectedAddress: undefined,
-    addressList: addressList
+    addressList: addressList,
+    editAddress: undefined,
+    isEdited: false
   },
   getters: {
     defaultAddress: state => {
@@ -47,7 +49,32 @@ export default {
       return addrList
     }
   },
-  mutations: {},
+  mutations: {
+    SET_EDITADDRESS (state, addr) {
+      state.editAddress = addr
+    },
+    ADDR_IS_EIDT (state, addr) {
+      state.isEdited = false
+      if (state.editAddress) {
+        for (const key in addr) {
+          if (state.editAddress.hasOwnProperty(key)) {
+            if (key !== 'region') {
+              if (addr[key] !== state.editAddress[key]) {
+                state.isEdited = true
+                break
+              }
+            } else {
+              for (let i = 0; i < addr[key].length; i++) {
+                if (addr[key][i] !== state.editAddress[key][i]) {
+                  state.isEdited = true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   actions: {
     modifyAddress (addr) {},
     deleteSAddress (addrId) {},

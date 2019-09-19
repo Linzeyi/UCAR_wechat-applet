@@ -137,8 +137,8 @@ export default {
       border-radius: 20rpx;
       background-color: rgb(249, 249, 249);
 
-      &:hover {
-        background-color: rgb(153, 153, 153);
+      &:active {
+        background-color: rgb(180, 180, 180);
       }
     }
   }

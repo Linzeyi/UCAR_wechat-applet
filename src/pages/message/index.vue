@@ -1,34 +1,32 @@
 <template>
   <div class="message-wrap page">
-    <div class="panel" v-for="(item, index) in unreadMessage" :key="index">
+    <div class="panel" v-for="(item, index) in unreadMessageList" :key="index">
       <div class="panel__hd title" @click="showUnread(index)" :class="{'unshow': !item.isShow, 'show': item.isShow}">
-        <i class="iconfont red-point" v-if="!item.isReaded">&#xe606;</i>
-        <p>{{ item.title }}</p>
+        <i class="iconfont red-point" v-if="!item.isRead">&#xe606;</i>
+        <p>{{ item.content }}</p>
       </div>
       <div class="panel__bd" v-if="item.isShow">
         <div class="weui-media-box">
           <p class="weui-media-box__desc">
-            {{ item.desc }}
+            {{ item.content }}
           </p>
           <ul class="weui-media-box__info">
-            <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.date }}</li>
-            <li class="weui-media-box__info__meta">{{ item.time }}</li>
+            <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.dateTime }}</li>
           </ul>
         </div>
       </div>
     </div>
-    <div class="panel" v-for="(item, index) in readedMessage" :key="index">
+    <div class="panel" v-for="(item, index) in readMessageList" :key="index">
       <div class="panel__hd title" @click="showReaded(index)" :class="{'unshow': !item.isShow, 'show': item.isShow}">
-        <p>{{ item.title }}</p>
+        <p>{{ item.content }}</p>
       </div>
       <div class="panel__bd" v-if="item.isShow">
         <div class="weui-media-box">
           <p class="weui-media-box__desc">
-            {{ item.desc }}
+            {{ item.content }}
           </p>
           <ul class="weui-media-box__info">
-            <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.date }}</li>
-            <li class="weui-media-box__info__meta">{{ item.time }}</li>
+            <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.dateTime }}</li>
           </ul>
         </div>
       </div>
@@ -37,55 +35,38 @@
 </template>
 
 <script>
+import { messageList } from '@/fake.js'
 export default {
   data () {
     return {
-      unreadIsShow: false,
-      unreadMessage: [
-        {
-          title: '第一条未读消息',
-          desc: '111未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息',
-          date: '2019年9月6日',
-          time: '10:00:00',
-          isShow: false,
-          isReaded: false
-        },
-        {
-          title: '第二条未读消息',
-          desc: '222未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息未读消息',
-          date: '2018年9月6日',
-          time: '08:00:00',
-          isShow: false,
-          isReaded: false
-        }
-      ],
-      readedMessage: [
-        {
-          title: '第一条已读消息',
-          desc: '111已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息',
-          date: '2019年9月6日',
-          time: '13:03:00',
-          isShow: true
-        },
-        {
-          title: '第二条已读消息',
-          desc: '222已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息已读消息',
-          date: '2018年9月6日',
-          time: '10:30:00',
-          isShow: true
-        }
-      ]
+      messageList: messageList
+    }
+  },
+  onLoad () {
+    // this.$http.get('/action/message/getAllMessage', { userId: 123 }).then(res => {
+    //   console.log(res.data, 'all message')
+    // })
+    this.$store.commit('Message/SET_MESSAGE_LIST', messageList)
+  },
+  computed: {
+    unreadMessageList () {
+      // console.log(this.$store.getters['Message/newMessageList'], 'new message')
+      return this.$store.getters['Message/newMessageList']
+    },
+    readMessageList () {
+      // console.log(this.$store.getters['Message/oldMessageList'], 'old message')
+      return this.$store.getters['Message/oldMessageList']
     }
   },
   methods: {
     // 展示未读消息
     showUnread (index) {
-      this.unreadMessage[index].isShow = !this.unreadMessage[index].isShow
-      this.unreadMessage[index].isReaded = true
+      this.unreadMessageList[index].isRead = true
+      this.unreadMessageList[index].status = 1 - this.unreadMessageList[index].status
     },
     // 展示已读消息
     showReaded (index) {
-      this.readedMessage[index].isShow = !this.readedMessage[index].isShow
+      this.readMessageList[index].isShow = !this.readMessageList[index].isShow
     },
     // 获取新消息
     getMessageList () {
