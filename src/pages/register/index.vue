@@ -53,17 +53,17 @@ import BaseMessage from "@/components/base/BaseMessage";
 export default {
   onUnload() {
     this.form.phone = "";
-    this.form.captcha = "";
     this.form.password = "";
+    this.form.captcha = "";
     this.showPassword = false;
     this.agreementActive = false;
   },
   data() {
     return {
       form: {
-        phone: "",
-        captcha: "",
-        password: ""
+        phone: "15605026927",
+        password: "hjs123456",
+        captcha: "123456"
       },
       showPassword: false,
       agreementActive: false
@@ -100,14 +100,14 @@ export default {
         return;
       }
       this.register();
+    },
+    async register() {
+      await this.$http.post("/action/user/register", {
+        phone: this.form.phone,
+        captcha: this.form.captcha,
+        password: this.form.password
+      });
     }
-  },
-  register() {
-    this.$http.post("/action/user/register", {
-      phone: this.form.phone,
-      captcha: this.form.captcha,
-      password: this.form.password
-    });
   }
 };
 </script>
