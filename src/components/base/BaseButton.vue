@@ -10,7 +10,6 @@ export default {};
 
 <style lang="less" scoped>
 .wrap {
-  display: inline-block;
   width: 500rpx;
   height: 70rpx;
   line-height: 70rpx;

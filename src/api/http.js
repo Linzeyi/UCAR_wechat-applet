@@ -67,6 +67,16 @@ fly.interceptors.request.use(request => {
   // const result = resultStr ? JSON.parse(resultStr) : '' // 将数据字符串转为对象
   // console.log('解密数据：', result)
 
+  const AccessUrl = config.AccessUrl
+  if (!AccessUrl.includes(request.url)) {
+    const token = wx.getStorageSync('token')
+    if (token) {
+      request.headers["token"] = token;
+    } else {
+      mpvue.switchTab({ url: '/pages/login/main' })
+    }
+  }
+
   return request
 })
 

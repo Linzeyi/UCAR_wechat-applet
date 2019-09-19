@@ -1,6 +1,8 @@
 <template>
   <div class="wrap">
-    <img :src="avatarUrl" alt="头像" />
+    <div class="header">
+      <img :src="avatarUrl" alt="头像" />
+    </div>
     <div class="form">
       <div class="input-item">
         <span>账号</span>
@@ -24,9 +26,10 @@
         <base-text @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</base-text>
       </div>
     </div>
-    <base-button @click="handleSubmit">登录</base-button>
-    <div class="place-holder"></div>
-    <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
+    <div class="footer">
+      <base-button @click="handleCheck">登录</base-button>
+      <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
+    </div>
     <base-message></base-message>
   </div>
 </template>
@@ -55,7 +58,7 @@ export default {
     BaseMessage
   },
   methods: {
-    async handleSubmit() {
+    async handleCheck() {
       let flag = false;
       flag = await this.$store.dispatch("UserInfo/checkPhone", this.form.phone);
       if (!flag) {
@@ -68,7 +71,20 @@ export default {
       if (!flag) {
         return;
       }
-      console.log("验证成功");
+      this.login();
+    },
+    async login() {
+      const result = await this.$http.post("/action/user/login", {
+        phone: this.form.phone,
+        password: this.form.password
+      });
+      const token = result.data.token;
+      if (token) {
+        wx.setStorage({
+          key: "token",
+          data: token
+        });
+      }
     }
   }
 };
@@ -82,27 +98,26 @@ export default {
   top: 8rpx;
 }
 .wrap {
+  box-sizing: border-box;
   height: 100%;
-  padding: 10rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   font-size: 30rpx;
+  padding: 60rpx 40rpx;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
 
-  & > img {
-    display: block;
-    width: 160rpx;
-    height: 160rpx;
-    margin-bottom: 140rpx;
-    border: 2rpx solid rgb(26, 188, 156);
-    border-radius: 50%;
+  .header {
+    text-align: center;
+    > img {
+      width: 160rpx;
+      height: 160rpx;
+      border-radius: 50%;
+    }
   }
 
   .form {
-    width: 80%;
-    margin-bottom: 120rpx;
-
+    margin: 0 auto;
+    width: 85%;
     .input-item {
       transform: scale(1);
       margin-bottom: 60rpx;
@@ -111,8 +126,6 @@ export default {
         display: inline-block;
         vertical-align: middle;
         padding-left: 50rpx;
-        line-height: 40rpx;
-        min-height: 40rpx;
         height: 40rpx;
         font-size: 30rpx;
       }
@@ -124,11 +137,16 @@ export default {
       }
     }
   }
+
+  .footer {
+    height: 200rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
   .forget {
     text-align: right;
-  }
-  .place-holder {
-    height: 40rpx;
   }
 }
 </style>

@@ -7,6 +7,9 @@ const config = {
   Auth: {
     cid: '007001',
     accountKey: '7vL5EioNUyQ9Rs5gv7Jm'
-  }
+  },
+  AccessUrl: [
+    '/action/user/login'
+  ]
 }
 module.exports = config
