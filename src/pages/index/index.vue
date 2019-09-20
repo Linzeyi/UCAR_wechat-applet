@@ -14,7 +14,11 @@
             </span>
           </div>
           <div class="list-content">
-            <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
+            <goods-grid-list
+            :start.sync="start" 
+            :size.sync="size" 
+            :goodsList="goodsList" 
+            :col="2"></goods-grid-list>
           </div>
         </div>
       </div>
@@ -37,7 +41,9 @@ export default {
         avatarUrl: 'http://mpvue.com/assets/logo.png'
       },
       imgList: [],
-      goodsList: []
+      goodsList: [],
+      start: 0,
+      size: 4
     }
   },
   components: {
@@ -80,17 +86,32 @@ export default {
         title: '正在加载',
         mask: true
       })
-      this.$http.get('/action/goods/getRecommendGoodsList').then(res => {
+      this.$http.get('/action/goods/getRecommendGoodsList', {
+        start: this.start,
+        size: this.size
+      }).then(res => {
         console.log(res)
         if (res.data) {
           this.goodsList = res.data
+          this.getRandomImgList()
+        } else {
+          wx.showToast({
+            title: '加载失败',
+            icon: 'none',
+            duration: 2000
+          })
         }
         wx.hideLoading()
         wx.stopPullDownRefresh()
-        this.getRandomImgList()
       }).catch(err => {
         console.log(err)
         wx.hideLoading()
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title: '加载失败',
+          icon: 'none',
+          duration: 2000
+        })
       })
     },
     switchTab (url) {

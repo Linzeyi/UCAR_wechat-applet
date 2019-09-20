@@ -192,6 +192,19 @@ export default {
             console.log(that.order)
             that.$http.post('/action/order/setOrder', that.order).then(res => {
               console.log(res)
+              if (res.data) {
+                wx.showToast({
+                  title: '成功获取订单',
+                  icon: 'success',
+                  duration: 2000
+                })
+              } else {
+                wx.showToast({
+                  title: '查询失败',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
             })
             mpvue.redirectTo({ url: '/pages/orderDetail/main' })
           }

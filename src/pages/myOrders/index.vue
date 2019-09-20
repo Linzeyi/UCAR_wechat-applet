@@ -10,7 +10,7 @@
         <span>{{item.name}}</span>
       </div>
     </div>
-    <div class="order-list-wrap">
+    <div class="order-list-wrap" v-if="orderList.length !== 0">
       <div class="order-box" v-for="(orderItem, orderIndex) in orderList" :key="orderIndex">
         <div class="header">
           <div class="left-box">
@@ -45,14 +45,20 @@
             合计：<span class="price"><span class="logo">¥</span>{{orderItem.payPrice}}</span>
           </div>
           <div class="goods-footer">
-            <span class="option-btn" @click="toOrderDetail(orderItem)">查看订单</span>
-            <span class="option-btn" v-if="orderItem.status === 1 ">确认收货</span>
-            <span class="option-btn" v-if="orderItem.status < 1 ">取消订单</span>
-            <span class="option-btn" v-if="orderItem.status === 0">去支付</span>
+            <span class="option-btn" @click="toOrderDetail(orderItem.orderNo)">查看订单</span>
+            <span class="option-btn" v-if="orderItem.status === 1" @click="confirmReceipt(orderItem)">确认收货</span>
+            <span class="option-btn" v-if="orderItem.status < 1" @click="cancelOrder(orderItem)">取消订单</span>
+            <span class="option-btn" v-if="orderItem.status === 0" @click="toPayOrder(orderItem)">去支付</span>
             <span class="option-btn" @click="toGoodsComments(orderItem)" v-if="orderItem.status > 1 && orderItem.status < 3">评价</span>
           </div>
         </div>
       </div>
+    </div>
+    <div class="no-orders-panel" v-else>
+      <p>
+        <i class="iconfont icon-no-orders">&#xe6ee;</i>
+        订单列表暂时为空...
+      </p>
     </div>
   </div>
 </template>
@@ -92,7 +98,6 @@ export default {
     console.log('onShow')
   },
   onLoad () {
-    this.init()
     this.getOrderList()
   },
   watch: {
@@ -112,24 +117,46 @@ export default {
     }
   },
   methods: {
-    init () {
-      this.orderList = this.$store.getters['Order/orderList']
-      console.log("我的订单列表获取：", this.orderList)
-    },
     getOrderList (status) {
+      wx.showLoading({
+        title: '正在加载',
+        mask: true
+      })
       this.$http.get('/action/order/getOrderList', {
         status: this.selectTypeKey
       }).then(res => {
         console.log(res)
-        this.orderList = res.data
+        if (res.data) {
+          this.orderList = res.data
+        } else {
+          wx.showToast({
+            title: '加载失败！',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title: '加载失败！',
+          icon: 'none',
+          duration: 2000
+        })
       })
     },
+    confirmReceipt (order) {},
+    cancelOrder (order) {},
+    toPayOrder (order) {},
     toGoodsComments (order) {
       this.$store.commit('Comment/SET_ORDER', order)
       mpvue.navigateTo({ url: '/pages/goodsComments/main?orderNo=' + order.orderNo })
     },
-    toOrderDetail (item) {
-      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderNo=' + item.orderNo })
+    toOrderDetail (orderNo) {
+      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderNo=' + orderNo })
     }
   }
 }
@@ -139,6 +166,23 @@ export default {
 .myOrders-wrap {
   height: 100%;
   background-color: #f3f3f3;
+  .no-orders-panel {
+    position: relative;
+    top: 40px;
+    padding: 30px 0;
+    p {
+      font-size: 16px;
+      color: #bbb;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .iconfont {
+        font-size: 36px;
+        margin-right: 3px;
+      }
+    }
+  }
   .tab-panel {
     position: fixed;
     left: 0;
@@ -232,7 +276,7 @@ export default {
               .type {
                 font-size: 10px;
                 padding: 2px 4px;
-                background-color: #f6f6f6;
+                background-color: #f3f3f3;
                 border-radius: 4px;
                 color: #999;
               }
