@@ -16,11 +16,11 @@
       <span>短信验证码</span>
       <input type="text" maxlength="6" placeholder="短信验证码" v-model="form.captcha" />
       <div class="captcha">
-        <captcha></captcha>
+        <captcha :phone="getPhone" :type=2></captcha>
       </div>
     </div>
     <div class="submit">
-      <base-button @click="handleSubmit">保存</base-button>
+      <base-button @click="handleCheck">保存</base-button>
     </div>
     <base-message></base-message>
   </div>
@@ -46,8 +46,13 @@ export default {
     BaseButton,
     BaseMessage
   },
+  computed: {
+    getPhone() {
+      return this.$store.getters['UserInfo/phone']
+    }
+  },
   methods: {
-    async handleSubmit() {
+    async handleCheck() {
       let flag = false;
       flag = await this.$store.dispatch(
         "BaseStore/checkPassword",
@@ -71,7 +76,11 @@ export default {
         return
       }
       // 判断旧密码是否一致，需调接口
-      console.log("修改成功");
+      const result = await this.$http('/action/user/comparePassword', {
+        newPassword: this.newPassword,
+        oldPassword: this.oldPassword
+      })
+      console.log(result.data)
     }
   }
 };
@@ -117,8 +126,8 @@ export default {
   }
 
   .submit {
-    margin-top: 120rpx;
-    text-align: center;
+    margin: 120rpx auto 0;
+    width: 500rpx;
   }
 }
 </style>

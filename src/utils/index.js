@@ -64,5 +64,6 @@ export default {
   navigateTo,
   timestampTo,
   getSwiperDefaultImg,
-  getSquareDefaultImg
+  getSquareDefaultImg,
+  switchTab
 }

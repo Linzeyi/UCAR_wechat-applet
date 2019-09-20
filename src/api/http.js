@@ -76,6 +76,7 @@ fly.interceptors.request.use(request => {
       wx.showToast({
         title: '请先登录账号',
         image: '/static/images/login.svg',
+        icon: 'none',
         mask: true,
         duration: 1500
       })

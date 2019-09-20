@@ -9,7 +9,10 @@ const config = {
     accountKey: '7vL5EioNUyQ9Rs5gv7Jm'
   },
   AccessUrl: [
-    '/action/user/login'
+    '/action/user/login',
+    '/action/user/register',
+    '/action/user/getCaptcha',
+    '/action/user/changePassword'
   ]
 }
 module.exports = config
