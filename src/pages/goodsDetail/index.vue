@@ -37,7 +37,7 @@
             <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm" :disabled="checkInvalid">立即购买</button>
           </div>
         </div>
-        <type-dialog :parentType="'goodsDetail'" :goodsNo="goods.goodsNo" :property="property" :pNum="num" @changeType="changeType"></type-dialog>
+        <type-dialog :parentType="'goodsDetail'" :goodsNo="goods.goodsNo" :property="property" :pNum="num" @changeProperty="changeProperty"></type-dialog>
       </div>
     </base-custom-box>
   </div>
@@ -121,17 +121,20 @@ export default {
   methods: {
     init () {
       this.currentTabKey = 0
+      let goodsNo = this.goods.goodsNo
       this.goods = {}
+      this.goods.goodsNo = goodsNo
       this.property = {}
       this.num = 0
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
     },
-    changeType (property, num) {
+    changeProperty (property, num) {
       this.property = property
       this.num = num
       console.log('赋值规格后的商品', this.goods)
     },
     getGoodsByNo () {
+      this.init()
       wx.showLoading({
         title: '正在加载',
         mask: true
@@ -233,6 +236,7 @@ export default {
           let goods = JSON.parse(JSON.stringify(this.goods))
           goods.num = this.num
           goods.property = this.property
+          delete goods.propertyList
           let goodsList = [goods]
           this.$store.commit('Order/SET_GOODSLIST', goodsList)
           mpvue.navigateTo({ url: '/pages/orderConfirm/main' })

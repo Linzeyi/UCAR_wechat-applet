@@ -55,6 +55,11 @@ export default {
   onLoad () {
     this.getRecommendGoodsList()
   },
+  watch: {
+    size () {
+      this.getRecommendGoodsList()
+    }
+  },
   async onPullDownRefresh() {
     console.log('下拉刷新')
     this.getRecommendGoodsList()

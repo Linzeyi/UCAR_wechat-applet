@@ -16,7 +16,7 @@
             <span class="title">选购商品</span>
           </div>
           <div class="goods-list">
-            <div class="goods-box" v-for="(goodsItem, goodsIndex) in order.goodsList" :key="goodsIndex">
+            <div class="goods-box" v-for="(goodsItem, goodsIndex) in order.shopGoodsList" :key="goodsIndex">
               <div class="info-box lzy-flex-box">
                 <div class="left-box">
                   <div class="img-box">
@@ -42,7 +42,7 @@
           <div class="goods-footer">
             <p class="small-font">
               <span class="left">商品总价</span>
-              <span class="right">¥ {{getTotalPrice}}</span>
+              <span class="right">¥ {{order.payPrice}}</span>
             </p>
             <p class="small-font">
               <span class="left">其他开销</span>
@@ -50,11 +50,15 @@
             </p>
             <p class="order-price-font">
               <span class="left">订单总价</span>
-              <span class="right">¥ {{getTotalPrice}}</span>
+              <span class="right">¥ {{order.payPrice}}</span>
             </p>
-            <p class="total-price-font">
+            <p class="total-price-font" v-if="order.status === 0">
               <span class="left">需付款</span>
-              <span class="right"><span class="logo">¥</span> {{getTotalPrice}}</span>
+              <span class="right"><span class="logo">¥</span> {{order.payPrice}}</span>
+            </p>
+            <p class="total-price-font" v-else>
+              <span class="left">已付款</span>
+              <span class="right"><span class="logo">¥</span> {{order.payPrice}}</span>
             </p>
           </div>
         </div>
@@ -65,15 +69,15 @@
           </div>
           <div class="content-panel">
             <span class="title">收货人</span>
-            <span>{{order.addressInfo.receiverName}}</span>
+            <span>{{order.receiptInfo.receiptName}}</span>
           </div>
           <div class="content-panel">
             <span class="title">联系方式</span>
-            <span>{{order.addressInfo.receiverPhone}}</span>
+            <span>{{order.receiptInfo.receiptTel}}</span>
           </div>
           <div class="content-panel">
             <span class="title">收货地址</span>
-            <span>{{order.addressInfo.address}}</span>
+            <span>{{order.receiptInfo.receiptAddress}}</span>
           </div>
         </div>
         <div class="wrap-panel order-info-panel">
@@ -83,7 +87,7 @@
           </div>
           <div class="content-panel">
             <span class="title">订单编号</span>
-            <span>{{order.orderId}}</span>
+            <span>{{order.orderNo}}</span>
           </div>
           <div class="content-panel">
             <span class="title">订单状态</span>
@@ -116,8 +120,10 @@
         </div>
         <div class="pay-footer lzy-footer">
           <div class="right-box">
-            <button class="cancel-btn" @click="cancelOrder">取消订单</button>
-            <button class="pay-btn" @click="payOrder">付款</button>
+            <button class="pay-btn" @click="payOrder" v-if="order.status === 0">付款</button>
+            <button class="cancel-btn" @click="cancelOrder" v-if="order.status < 1">取消订单</button>
+            <button class="cancel-btn" @click="confirmReceipt" v-if="order.status === 1">确认收货</button>
+            <button class="cancel-btn" @click="toGoodsComments()" v-if="order.status > 1 && order.status < 3">评价</button>
           </div>
         </div>
       </div>
@@ -156,9 +162,9 @@ export default {
     }
   },
   onLoad (option) {
+    this.order.orderNo = option.orderNo
+    console.log(option)
     this.getOrder()
-    this.selectPayType = this.payTypeList[0]
-    this.order = JSON.parse(JSON.stringify(this.$store.getters['Order/order']))
     let title = '订单详情'
     if (this.order.status === 0 || this.order.status === '0') {
       title = '订单支付'
@@ -177,17 +183,6 @@ export default {
     getDefaultImg () {
       return this.Utils.getSquareDefaultImg()
     },
-    getTotalPrice () {
-      let price = 0
-      if (JSON.stringify(this.order) === '{}') {
-        return 0
-      } else {
-        this.order.goodsList.map(item => {
-          price += item.num * (item.type.discountPrice ? item.type.discountPrice : item.type.price)
-        })
-        return price
-      }
-    },
     getStatusList () {
       return this.$store.getters['Order/statusList'][parseInt(this.order.status)]
     }
@@ -195,18 +190,41 @@ export default {
   methods: {
     init () {
       console.log('orderDetail页面销毁')
-      this.$store.commit('Order/INIT_ORDER')
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
     },
     backOff () {
       mpvue.navigateBack({ delta: 1 })
     },
     getOrder () {
+      wx.showLoading({
+        title: '获取订单信息',
+        mask: true
+      })
       this.$http.get('/action/order/getOrder', {
-        orderNo: '369155106035204096'
+        orderNo: this.order.orderNo
       }).then(res => {
         console.log(res)
+        if (res.data) {
+          this.order = res.data
+          this.order.createTime = this.Utils.formatTime(this.order.createTime)
+        } else {
+          wx.showToast({
+            title: '获取失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        wx.hideLoading()
         wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title: '获取失败',
+          icon: 'none',
+          duration: 2000
+        })
       })
     },
     cancelOrder () {
@@ -224,7 +242,7 @@ export default {
     },
     payOrder () {
       let that = this
-      if (this.getTotalPrice > this.selectPayType.balance) {
+      if (this.order.payPrice > this.selectPayType.balance) {
         wx.showModal({
           title: '您的余额已不足',
           content: '请充值或选用其他支付方式',
@@ -239,18 +257,30 @@ export default {
       } else {
         wx.showModal({
           title: '确认付款',
-          content: '本次应付金额共计' + this.getTotalPrice + '\r\n是否用' + this.selectPayType.name + '支付方式付款',
+          content: '本次应付金额共计' + this.order.payPrice,
           confirmText: '支付',
           success (res) {
             if (res.confirm) {
-              wx.showModal({
-                title: '支付成功',
-                content: '将为您跳转至我的订单界面',
-                showCancel: false,
-                success (res) {
-                  console.log('付款成功，支付订单：', that.order)
-                  that.$store.commit('Order/ADD_ORDER', that.order)
-                  mpvue.navigateTo({ url: '/pages/myOrders/main' })
+              that.$http.get('/action/order/payOrder', {
+                orderNo: that.order.orderNo
+              }).then(res => {
+                console.log(res)
+                if (res.data) {
+                  wx.showModal({
+                    title: '支付成功',
+                    content: '将为您跳转至我的订单界面',
+                    showCancel: false,
+                    success (res) {
+                      console.log('付款成功，支付订单：', that.order)
+                      mpvue.navigateTo({ url: '/pages/myOrders/main' })
+                    }
+                  })
+                } else {
+                  wx.showToast({
+                    title: '支付失败',
+                    icon: 'none',
+                    duration: 2000
+                  })
                 }
               })
             } else {

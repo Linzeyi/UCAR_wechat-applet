@@ -183,10 +183,13 @@ export default {
       })
     },
     showTypeDialog (flag) {
-      this.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
+      let that = this
+      this.$nextTick(function() {
+        that.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
+      })
     },
     handlerSelectedType () {
-      this.$emit('changeType', this.selectedProperty, this.num)
+      this.$emit('changeProperty', this.selectedProperty, this.num)
       this.showTypeDialog(false)
     },
     selectType (property) {

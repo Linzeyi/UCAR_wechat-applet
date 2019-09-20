@@ -74,7 +74,7 @@ export default {
   },
   computed: {
     checkMoreShow () {
-      return (this.goodsList.length > this.size) && !this.isLoading
+      return this.goodsList.length === this.size
     }
   },
   async onReachBottom () {

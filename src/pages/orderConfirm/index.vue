@@ -12,12 +12,12 @@
             </div>
             <div class="content-box">
               <p>
-                <span class="name">{{getAddress.receiverName}}</span>
-                <span class="phone">{{getAddress.receiverPhone}}</span>
-                <span class="type" v-if="getAddress.isDefault">默认</span>
+                <span class="name">{{address.receiptName}}</span>
+                <span class="phone">{{address.receiptTel}}</span>
+                <span class="type" v-if="address.isDefault">默认</span>
               </p>
               <p>
-                {{getAddress.address}}
+                {{address.receiptAddress}}
               </p>
             </div>
             <div class="right-box">
@@ -92,23 +92,22 @@ export default {
   data () {
     return {
       order: {
-        orderId: '',
         remark: '',
-        addressInfo: {
-          name: '林泽毅',
-          phone: '13107927091',
-          address: '福建省厦门市思明区宝龙一城西塔21楼',
-          isDefault: true
-        },
+        receiptInfo: {},
         goodsList: []
-      }
+      },
+      address: {}
     }
   },
   onLoad (option) {
     this.getGoodsList()
+    this.getDefaultAddress()
   },
   onUnload () {
     // this.init()
+  },
+  async onPullDownRefresh() {
+    this.getDefaultAddress()
   },
   computed: {
     getDefaultImg () {
@@ -142,6 +141,30 @@ export default {
       // this.orderId = ''
       console.log('orderConfirm页面销毁')
       this.$store.commit('Order/INIT_ORDER')
+    },
+    getDefaultAddress () {
+      this.$http.get('/action/addr/getDefault').then(res => {
+        if (res.data) {
+          this.$set(this.address, 'receiptName', res.data.address.receiver)
+          this.$set(this.address, 'receiptAddress', res.data.address.province + res.data.address.city + res.data.address.district + res.data.address.addressDetail)
+          this.$set(this.address, 'receiptTel', res.data.address.phone)
+          this.$set(this.address, 'isDefault', res.data.address.isDefault)
+          console.log(this.address)
+        } else {
+          wx.showToast({
+            title: '获取地址失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+        wx.showToast({
+          title: '获取地址失败',
+          icon: 'none',
+          duration: 2000
+        })
+      })
     },
     getGoodsList () {
       this.order.goodsList = this.$store.getters['Order/goodsList']
@@ -186,13 +209,13 @@ export default {
         success (res) {
           if (res.confirm) {
             that.order.createTime = that.Utils.formatTime(new Date())
-            that.order.status = 0
-            that.order.addressInfo = that.getAddress
-            // that.$store.commit('Order/SET_ORDER', that.order)
+            that.order.orderType = 0
+            that.order.receiptInfo = that.address
             console.log(that.order)
             that.$http.post('/action/order/setOrder', that.order).then(res => {
               console.log(res)
               if (res.data) {
+                mpvue.redirectTo({ url: '/pages/orderDetail/main?orderNo=' + res.data.orderNo })
                 wx.showToast({
                   title: '成功获取订单',
                   icon: 'success',
@@ -206,7 +229,6 @@ export default {
                 })
               }
             })
-            mpvue.redirectTo({ url: '/pages/orderDetail/main' })
           }
         }
       })

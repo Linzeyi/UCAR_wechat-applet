@@ -17,7 +17,7 @@
             <span class="order-id">订单编号：{{orderItem.orderNo}}</span>
           </div>
           <div class="right-box">
-            <span class="status">{{getStatusList[orderItem.status + 1]}}</span>
+            <span class="status">{{typeTabList[orderItem.status + 1].name}}</span>
           </div>
         </div>
         <div class="goods-list">
@@ -25,16 +25,16 @@
             <div class="flex-box">
               <div class="left-box">
                 <div class="img-box">
-                  <image :src="goodsItem.propertyVO.picList[0] ? goodsItem.propertyVO.picList[0] : getDefaultImg" alt="商品图片"></image>
+                  <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片"></image>
                 </div>
               </div>
               <div class="content-box">
                 <p class="title">{{goodsItem.goodsName}}</p>
-                <p class="type">规格:{{goodsItem.propertyVO.propertyName}}</p>
+                <p class="type">规格:{{goodsItem.property.propertyName}}</p>
               </div>
               <div class="right-box">
                 <p class="price">
-                  <span class="logo">¥</span>{{goodsItem.propertyVO.discountPrice}}
+                  <span class="logo">¥</span>{{goodsItem.property.discountPrice}}
                 </p>
                 <p class="num">x{{goodsItem.num}}</p>
               </div>
@@ -46,9 +46,9 @@
           </div>
           <div class="goods-footer">
             <span class="option-btn" @click="toOrderDetail(orderItem.orderNo)">查看订单</span>
-            <span class="option-btn" v-if="orderItem.status === 1" @click="confirmReceipt(orderItem)">确认收货</span>
-            <span class="option-btn" v-if="orderItem.status < 1" @click="cancelOrder(orderItem)">取消订单</span>
-            <span class="option-btn" v-if="orderItem.status === 0" @click="toPayOrder(orderItem)">去支付</span>
+            <span class="option-btn" v-if="orderItem.status === 0" @click="toPayOrder(orderItem.orderNo)">去支付</span>
+            <span class="option-btn" v-if="orderItem.status < 1" @click="cancelOrder(orderItem.orderNo)">取消订单</span>
+            <span class="option-btn" v-if="orderItem.status === 2" @click="confirmReceipt(orderItem.orderNo)">确认收货</span>
             <span class="option-btn" @click="toGoodsComments(orderItem)" v-if="orderItem.status > 1 && orderItem.status < 3">评价</span>
           </div>
         </div>
@@ -79,16 +79,20 @@ export default {
           key: '0'
         },
         {
-          name: '待收货',
+          name: '待发货',
           key: '1'
         },
         {
-          name: '已完成',
+          name: '待收货',
           key: '2'
         },
         {
-          name: '已取消',
+          name: '已完成',
           key: '3'
+        },
+        {
+          name: '已取消',
+          key: '4'
         }
       ],
       orderList: []
@@ -117,7 +121,7 @@ export default {
     }
   },
   methods: {
-    getOrderList (status) {
+    getOrderList () {
       wx.showLoading({
         title: '正在加载',
         mask: true
@@ -148,9 +152,85 @@ export default {
         })
       })
     },
-    confirmReceipt (order) {},
-    cancelOrder (order) {},
-    toPayOrder (order) {},
+    confirmReceipt (orderNo) {
+      let that = this
+      wx.showModal({
+        title: '确认收货',
+        content: '是否确认收货',
+        cancelText: '否',
+        confirmText: '是',
+        success (res) {
+          if (res.confirm) {
+            that.$http.get('/action/order/confirmOrder', {
+              orderNo: orderNo
+            }).then(res => {
+              if (res.data) {
+                wx.showToast({
+                  title: '确认成功',
+                  icon: 'success',
+                  duration: 2000
+                })
+                that.getOrderList()
+              } else {
+                wx.showToast({
+                  title: '确认失败！',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
+            }).catch(err => {
+              console.log(err)
+              wx.showToast({
+                title: '确认失败！',
+                icon: 'none',
+                duration: 2000
+              })
+            })
+          }
+        }
+      })
+    },
+    cancelOrder (orderNo) {
+      let that = this
+      wx.showModal({
+        title: '取消订单',
+        content: '是否取消订单',
+        cancelText: '否',
+        confirmText: '是',
+        success (res) {
+          if (res.confirm) {
+            that.$http.get('//action/order/cancelOrder', {
+              orderNo: orderNo
+            }).then(res => {
+              if (res.data) {
+                wx.showToast({
+                  title: '取消成功',
+                  icon: 'success',
+                  duration: 2000
+                })
+                that.getOrderList()
+              } else {
+                wx.showToast({
+                  title: '取消失败！',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
+            }).catch(err => {
+              console.log(err)
+              wx.showToast({
+                title: '取消失败！',
+                icon: 'none',
+                duration: 2000
+              })
+            })
+          }
+        }
+      })
+    },
+    toPayOrder (orderNo) {
+      this.toOrderDetail(orderNo)
+    },
     toGoodsComments (order) {
       this.$store.commit('Comment/SET_ORDER', order)
       mpvue.navigateTo({ url: '/pages/goodsComments/main?orderNo=' + order.orderNo })

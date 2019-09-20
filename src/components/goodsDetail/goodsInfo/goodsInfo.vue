@@ -108,7 +108,10 @@ export default {
   },
   methods: {
     showTypeDialog () {
-      this.$store.commit('Goods/SET_SHOWTYPEDIALOG', true)
+      let that = this
+      this.$nextTick(function () {
+        that.$store.commit('Goods/SET_SHOWTYPEDIALOG', true)
+      })
     }
   },
   computed: {
