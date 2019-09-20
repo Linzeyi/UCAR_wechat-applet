@@ -28,7 +28,7 @@
                       <p class="bottom-p">
                         <span class="price"><span class="logo">¥</span>{{(goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice )* goodsItem.num}}</span>
                         <span class="numPicker-box">
-                          <num-picker :min="1" :isSmall="true" :max="goodsItem.property.stock" :num.sync="goodsItem.num" @changeType="changeType"></num-picker>
+                          <num-picker :min="1" :isSmall="true" :max="goodsItem.property.stock" :num.sync="goodsItem.num" @changeProperty="changeProperty"></num-picker>
                         </span>
                       </p>
                     </div>
@@ -55,13 +55,13 @@
                     <div class="tips-box">
                       <span class="invalid-tips">失效</span>
                     </div>
-                    <div class="img-box" v-for="(typeItem, typeIndex) in unGoodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                      <image :src="typeItem.imgList[0] ? typeItem.imgList[0] : getDefaultImg" alt="商品图片" mode="aspectFit"></image>
+                    <div class="img-box" :key="typeIndex">
+                      <image :src="unGoodsItem.property.picList[0] ? unGoodsItem.property.picList[0] : getDefaultImg" alt="商品图片" mode="aspectFit"></image>
                     </div>
                   </div>
                   <div class="content-box">
                     <div class="info-box">
-                      <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.title}}</p>
+                      <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.goodsName}}</p>
                       <p class="invalid-msg">{{unGoodsItem.invalidMsg}}</p>
                     </div>
                   </div>
@@ -85,7 +85,7 @@
             <button class="to-pay-btn" @click="toOrderConfirm">结算({{getSelectedNum}})</button>
           </div>
         </div>
-        <type-dialog :parentType="'shoppingCart'" @changeType="changeType"></type-dialog>
+        <type-dialog :parentType="'shoppingCart'" :goodsNo="selectedGoods.goodsNo" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
       </div>
     </base-custom-box>
   </div>
@@ -108,7 +108,10 @@ export default {
     return {
       isAllSelected: false,
       goodsList: [],
-      invalidGoodsList: []
+      invalidGoodsList: [],
+      selectedGoods: {
+        goodsNo: ''
+      }
     }
   },
   computed: {
@@ -156,10 +159,13 @@ export default {
         urls: item.picList
       })
     },
-    changeType () {
+    changeProperty () {
+      console.log('选中商品', this.selectedGoods)
       this.getShoppingCartGoodsList()
     },
     getShoppingCartGoodsList () {
+      this.goodsList = []
+      this.invalidGoodsList = []
       wx.showLoading({
         title: '正在加载',
         mask: true
@@ -167,8 +173,8 @@ export default {
       this.$http.get('/action/order/getShoppingCartList').then(res => {
         console.log(res)
         if (res) {
-          this.goodsList = res.validCart
-          this.invalidGoodsList = res.invalidCart
+          this.goodsList = res.data.validCart
+          this.invalidGoodsList = res.data.invalidCart
         } else {
           wx.showToast({
             title: '加载失败',
@@ -181,6 +187,7 @@ export default {
       }).catch(err => {
         console.log(err)
         wx.hideLoading()
+        wx.stopPullDownRefresh()
         wx.showToast({
           title: '加载失败',
           icon: 'none',
@@ -189,7 +196,7 @@ export default {
       })
     },
     handlerShowTypeDialog (goodsItem) {
-      this.$store.commit('Goods/SET_GOODS', goodsItem)
+      this.selectedGoods = goodsItem
       this.showTypeDialog(true)
     },
     showTypeDialog (flag) {
@@ -301,10 +308,6 @@ export default {
                 width: 70px;
                 height: 70px;
                 overflow: hidden;
-                display: none;
-                &.isSelected {
-                  display: inline-block;
-                }
                 image {
                   width: 100%;
                   height: 100%;
@@ -366,15 +369,11 @@ export default {
               color: #333;
             }
             &.type {
-              display: none;
               font-size: 10px;
               padding: 2px 4px;
               background-color: #f6f6f6;
               border-radius: 4px;
               color: #999;
-              &.isSelected {
-                display: block;
-              }
             }
             .price {
               font-size: 12px;
@@ -385,14 +384,10 @@ export default {
               }
             }
             &.bottom-p {
-              display: none;
               margin-top: 5px;
               height: 30px;
               position: relative;
               padding: 0;
-              &.isSelected {
-                display: block;
-              }
               .price {
                 display: inline-block;
                 height: 30px;
