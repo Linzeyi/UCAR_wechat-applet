@@ -147,16 +147,39 @@ export default {
         this.avatarUrl = url;
       }
     },
+    handleWechat(tempUrl) {
+      const token = wx.getStorageSync("token");
+      wx.uploadFile({
+        url:
+          "https://apiproxytest.ucarinc.com/ucarincapiproxy/action/user/uploadAvatar",
+        filePath: tempUrl,
+        name: "file",
+        header: {
+          apigroupcode: "tranning",
+          token: token
+        },
+        formData: {
+          sign: '4191131821855832366960060265169801929',
+          cid: '007001'
+          // fileName: ''
+        },
+        success(res) {
+          console.log("上传文件结束");
+        }
+      });
+    },
     handleTempAvatar(tempUrl) {
       let base64 = wx.getFileSystemManager().readFileSync(tempUrl, "base64");
+      console.log(base64.length);
       this.uploadAvatar(base64);
     },
-    async handleRemoteAvatar(url) {
+    handleRemoteAvatar(url) {
       const _this = this;
       wx.request({
         url: url,
         responseType: "arraybuffer",
         success(res) {
+          console.log("res：", res);
           let base64 = wx.arrayBufferToBase64(res.data);
           _this.uploadAvatar(base64);
         }
