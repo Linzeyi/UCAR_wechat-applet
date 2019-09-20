@@ -56,6 +56,10 @@ export default {
 .navigation-bar {
   text-align: center;
   transform: scale(1);
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
   .nav-icon {
     position: fixed;
 

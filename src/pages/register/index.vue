@@ -4,7 +4,7 @@
     <div class="form">
       <div class="input-item">
         <span>账号</span>
-        <input type="text" placeholder="手机号" v-model="form.phone" />
+        <input type="text" placeholder="手机号" v-model="form.phone" maxlength="11" />
       </div>
       <div class="input-item">
         <div class="switch-button">
@@ -97,6 +97,13 @@ export default {
         this.form.captcha
       );
       if (!flag) {
+        return;
+      }
+      if (!this.agreementActive) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "请先同意用户协议"
+        });
         return;
       }
       this.register();

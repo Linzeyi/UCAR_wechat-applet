@@ -81,7 +81,7 @@ export default {
         phone: this.form.phone,
         password: this.form.password
       });
-      if (result.data === null) {
+      if (result.status !== 20000) {
         this.$store.commit("BaseStore/SHOW_TOAST", {
           type: "error",
           content: "账号或密码不正确"
