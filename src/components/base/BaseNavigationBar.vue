@@ -1,5 +1,5 @@
 <template>
-  <div class="navigation-bar" :style="{'height': customNavHeight}">
+  <div class="navigation-bar" :style="{'height': customNavHeight, 'background-color': bgColor}">
     <div
       class="nav-icon"
       :style="{'top': iconTop, 'left': iconLeft, 'height': iconHeight, 'line-height': iconHeight}"
@@ -16,7 +16,11 @@
 <script>
 export default {
   props: {
-    name: String
+    name: String,
+    bgColor: {
+      type: String,
+      default: 'white'
+    }
   },
   created() {
     this.menuInfo = this.$store.getters["SystemInfo/menuInfo"];
