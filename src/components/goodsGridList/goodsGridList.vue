@@ -1,7 +1,7 @@
 <template>
   <div class="goods-grids-wrap">
-    <div class="goods-grids" :style="'column-count: ' + col">
-      <div v-for="(goodsItem, goodsIndex) in computedGoodsList" :key="goodsIndex" class="grid-box">
+    <div class="goods-grids" :style="'column-count: ' + col" v-if="goodsList.length !== 0">
+      <div v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex" class="grid-box">
         <div class="content-box" @click="toGoodsDetail(goodsItem)">
           <div class="img-box">
             <image :src="goodsItem.pic ? goodsItem.pic : 'https://fs.zhenjiang365.cn/bbsimg/fcmb/image/nopic590.jpg'" :alt="goodsItem.goodsName" mode="widthFix"></image>
@@ -15,6 +15,9 @@
           </p>
         </div>
       </div>
+    </div>
+    <div class="no-goods-panel" v-else>
+      <p><i class="iconfont icon-no-goods">&#xe65d;</i>暂无商品...</p>
     </div>
     <div class="loading-footer">
       <p v-if="checkMoreShow">
@@ -41,36 +44,56 @@ export default {
       default () {
         return 2
       }
+    },
+    start: {
+      type: Number,
+      default () {
+        return 0
+      }
+    },
+    size: {
+      type: Number,
+      default () {
+        return 4
+      }
     }
   },
   data () {
     return {
-      isLoading: false,
-      size: 4
+      isLoading: false
+    }
+  },
+  watch: {
+    goodsList: {
+      handler () {
+        console.log('检测到数组变化')
+        this.setLoading(false)
+      },
+      deep: true
     }
   },
   computed: {
-    computedGoodsList () {
-      return this.goodsList.slice(0, this.size)
-    },
     checkMoreShow () {
       return (this.goodsList.length > this.size) && !this.isLoading
     }
   },
-  onLoad () {
-  },
   async onReachBottom () {
     if (this.checkMoreShow && !this.isLoading) {
       console.log('触底')
-      this.isLoading = true
+      this.setLoading(true)
       let that = this
+      this.$emit('update:size', that.size + 4)
       setTimeout(function() {
-        that.size += 4
-        that.isLoading = false
-      }, 1500)
+        if (that.isLoading) {
+          that.setLoading(false)
+        }
+      }, 20000)
     }
   },
   methods: {
+    setLoading (flag) {
+      this.isLoading = flag
+    },
     toGoodsDetail (goods) {
       mpvue.navigateTo({ url: '/pages/goodsDetail/main?goodsNo=' + goods.goodsNo })
     }
@@ -82,6 +105,21 @@ export default {
 .goods-grids-wrap {
   padding: 5px;
   background-color: #f3f3f3;
+  .no-goods-panel {
+    padding: 30px 0;
+    p {
+      font-size: 16px;
+      color: #bbb;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .iconfont {
+        font-size: 21px;
+        margin-right: 7px;
+      }
+    }
+  }
   .goods-grids {
     border: none;
     column-gap: 0;

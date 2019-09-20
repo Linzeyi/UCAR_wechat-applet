@@ -139,19 +139,27 @@ export default {
       this.$http.get('/action/goods/getGoodsDetailByGoodsNo', {
         goodsNo: this.goods.goodsNo
       }).then(res => {
-        wx.hideLoading()
-        wx.stopPullDownRefresh()
         if (res.data) {
           this.goods = res.data
           console.log('goods:', this.goods)
+        } else {
+          wx.showToast({
+            title: '加载失败',
+            icon: 'none',
+            duration: 2000
+          })
         }
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
       }).catch(err => {
         console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
         wx.showToast({
-          title: '查询失败！',
+          title: '加载失败！',
+          icon: 'none',
           duration: 2000
         })
-        wx.hideLoading()
       })
     },
     backOff () {
@@ -191,11 +199,19 @@ export default {
                 num: that.num
               }).then(res => {
                 console.log(res)
-              })
-              wx.showToast({
-                title: '添加成功',
-                icon: 'success',
-                duration: 2000
+                if (res.status) {
+                  wx.showToast({
+                    title: '添加成功',
+                    icon: 'success',
+                    duration: 2000
+                  })
+                } else {
+                  wx.showToast({
+                    title: '添加失败',
+                    icon: 'none',
+                    duration: 2000
+                  })
+                }
               })
             }
           }

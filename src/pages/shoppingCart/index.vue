@@ -6,7 +6,7 @@
     <base-custom-box>
       <div class="shoppingCart-wrap lzy-list-wrap">
         <div class="goods-list-wrap">
-          <div class="goods-list">
+          <div class="goods-list" v-if="goodsList.length !== 0">
             <div class="goods-box" v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex">
               <movable-area class="movable-area">
                 <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
@@ -38,7 +38,13 @@
               </movable-area>
             </div>
           </div>
-          <div class="invalid-goods-list">
+          <div class="no-goods-panel" v-else>
+            <p>
+              <i class="iconfont icon-no-goods">&#xe617;</i>
+              购物车空啦！
+            </p>
+          </div>
+          <div class="invalid-goods-list" v-if="invalidGoodsList.length !== 0">
             <div class="header">
               <span class="title">失效商品{{invalidGoodsList.length}}件</span>
             </div>
@@ -160,22 +166,27 @@ export default {
       })
       this.$http.get('/action/order/getShoppingCartList').then(res => {
         console.log(res)
-        this.goodsList = res.validCart
-        this.invalidGoodsList = res.invalidCart
+        if (res) {
+          this.goodsList = res.validCart
+          this.invalidGoodsList = res.invalidCart
+        } else {
+          wx.showToast({
+            title: '加载失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
         wx.hideLoading()
         wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.showToast({
+          title: '加载失败',
+          icon: 'none',
+          duration: 2000
+        })
       })
-      // let goodsList = this.$store.getters['ShoppingCart/goodsList']
-      // console.log(goodsList)
-      // this.goodsList = []
-      // this.invalidGoodsList = []
-      // goodsList.map(item => {
-      //   if (item.isValid) {
-      //     this.goodsList.push(item)
-      //   } else {
-      //     this.invalidGoodsList.push(item)
-      //   }
-      // })
     },
     handlerShowTypeDialog (goodsItem) {
       this.$store.commit('Goods/SET_GOODS', goodsItem)
@@ -246,6 +257,21 @@ export default {
   .goods-list-wrap {
     padding: 0 10px 30px 10px;
     box-sizing: border-box;
+    .no-goods-panel {
+      padding: 30px 0;
+      p {
+        font-size: 16px;
+        color: #bbb;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .iconfont {
+          font-size: 24px;
+          margin-right: 9px;
+        }
+      }
+    }
     .goods-list, .invalid-goods-list {
       .goods-box, .invalid-goods-box {
         padding: 10px;
