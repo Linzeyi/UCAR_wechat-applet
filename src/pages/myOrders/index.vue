@@ -14,41 +14,42 @@
       <div class="order-box" v-for="(orderItem, orderIndex) in orderList" :key="orderIndex">
         <div class="header">
           <div class="left-box">
-            <span class="order-id">订单编号：{{orderItem.orderId}}</span>
+            <span class="order-id">订单编号：{{orderItem.orderNo}}</span>
           </div>
           <div class="right-box">
-            <span class="status">{{getStatusList[orderItem.status]}}</span>
+            <span class="status">{{getStatusList[orderItem.status + 1]}}</span>
           </div>
         </div>
         <div class="goods-list">
-          <div class="goods-box" v-for="(goodsItem, goodsIndex) in orderItem.goodsList" :key="goodsIndex">
+          <div class="goods-box" v-for="(goodsItem, goodsIndex) in orderItem.shopGoodsList" :key="goodsIndex">
             <div class="flex-box">
               <div class="left-box">
                 <div class="img-box">
-                  <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
+                  <image :src="goodsItem.propertyVO.picList[0] ? goodsItem.propertyVO.picList[0] : getDefaultImg" alt="商品图片"></image>
                 </div>
               </div>
               <div class="content-box">
-                <p class="title">{{goodsItem.title}}</p>
-                <p class="type">{{goodsItem.type.title}}:{{goodsItem.type.content}}</p>
+                <p class="title">{{goodsItem.goodsName}}</p>
+                <p class="type">规格:{{goodsItem.propertyVO.propertyName}}</p>
               </div>
               <div class="right-box">
                 <p class="price">
-                  <span class="logo">¥</span>{{goodsItem.type.price}}
+                  <span class="logo">¥</span>{{goodsItem.propertyVO.discountPrice}}
                 </p>
                 <p class="num">x{{goodsItem.num}}</p>
               </div>
             </div>
           </div>
           <div class="computed-info">
-            <span class="num">共{{orderItem.goodsList.length}}件商品，</span>
-            合计：<span class="price"><span class="logo">¥</span><comTotalPrice :goodsList="orderItem.goodsList"></comTotalPrice></span>
+            <span class="num">共{{orderItem.shopGoodsList.length}}件商品，</span>
+            合计：<span class="price"><span class="logo">¥</span>{{orderItem.payPrice}}</span>
           </div>
           <div class="goods-footer">
             <span class="option-btn" @click="toOrderDetail(orderItem)">查看订单</span>
-            <span class="option-btn" v-if="orderItem.status <= 1 ">取消订单</span>
+            <span class="option-btn" v-if="orderItem.status === 1 ">确认收货</span>
+            <span class="option-btn" v-if="orderItem.status < 1 ">取消订单</span>
             <span class="option-btn" v-if="orderItem.status === 0">去支付</span>
-            <span class="option-btn" @click="toGoodsComments(orderItem)">评价</span>
+            <span class="option-btn" @click="toGoodsComments(orderItem)" v-if="orderItem.status > 1 && orderItem.status < 3">评价</span>
           </div>
         </div>
       </div>
@@ -57,158 +58,55 @@
 </template>
 
 <script>
-import comTotalPrice from '../../components/myOrders/totalPrice'
 
 export default {
   data () {
     return {
-      selectTypeKey: 0,
+      selectTypeKey: '-1',
       typeTabList: [
         {
           name: '全部',
-          key: '0'
+          key: '-1'
         },
         {
           name: '待付款',
-          key: '1'
+          key: '0'
         },
         {
           name: '待收货',
-          key: '2'
+          key: '1'
         },
         {
           name: '已完成',
-          key: '3'
+          key: '2'
         },
         {
           name: '已取消',
-          key: '4'
+          key: '3'
         }
       ],
-      orderList: [
-        {
-          orderId: 'XD215135',
-          status: '等待付款',
-          goodsList: [
-            {
-              id: undefined,
-              title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-              src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
-              store: {
-                name: '米其林4S店'
-              },
-              type: {
-                title: '规格/型号',
-                content: '最大/2090',
-                price: 54
-              },
-              num: 3
-            },
-            {
-              id: undefined,
-              title: '【二手9成新】苹果8Plus Apple iPhone8',
-              src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
-              store: {
-                name: '苹果旗舰店店'
-              },
-              type: {
-                title: '内存',
-                content: '64G',
-                price: 3162
-              },
-              num: 1
-            }
-          ]
-        },
-        {
-          orderId: 'XD532325',
-          status: '交易成功',
-          goodsList: [
-            {
-              id: undefined,
-              title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-              src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
-              store: {
-                name: '米其林4S店'
-              },
-              type: {
-                title: '规格/型号',
-                content: '最大/9595',
-                price: 80
-              },
-              num: 6
-            },
-            {
-              id: undefined,
-              title: '【二手9成新】苹果8Plus Apple iPhone8',
-              src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
-              store: {
-                name: '苹果旗舰店店'
-              },
-              type: {
-                title: '内存',
-                content: '256G',
-                price: 4999
-              },
-              num: 2
-            }
-          ]
-        },
-        {
-          orderId: 'XD532325',
-          status: '未支付',
-          goodsList: [
-            {
-              id: undefined,
-              title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-              src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
-              store: {
-                name: '米其林4S店'
-              },
-              type: {
-                title: '规格/型号',
-                content: '最大/9595',
-                price: 80
-              },
-              num: 6
-            },
-            {
-              id: undefined,
-              title: '【二手9成新】苹果8Plus Apple iPhone8',
-              src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
-              store: {
-                name: '苹果旗舰店店'
-              },
-              type: {
-                title: '内存',
-                content: '256G',
-                price: 4999
-              },
-              num: 2
-            }
-          ]
-        }
-      ]
+      orderList: []
     }
-  },
-  components: {
-    comTotalPrice
   },
   onShow () {
     console.log('onShow')
   },
   onLoad () {
     this.init()
+    this.getOrderList()
   },
   watch: {
+    selectTypeKey () {
+      this.getOrderList()
+    }
   },
   async onPullDownRefresh() {
-    console.log('下拉刷新')
-    console.log(this)
-    // 停止下拉刷新
-    // wx.stopPullDownRefresh()
+    this.getOrderList()
   },
   computed: {
+    getDefaultImg () {
+      return this.Utils.getSquareDefaultImg()
+    },
     getStatusList () {
       return this.$store.getters['Order/statusList']
     }
@@ -218,12 +116,20 @@ export default {
       this.orderList = this.$store.getters['Order/orderList']
       console.log("我的订单列表获取：", this.orderList)
     },
+    getOrderList (status) {
+      this.$http.get('/action/order/getOrderList', {
+        status: this.selectTypeKey
+      }).then(res => {
+        console.log(res)
+        this.orderList = res.data
+      })
+    },
     toGoodsComments (order) {
       this.$store.commit('Comment/SET_ORDER', order)
-      mpvue.navigateTo({ url: '/pages/goodsComments/main?orderId=' + order.orderId })
+      mpvue.navigateTo({ url: '/pages/goodsComments/main?orderNo=' + order.orderNo })
     },
     toOrderDetail (item) {
-      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderId=' + item.orderId })
+      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderNo=' + item.orderNo })
     }
   }
 }

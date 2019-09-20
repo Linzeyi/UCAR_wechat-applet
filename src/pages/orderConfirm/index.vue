@@ -32,27 +32,29 @@
             <div class="info-box lzy-flex-box" @click="toGoodsDetail(goodsItem)">
               <div class="left-box">
                 <div class="img-box">
-                  <image :src="goodsItem.type.imgList[0]" alt="商品图片" mode="aspectFit" ></image>
+                  <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片" mode="aspectFit" ></image>
                 </div>
               </div>
               <div class="content-box">
-                <p class="title">{{goodsItem.title}}</p>
+                <p class="title">{{goodsItem.goodsName}}</p>
                 <p class="type">
                   <span class="type-title">
-                    {{goodsItem.type.title}}:
+                    规格:
                   </span>
-                  <span class="type-item">{{goodsItem.type.content}}；</span>
+                  <span class="type-item">{{goodsItem.property.propertyName}}；</span>
                 </p>
               </div>
               <div class="right-box">
-                <p class="price"><span class="logo">¥</span>{{goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price}}</p>
+                <p class="price"><span class="logo">¥</span>{{goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice}}</p>
                 <p class="num">x{{goodsItem.num}}</p>
               </div>
             </div>
             <div class="footer">
               <p>
                 <span class="num">共{{goodsItem.num}}件</span>
-                小记：<span class="price"><span class="logo">¥</span>{{(goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price) * goodsItem.num}}</span>
+                  小记：<span class="price"><span class="logo">¥</span>
+                  <com-price-counter :price="goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice" :num="goodsItem.num"></com-price-counter>
+                </span>
               </p>
             </div>
           </div>
@@ -80,15 +82,17 @@
 <script>
 import BaseCustomBox from "@/components/base/BaseCustomBox"
 import BaseNavigationBar from "@/components/base/BaseNavigationBar"
+import comPriceCounter from '@/components/comPriceCounter/comPriceCounter'
 export default {
   components: {
     BaseCustomBox,
-    BaseNavigationBar
+    BaseNavigationBar,
+    comPriceCounter
   },
   data () {
     return {
       order: {
-        orderId: 'XD100024',
+        orderId: '',
         remark: '',
         addressInfo: {
           name: '林泽毅',
@@ -100,18 +104,17 @@ export default {
       }
     }
   },
-  onShow () {
-    console.log('onShow')
-  },
-  onLoad () {
+  onLoad (option) {
     this.getGoodsList()
   },
   onUnload () {
     // this.init()
   },
   computed: {
+    getDefaultImg () {
+      return this.Utils.getSquareDefaultImg()
+    },
     getAddress () {
-      console.log(this.$store.getters['UserCenter/selectedAddress'])
       return this.$store.getters['UserCenter/selectedAddress']
     },
     toEditAddress () {
@@ -127,9 +130,9 @@ export default {
     getTotalPrice () {
       let price = 0
       this.order.goodsList.map(item => {
-        price += item.num * (item.type.discountPrice ? item.type.discountPrice : item.type.price)
+        price += item.num * (item.property.discountPrice ? item.property.discountPrice : item.property.salePrice)
       })
-      return price
+      return price.toFixed(2)
     }
   },
   methods: {
@@ -139,6 +142,10 @@ export default {
       // this.orderId = ''
       console.log('orderConfirm页面销毁')
       this.$store.commit('Order/INIT_ORDER')
+    },
+    getGoodsList () {
+      this.order.goodsList = this.$store.getters['Order/goodsList']
+      console.log('确认订单获取到的商品列表：', this.order.goodsList)
     },
     toEditAddress () {
       mpvue.navigateTo({ url: '/pages/selectAddress/main' })
@@ -157,7 +164,6 @@ export default {
       })
     },
     toGoodsDetail (goodsItem) {
-      let that = this
       wx.showModal({
         title: '订单未提交',
         content: '您的订单尚未提交，如果离开此页面将不会保存订单信息，是否继续？',
@@ -165,8 +171,7 @@ export default {
         confirmText: '是',
         success (res) {
           if (res.confirm) {
-            that.$store.commit('Goods/SET_GOODS', goodsItem)
-            mpvue.navigateTo({ url: '/pages/goodsDetail/main' })
+            mpvue.navigateTo({ url: '/pages/goodsDetail/main?goodsNo=' + goodsItem.goodsNo })
           }
         }
       })
@@ -183,15 +188,15 @@ export default {
             that.order.createTime = that.Utils.formatTime(new Date())
             that.order.status = 0
             that.order.addressInfo = that.getAddress
-            that.$store.commit('Order/SET_ORDER', that.order)
+            // that.$store.commit('Order/SET_ORDER', that.order)
+            console.log(that.order)
+            that.$http.post('/action/order/setOrder', that.order).then(res => {
+              console.log(res)
+            })
             mpvue.redirectTo({ url: '/pages/orderDetail/main' })
           }
         }
       })
-    },
-    getGoodsList () {
-      this.order.goodsList = JSON.parse(JSON.stringify(this.$store.getters['Order/goodsList']))
-      console.log('确认订单获取到的商品列表：', this.order.goodsList)
     }
   }
 }

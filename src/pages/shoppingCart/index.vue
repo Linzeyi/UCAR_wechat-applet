@@ -15,24 +15,20 @@
                       <i class="iconfont icon-select-no" v-if="!goodsItem.isSelected">&#xe656;</i>
                       <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
                     </div>
-                    <div class="img-box" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                      <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit" @click="showImg(typeItem)"></image>
+                    <div class="img-box">
+                      <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片" mode="aspectFit" @click="showImg(goodsItem.property)"></image>
                     </div>
                   </div>
                   <div class="content-box">
                     <div class="info-box">
-                      <p class="title" @click="toGoodsDetail(goodsItem)">{{goodsItem.title}}</p>
-                      <p class="type" 
-                      v-for="(typeItem, typeIndex) in goodsItem.type" 
-                      :key="typeIndex" 
-                      :class="{'isSelected': typeItem.isSelected}"
-                      @click="handlerShowTypeDialog(goodsItem)">
-                        {{typeItem.title}}:{{typeItem.content}}
+                      <p class="title" @click="toGoodsDetail(goodsItem)">{{goodsItem.goodsName}}</p>
+                      <p class="type" @click="handlerShowTypeDialog(goodsItem)">
+                        规格:{{goodsItem.property.propertyName}}
                       </p>
-                      <p class="bottom-p" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                        <span class="price"><span class="logo">¥</span>{{(typeItem.discountPrice ? typeItem.discountPrice : typeItem.price )* goodsItem.num}}</span>
+                      <p class="bottom-p">
+                        <span class="price"><span class="logo">¥</span>{{(goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice )* goodsItem.num}}</span>
                         <span class="numPicker-box">
-                          <num-picker :min="1" :isSmall="true" :max="typeItem.stock" :num.sync="goodsItem.num" @changeType="changeType"></num-picker>
+                          <num-picker :min="1" :isSmall="true" :max="goodsItem.property.stock" :num.sync="goodsItem.num" @changeType="changeType"></num-picker>
                         </span>
                       </p>
                     </div>
@@ -54,7 +50,7 @@
                       <span class="invalid-tips">失效</span>
                     </div>
                     <div class="img-box" v-for="(typeItem, typeIndex) in unGoodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                      <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit"></image>
+                      <image :src="typeItem.imgList[0] ? typeItem.imgList[0] : getDefaultImg" alt="商品图片" mode="aspectFit"></image>
                     </div>
                   </div>
                   <div class="content-box">
@@ -110,17 +106,14 @@ export default {
     }
   },
   computed: {
+    getDefaultImg () {
+      return this.Utils.getSquareDefaultImg()
+    },
     getTotalPrice () {
       let price = 0
       this.goodsList.map(goodsItem => {
         if (goodsItem.isSelected) {
-          let selectedType
-          goodsItem.type.map(typeItem => {
-            if (typeItem.isSelected) {
-              selectedType = typeItem
-            }
-          })
-          price += ((selectedType.discountPrice ? selectedType.discountPrice : selectedType.price) * goodsItem.num)
+          price += ((goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.price) * goodsItem.num)
         }
       })
       return price
@@ -149,14 +142,12 @@ export default {
   },
   async onPullDownRefresh() {
     this.getShoppingCartGoodsList()
-    // 停止下拉刷新
-    // wx.stopPullDownRefresh()
   },
   methods: {
     showImg (item) {
       wx.previewImage({
-        current: item.imgList[0],
-        urls: item.imgList
+        current: item.picList[0],
+        urls: item.picList
       })
     },
     changeType () {
@@ -169,20 +160,22 @@ export default {
       })
       this.$http.get('/action/order/getShoppingCartList').then(res => {
         console.log(res)
+        this.goodsList = res.validCart
+        this.invalidGoodsList = res.invalidCart
         wx.hideLoading()
         wx.stopPullDownRefresh()
       })
-      let goodsList = this.$store.getters['ShoppingCart/goodsList']
-      console.log(goodsList)
-      this.goodsList = []
-      this.invalidGoodsList = []
-      goodsList.map(item => {
-        if (item.isValid) {
-          this.goodsList.push(item)
-        } else {
-          this.invalidGoodsList.push(item)
-        }
-      })
+      // let goodsList = this.$store.getters['ShoppingCart/goodsList']
+      // console.log(goodsList)
+      // this.goodsList = []
+      // this.invalidGoodsList = []
+      // goodsList.map(item => {
+      //   if (item.isValid) {
+      //     this.goodsList.push(item)
+      //   } else {
+      //     this.invalidGoodsList.push(item)
+      //   }
+      // })
     },
     handlerShowTypeDialog (goodsItem) {
       this.$store.commit('Goods/SET_GOODS', goodsItem)
@@ -207,16 +200,6 @@ export default {
         })
       } else {
         let selectedGoodsList = JSON.parse(JSON.stringify(this.getSelectedGoodsList))
-        selectedGoodsList.map(goodsItem => {
-          let selectedType
-          for (let i = 0; i < goodsItem.type.length; i++) {
-            if (goodsItem.type[i].isSelected) {
-              selectedType = goodsItem.type[i]
-              break
-            }
-          }
-          goodsItem.type = selectedType
-        })
         this.$store.commit('Order/SET_GOODSLIST', selectedGoodsList)
         console.log('购物车选中商品：', selectedGoodsList)
         console.log('购物车发起订单')

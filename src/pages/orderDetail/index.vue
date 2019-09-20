@@ -20,20 +20,20 @@
               <div class="info-box lzy-flex-box">
                 <div class="left-box">
                   <div class="img-box">
-                    <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
+                    <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片"></image>
                   </div>
                 </div>
                 <div class="content-box">
-                  <p class="title">{{goodsItem.title}}</p>
+                  <p class="title">{{goodsItem.goodsName}}</p>
                   <p class="type">
                     <span class="type-title">
-                      {{goodsItem.type.title}}:
+                      规格:
                     </span>
-                    <span class="type-item">{{goodsItem.type.content}}；</span>
+                    <span class="type-item">{{goodsItem.property.propertyName}}；</span>
                   </p>
                 </div>
                 <div class="right-box">
-                  <p class="price"><span class="logo">¥</span>{{goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price}}</p>
+                  <p class="price"><span class="logo">¥</span>{{goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice}}</p>
                   <p class="num">x{{goodsItem.num}}</p>
                 </div>
               </div>
@@ -155,7 +155,8 @@ export default {
       selectPayType: {}
     }
   },
-  onLoad () {
+  onLoad (option) {
+    this.getOrder()
     this.selectPayType = this.payTypeList[0]
     this.order = JSON.parse(JSON.stringify(this.$store.getters['Order/order']))
     let title = '订单详情'
@@ -170,12 +171,12 @@ export default {
     this.init()
   },
   async onPullDownRefresh() {
-    console.log('下拉刷新')
-    console.log(this)
-    // 停止下拉刷新
-    // wx.stopPullDownRefresh()
+    this.getOrder()
   },
   computed: {
+    getDefaultImg () {
+      return this.Utils.getSquareDefaultImg()
+    },
     getTotalPrice () {
       let price = 0
       if (JSON.stringify(this.order) === '{}') {
@@ -199,6 +200,14 @@ export default {
     },
     backOff () {
       mpvue.navigateBack({ delta: 1 })
+    },
+    getOrder () {
+      this.$http.get('/action/order/getOrder', {
+        orderNo: '369155106035204096'
+      }).then(res => {
+        console.log(res)
+        wx.stopPullDownRefresh()
+      })
     },
     cancelOrder () {
       wx.showModal({

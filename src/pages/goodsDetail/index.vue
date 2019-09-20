@@ -21,7 +21,7 @@
               <goods-info :goods.sync="goods" :num.sync="num" :property.sync="property" v-if="checkPropertyList"></goods-info>
             </swiper-item>
             <swiper-item class="no-bg-color">
-              <goods-comment :goodsNo="goods.goodsNo"></goods-comment>
+              <goods-comment :goods="goods"></goods-comment>
             </swiper-item>
           </swiper>
         </div>
@@ -97,7 +97,6 @@ export default {
       if (!this.checkProperty || this.checkInvalid) {
         return 0
       } else {
-        console.log(this.num)
         return (this.getSelectedTypePrice * (this.num ? this.num : 0)).toFixed(2)
       }
     },
@@ -105,16 +104,16 @@ export default {
       if (!this.checkProperty) {
         return 0.00
       } else {
-        console.log(this.property.discountPrice ? this.property.discountPrice : this.property.salePrice)
         return this.property.discountPrice ? this.property.discountPrice : this.property.salePrice
       }
     }
   },
   onLoad (option) {
-    console.log(option)
     this.goods.goodsNo = option.goodsNo
     this.getGoodsByNo()
-    // this.goods = this.$store.getters['Goods/goods']
+  },
+  onUnload () {
+    this.init()
   },
   async onPullDownRefresh() {
     this.getGoodsByNo()
@@ -122,6 +121,9 @@ export default {
   methods: {
     init () {
       this.currentTabKey = 0
+      this.goods = {}
+      this.property = {}
+      this.num = 0
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
     },
     changeType (property, num) {
@@ -130,14 +132,26 @@ export default {
       console.log('赋值规格后的商品', this.goods)
     },
     getGoodsByNo () {
+      wx.showLoading({
+        title: '正在加载',
+        mask: true
+      })
       this.$http.get('/action/goods/getGoodsDetailByGoodsNo', {
         goodsNo: this.goods.goodsNo
       }).then(res => {
+        wx.hideLoading()
         wx.stopPullDownRefresh()
         if (res.data) {
           this.goods = res.data
           console.log('goods:', this.goods)
         }
+      }).catch(err => {
+        console.log(err)
+        wx.showToast({
+          title: '查询失败！',
+          duration: 2000
+        })
+        wx.hideLoading()
       })
     },
     backOff () {
@@ -150,6 +164,7 @@ export default {
       this.currentTabKey = index
     },
     addToShoppingCart () {
+      let that = this
       if (this.goods.num === 0) {
         wx.showToast({
           title: '商品数量不能为0',
@@ -169,6 +184,14 @@ export default {
           confirmText: '确定',
           success (res) {
             if (res.confirm) {
+              that.$http.get('/action/order/updateGoodsInCart', {
+                goodsNo: that.goods.goodsNo,
+                goodsName: that.goods.goodsName,
+                property: that.property,
+                num: that.num
+              }).then(res => {
+                console.log(res)
+              })
               wx.showToast({
                 title: '添加成功',
                 icon: 'success',
@@ -191,27 +214,17 @@ export default {
             duration: 2000
           })
         } else {
-          let goodsList = [this.goods]
-          let selectedGoodsList = JSON.parse(JSON.stringify(goodsList))
-          selectedGoodsList.map(goodsItem => {
-            let selectedType
-            for (let i = 0; i < goodsItem.type.length; i++) {
-              if (goodsItem.type[i].isSelected) {
-                selectedType = goodsItem.type[i]
-                break
-              }
-            }
-            goodsItem.type = selectedType
-          })
+          let goods = JSON.parse(JSON.stringify(this.goods))
+          goods.num = this.num
+          goods.property = this.property
+          let goodsList = [goods]
+          this.$store.commit('Order/SET_GOODSLIST', goodsList)
           mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
         }
       } else {
         this.$store.commit('Goods/SET_SHOWTYPEDIALOG', true)
       }
     }
-  },
-  onUnload () {
-    this.init()
   }
 }
 </script>

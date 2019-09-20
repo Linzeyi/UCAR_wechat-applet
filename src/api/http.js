@@ -26,7 +26,7 @@ const headers = {
 Object.assign(fly.config, {
   headers: headers,
   baseURL: baseURL,
-  timeout: 10000,
+  timeout: 20000,
   widthCredentials: true
 })
 

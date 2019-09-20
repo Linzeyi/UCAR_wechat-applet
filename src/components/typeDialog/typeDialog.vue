@@ -106,6 +106,9 @@ export default {
     }
   },
   computed: {
+    getDefaultImg () {
+      return this.Utils.getSquareDefaultImg()
+    },
     checkProperty () {
       if (JSON.stringify(this.selectedProperty) !== '{}') {
         console.log('有选中规格！', this.selectedProperty)
@@ -151,9 +154,9 @@ export default {
     getImgSrc () {
       if (this.checkProperty) {
         console.log('规格组件图片显示', this.selectedProperty.picList)
-        return this.selectedProperty.picList[0] ? this.selectedProperty.picList[0] : ''
+        return this.selectedProperty.picList[0] ? this.selectedProperty.picList[0] : 'https://fs.zhenjiang365.cn/bbsimg/fcmb/image/nopic590.jpg'
       } else {
-        return ''
+        return this.getDefaultImg
       }
     },
     checkOpenTypeDialog () {

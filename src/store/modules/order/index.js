@@ -56,9 +56,5 @@ export default {
     }
   },
   actions: {
-    ShowStore ({commit}) {
-      console.log('indexStore')
-      return 'index'
-    }
   }
 }

@@ -118,14 +118,13 @@ export default {
     getImgList () {
       console.log('商品信息获取图片列表：')
       if (this.checkProperty) {
-        console.log(this.property.picList)
         return this.property.picList
       } else {
         return this.goods.propertyList[0].picList
       }
     },
     checkProperty () {
-      if (JSON.stringify(this.property) !== '{}') {
+      if (JSON.stringify(this.property) !== '{}' && JSON.stringify(this.property) !== 'undefined') {
         console.log('有选中规格！')
         return true
       } else {
