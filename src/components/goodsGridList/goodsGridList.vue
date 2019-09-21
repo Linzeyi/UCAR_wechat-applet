@@ -82,10 +82,11 @@ export default {
       console.log('触底')
       this.setLoading(true)
       let that = this
-      this.$emit('update:size', that.size + 4)
+      this.$emit('update:size', this.size + 4)
       setTimeout(function() {
         if (that.isLoading) {
           that.setLoading(false)
+          that.$emit('update:size', that.size - 4)
         }
       }, 20000)
     }

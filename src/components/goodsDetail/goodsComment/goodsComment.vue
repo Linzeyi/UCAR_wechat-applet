@@ -61,28 +61,18 @@ export default {
     return {
       goodsScore: 0,
       totalComment: 0,
-      scoreList: [],
+      scoreList: [0, 0, 0, 0, 0],
       commentList: []
     }
   },
-  watch: {
-    goods: {
-      handler (val) {
-        console.log(val)
-        console.log('重新获取评论信息')
-        this.getCommentList()
-        this.getScoreInfo()
-      },
-      immediate: true
-    }
-  },
+  watch: {},
   onUnload () {
     this.init()
   },
   methods: {
     init () {
       this.commentList = []
-      this.scoreList = []
+      this.scoreList = [0, 0, 0, 0, 0]
       this.goodsScore = 0
       this.totalComment = 0
     },
@@ -90,10 +80,12 @@ export default {
       this.$http.get('/action/comment/getGoodsCommentList', {
         goodsNo: this.goods.goodsNo
       }).then(res => {
-        this.commentList = res.data ? res.data : []
-        this.commentList.map(item => {
-          item.createTime = this.Utils.getYMDTime(item.createTime)
-        })
+        if (res.data) {
+          this.commentList = res.data ? res.data : []
+          this.commentList.map(item => {
+            item.createTime = this.Utils.getYMDTime(item.createTime)
+          })
+        }
       })
     },
     getScoreInfo () {

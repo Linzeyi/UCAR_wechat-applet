@@ -15,6 +15,7 @@
           </div>
           <div class="list-content">
             <goods-grid-list
+            ref="goods_grid_list_el"
             :start.sync="start" 
             :size.sync="size" 
             :goodsList="goodsList" 
@@ -56,8 +57,13 @@ export default {
     this.getRecommendGoodsList()
   },
   watch: {
-    size () {
-      this.getRecommendGoodsList()
+    size: {
+      handler (newVal, oldVal) {
+        if (newVal > oldVal) {
+          this.getRecommendGoodsList()
+        }
+      },
+      deep: true
     }
   },
   async onPullDownRefresh() {
@@ -100,6 +106,8 @@ export default {
           this.goodsList = res.data
           this.getRandomImgList()
         } else {
+          this.size -= 4
+          this.$refs['goods_grid_list_el'].setLoading(false)
           wx.showToast({
             title: '加载失败',
             icon: 'none',
@@ -112,6 +120,8 @@ export default {
         console.log(err)
         wx.hideLoading()
         wx.stopPullDownRefresh()
+        this.size -= 4
+        this.$refs['goods_grid_list_el'].setLoading(false)
         wx.showToast({
           title: '加载失败',
           icon: 'none',

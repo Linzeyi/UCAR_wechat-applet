@@ -98,9 +98,6 @@ export default {
       orderList: []
     }
   },
-  onShow () {
-    console.log('onShow')
-  },
   onLoad () {
     this.getOrderList()
   },
@@ -122,6 +119,7 @@ export default {
   },
   methods: {
     getOrderList () {
+      this.orderList = []
       wx.showLoading({
         title: '正在加载',
         mask: true

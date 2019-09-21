@@ -12,7 +12,7 @@
                 <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
                   <div class="left-box">
                     <div class="select-box" @click="selectGoods(goodsItem)">
-                      <i class="iconfont icon-select-no" v-if="!goodsItem.isSelected">&#xe656;</i>
+                      <i class="iconfont icon-select-no" v-if="goodsItem.isSelected">&#xe656;</i>
                       <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
                     </div>
                     <div class="img-box">
@@ -28,7 +28,7 @@
                       <p class="bottom-p">
                         <span class="price"><span class="logo">¥</span>{{(goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice )* goodsItem.num}}</span>
                         <span class="numPicker-box">
-                          <num-picker :min="1" :isSmall="true" :max="goodsItem.property.stock" :num.sync="goodsItem.num" @changeProperty="changeProperty"></num-picker>
+                          <num-picker :objItem="goodsItem" :min="1" :isSmall="true" :max="goodsItem.stock" :num.sync="goodsItem.num" @changeObjectNum="changeShopGoodsNum" @changeProperty="changeProperty"></num-picker>
                         </span>
                       </p>
                     </div>
@@ -62,7 +62,7 @@
                   <div class="content-box">
                     <div class="info-box">
                       <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.goodsName}}</p>
-                      <p class="invalid-msg">{{unGoodsItem.invalidMsg}}</p>
+                      <p class="invalid-msg">失效原因：{{unGoodsItem.remark}}</p>
                     </div>
                   </div>
                 </movable-view>
@@ -85,7 +85,7 @@
             <button class="to-pay-btn" @click="toOrderConfirm">结算({{getSelectedNum}})</button>
           </div>
         </div>
-        <type-dialog :parentType="'shoppingCart'" :goodsNo="selectedGoods.goodsNo" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
+        <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
       </div>
     </base-custom-box>
   </div>
@@ -120,11 +120,14 @@ export default {
     },
     getTotalPrice () {
       let price = 0
-      this.goodsList.map(goodsItem => {
-        if (goodsItem.isSelected) {
-          price += ((goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.price) * goodsItem.num)
-        }
-      })
+      if (this.goodsList.length !== 0) {
+        this.goodsList.map(goodsItem => {
+          if (goodsItem.isSelected) {
+            console.log('选中商品：', goodsItem)
+            price += ((goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice) * goodsItem.num)
+          }
+        })
+      }
       return price
     },
     getSelectedNum () {
@@ -140,13 +143,14 @@ export default {
       let selectedGoodsList = []
       this.goodsList.map(item => {
         if (item.isSelected) {
+          console.log('选中商品：', item)
           selectedGoodsList.push(item)
         }
       })
       return selectedGoodsList
     }
   },
-  onLoad () {
+  onShow () {
     this.getShoppingCartGoodsList()
   },
   async onPullDownRefresh() {
@@ -159,20 +163,99 @@ export default {
         urls: item.picList
       })
     },
-    changeProperty () {
-      console.log('选中商品', this.selectedGoods)
+    changeProperty (newProperty, newNum, oldProperty, oldNum, goods) {
+      console.log('新的规格：', newProperty, '新的数量：', newNum, '旧的规格：', oldProperty, '旧的数量：', oldNum)
+      wx.showLoading({
+        title: '修改规格',
+        mask: true
+      })
+      let oldCartItem = JSON.parse(JSON.stringify(goods))
+      oldCartItem.property = oldProperty
+      oldCartItem.num = oldNum
+      let newCartItem = JSON.parse(JSON.stringify(goods))
+      newCartItem.property = newProperty
+      newCartItem.num = newNum
+      this.$http.get('/action/order/setShopGoods', {
+        oldCartItem: oldCartItem,
+        newCartItem: newCartItem
+      }).then(res => {
+        if (res.data) {
+          this.getShoppingCartGoodsList()
+          wx.showToast({
+            title: '修改成功',
+            icon: 'success',
+            duration: 2000
+          })
+        } else {
+          wx.showToast({
+            title: '修改失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title: '修改失败',
+          icon: 'none',
+          duration: 2000
+        })
+      })
       this.getShoppingCartGoodsList()
     },
+    changeShopGoodsNum (goods) {
+      wx.showLoading({
+        title: '修改数量',
+        mask: true
+      })
+      this.$http.get('/action/order/updateGoodsInCart', {
+        goodsNo: goods.goodsNo,
+        goodsName: goods.goodsName,
+        property: goods.property,
+        num: goods.num
+      }).then(res => {
+        if (res.data) {
+          wx.showToast({
+            title: '修改成功',
+            icon: 'success',
+            duration: 2000
+          })
+        } else {
+          this.goodsList = []
+          this.getShoppingCartGoodsList()
+          wx.showToast({
+            title: '修改失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        this.goodsList = []
+        this.getShoppingCartGoodsList()
+        wx.showToast({
+          title: '修改失败',
+          icon: 'none',
+          duration: 2000
+        })
+      })
+    },
     getShoppingCartGoodsList () {
-      this.goodsList = []
-      this.invalidGoodsList = []
       wx.showLoading({
         title: '正在加载',
         mask: true
       })
       this.$http.get('/action/order/getShoppingCartList').then(res => {
         console.log(res)
-        if (res) {
+        if (res.data) {
           this.goodsList = res.data.validCart
           this.invalidGoodsList = res.data.invalidCart
         } else {
@@ -197,7 +280,10 @@ export default {
     },
     handlerShowTypeDialog (goodsItem) {
       this.selectedGoods = goodsItem
-      this.showTypeDialog(true)
+      let that = this
+      setTimeout(function() {
+        that.showTypeDialog(true)
+      }, 0)
     },
     showTypeDialog (flag) {
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
@@ -207,7 +293,7 @@ export default {
     },
     toGoodsDetail (goodsItem) {
       this.$store.commit('Goods/SET_GOODS', goodsItem)
-      mpvue.navigateTo({ url: '/pages/goodsDetail/main' })
+      mpvue.navigateTo({ url: '/pages/goodsDetail/main?goodsNo=' + goodsItem.goodsNo })
     },
     toOrderConfirm () {
       if (this.getSelectedNum === 0) {
@@ -432,11 +518,15 @@ export default {
           }
         }
         .title {
-          margin-bottom: 15px;
-          color: #888;
+          margin-bottom: 10px;
+          color: #333;
         }
         .invalid-msg {
-          color: #333;
+          font-size: 10px;
+          padding: 2px 4px;
+          background-color: #f6f6f6;
+          border-radius: 4px;
+          color: #999;
         }
       }
     }
