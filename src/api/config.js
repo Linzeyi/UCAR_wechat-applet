@@ -12,7 +12,8 @@ const config = {
     '/action/user/login',
     '/action/user/register',
     '/action/user/getCaptcha',
-    '/action/goods/getPopularSearch'
+    '/action/goods/getPopularSearch',
+    '/action/goods/searchGoods'
   ]
 }
 module.exports = config

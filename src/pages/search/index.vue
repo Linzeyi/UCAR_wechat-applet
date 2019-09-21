@@ -71,7 +71,7 @@ export default {
   onLoad () {
     // 获取热门搜索
     this.$http.get('/action/goods/getPopularSearch').then(res => {
-      if (res) {
+      if (res !== '' && res.data.status === 20000) {
         let para = JSON.parse(res.data.data)
         this.popularSearch = para
         console.log(this.popularSearch, 'popular search')
@@ -88,19 +88,19 @@ export default {
       this.isShowSearchPage = !this.isShowSearchPage
       if (arg) {
         this.searchContent = arg.tagName
+        this.$http.post('/action/goods/searchGoods', {
+          tagNo: arg.tagNo,
+          tagName: arg.tagName,
+          elasticPageParam: {
+            start: 0,
+            size: 10
+          }
+        }).then(res => {
+          console.log(res, 'searchGoods')
+        })
       } else {
         this.searchContent = ''
       }
-      this.$http.post('/action/goods/searchGoods', {
-        tagNo: arg.tagNo,
-        tagName: arg.tagName,
-        elasticPageParam: {
-          start: 0,
-          size: 10
-        }
-      }).then(res => {
-        console.log(res, 'searchGoods')
-      })
     },
     // 点击推荐搜索
     searchByRecommend (arg) {
