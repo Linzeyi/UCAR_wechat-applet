@@ -164,8 +164,26 @@ export default {
         // 检验表单内容合法性
         if (this.validateForm()) {
           console.log('提交！')
-          mpvue.navigateBack()
-          this.showToast('添加成功', 'success')
+          let param = {
+            receiver: this.formData.receiverName,
+            phone: this.formData.receiverPhone,
+            postCode: this.formData.postCode,
+            province: this.formData.region[0],
+            city: this.formData.region[1],
+            district: this.formData.region[2],
+            addressDetail: this.formData.address,
+            isDefault: Number(this.formData.isDefault)
+          }
+          this.$http.post('/action/addr/add', param).then(res => {
+            if (res) {
+              if (res.status === 20000) {
+                mpvue.navigateBack()
+                this.showToast('添加成功', 'success')
+              } else {
+                this.showToast('添加失败')
+              }
+            }
+          })
         }
       } else {
         this.showToast('地址信息未填写完整', 'none')

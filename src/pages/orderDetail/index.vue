@@ -7,7 +7,11 @@
       <div class="orderPay-wrap lzy-list-wrap">
         <div class="wrap-panel top-panel">
           <div class="left-box">
-            <p class="status" v-if="order.status == 0">等待买家付款...</p>
+            <p class="status" v-if="order.status === 0"><i class="iconfont">&#xe694;</i>等待买家付款...</p>
+            <p class="status" v-if="order.status === 1"><i class="iconfont">&#xe6cf;</i>已付款，等待卖家发货...</p>
+            <p class="status" v-if="order.status === 2"><i class="iconfont">&#xe67e;</i>已发货，等待签收...</p>
+            <p class="status" v-if="order.status === 3"><i class="iconfont">&#xe6a5;</i>订单已完成</p>
+            <p class="status" v-if="order.status === 4"><i class="iconfont">&#xe6a6;</i>订单已取消</p>
           </div>
         </div>
         <div class="wrap-panel goods-panel">
@@ -102,7 +106,7 @@
             <span>{{order.remark}}</span>
           </div>
         </div>
-        <div class="wrap-panel pay-type-panel">
+        <div class="wrap-panel pay-type-panel" v-if="order.status === 0">
           <div class="header">
             <span class="iconfont icon-pay-type">&#xe60e;</span>
             <span class="title">支付方式</span>
@@ -123,7 +127,7 @@
             <button class="pay-btn" @click="payOrder" v-if="order.status === 0">付款</button>
             <button class="cancel-btn" @click="cancelOrder" v-if="order.status < 1">取消订单</button>
             <button class="cancel-btn" @click="confirmReceipt" v-if="order.status === 1">确认收货</button>
-            <button class="cancel-btn" @click="toGoodsComments()" v-if="order.status > 1 && order.status < 3">评价</button>
+            <button class="cancel-btn" @click="toGoodsComments()" v-if="checkOrderCommentStatus">评价</button>
           </div>
         </div>
       </div>
@@ -142,11 +146,10 @@ export default {
   data () {
     return {
       order: {
-        orderId: 'XDD0001',
+        orderNo: '',
         createTime: this.Utils.formatTime(new Date()),
         status: '0',
-        addressInfo: {},
-        goodsList: []
+        receiptInfo: {}
       },
       payTypeList: [
         {
@@ -185,6 +188,24 @@ export default {
     },
     getStatusList () {
       return this.$store.getters['Order/statusList'][parseInt(this.order.status)]
+    },
+    checkAllGoodsIsCommented () {
+      let flag = true
+      if (this.order.shopGoodsList) {
+        this.order.shopGoodsList.map(item => {
+          if (!item.commentStatus) {
+            flag = false
+          }
+        })
+      }
+      return flag
+    },
+    checkOrderCommentStatus () {
+      if (this.order.status > 1 && this.order.status < 3 && this.checkAllGoodsIsCommented) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   methods: {
@@ -194,6 +215,11 @@ export default {
     },
     backOff () {
       mpvue.navigateBack({ delta: 1 })
+    },
+    getBalance () {
+      this.$http.get('/action/wallet/getUserBalance').then(res => {
+        console.log(res)
+      })
     },
     getOrder () {
       wx.showLoading({
@@ -242,56 +268,64 @@ export default {
     },
     payOrder () {
       let that = this
-      if (this.order.payPrice > this.selectPayType.balance) {
-        wx.showModal({
-          title: '您的余额已不足',
-          content: '请充值或选用其他支付方式',
-          cancelText: '选用其他',
-          confirmText: '前往充值',
-          success (res) {
-            if (res.confirm) {
-
-            }
-          }
+      if (JSON.stringify(this.selectPayType) === '{}') {
+        wx.showToast({
+          title: '请选择支付方式',
+          icon: 'none',
+          duration: 2000
         })
       } else {
-        wx.showModal({
-          title: '确认付款',
-          content: '本次应付金额共计' + this.order.payPrice,
-          confirmText: '支付',
-          success (res) {
-            if (res.confirm) {
-              that.$http.get('/action/order/payOrder', {
-                orderNo: that.order.orderNo
-              }).then(res => {
-                console.log(res)
-                if (res.data) {
-                  wx.showModal({
-                    title: '支付成功',
-                    content: '将为您跳转至我的订单界面',
-                    showCancel: false,
-                    success (res) {
-                      console.log('付款成功，支付订单：', that.order)
-                      mpvue.navigateTo({ url: '/pages/myOrders/main' })
-                    }
-                  })
-                } else {
-                  wx.showToast({
-                    title: '支付失败',
-                    icon: 'none',
-                    duration: 2000
-                  })
-                }
-              })
-            } else {
-              wx.showToast({
-                title: '取消支付',
-                icon: 'none',
-                duration: 2000
-              })
+        if (this.order.payPrice > this.selectPayType.balance) {
+          wx.showModal({
+            title: '您的余额已不足',
+            content: '请充值或选用其他支付方式',
+            cancelText: '选用其他',
+            confirmText: '前往充值',
+            success (res) {
+              if (res.confirm) {
+
+              }
             }
-          }
-        })
+          })
+        } else {
+          wx.showModal({
+            title: '确认付款',
+            content: '本次应付金额共计' + this.order.payPrice,
+            confirmText: '支付',
+            success (res) {
+              if (res.confirm) {
+                that.$http.get('/action/order/payOrder', {
+                  orderNo: that.order.orderNo
+                }).then(res => {
+                  console.log(res)
+                  if (res.data) {
+                    wx.showModal({
+                      title: '支付成功',
+                      content: '将为您跳转至我的订单界面',
+                      showCancel: false,
+                      success (res) {
+                        console.log('付款成功，支付订单：', that.order)
+                        mpvue.navigateTo({ url: '/pages/myOrders/main' })
+                      }
+                    })
+                  } else {
+                    wx.showToast({
+                      title: '支付失败',
+                      icon: 'none',
+                      duration: 2000
+                    })
+                  }
+                })
+              } else {
+                wx.showToast({
+                  title: '取消支付',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
+            }
+          })
+        }
       }
     }
   }
@@ -350,6 +384,11 @@ export default {
           color: #fff;
           .status {
             font-size: 14px;
+            .iconfont {
+              font-size: 14px;
+              margin-right: 4px;
+              color: #fff;
+            }
           }
         }
       }

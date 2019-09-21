@@ -35,13 +35,25 @@ export default {
     confirm () {
       if (this.Utils.regularRule.money.test(this.amount)) {
         console.log('充值！')
-      } else {
-        wx.showToast({
-          title: '请输入正确的金额，至多输入7位数字和两位小数',
-          icon: 'none',
-          duration: 2000
+        this.$http.post('/action/wallet/recharge', {balance: this.amount}).then(res => {
+          if (res !== '' && res.status === 20000) {
+            this.showToast('充值成功', 'success', 2000)
+          } else {
+            this.showToast('充值失败')
+          }
         })
+      } else {
+        this.showToast('请输入正确的金额，至多输入7位数字和两位小数', 'none', 2000)
       }
+    },
+
+    // 提示
+    showToast (content, i, dur) {
+      wx.showToast({
+        title: content,
+        icon: i || 'none',
+        duration: dur || 1500
+      })
     }
   }
 }

@@ -21,7 +21,7 @@
               <goods-info :goods.sync="goods" :num.sync="num" :property.sync="property" v-if="checkPropertyList"></goods-info>
             </swiper-item>
             <swiper-item class="no-bg-color">
-              <goods-comment :goods="goods"></goods-comment>
+              <goods-comment ref="goods_comment_el" :goods="goods"></goods-comment>
             </swiper-item>
           </swiper>
         </div>
@@ -37,7 +37,7 @@
             <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm" :disabled="checkInvalid">立即购买</button>
           </div>
         </div>
-        <type-dialog :parentType="'goodsDetail'" :goodsNo="goods.goodsNo" :property="property" :pNum="num" @changeProperty="changeProperty"></type-dialog>
+        <type-dialog :parentType="'goodsDetail'" :goods="goods" :property="property" :pNum="num" @changeProperty="changeProperty"></type-dialog>
       </div>
     </base-custom-box>
   </div>
@@ -113,6 +113,7 @@ export default {
     this.getGoodsByNo()
   },
   onUnload () {
+    this.currentTabKey = 0
     this.init()
   },
   async onPullDownRefresh() {
@@ -120,7 +121,6 @@ export default {
   },
   methods: {
     init () {
-      this.currentTabKey = 0
       let goodsNo = this.goods.goodsNo
       this.goods = {}
       this.goods.goodsNo = goodsNo
@@ -144,6 +144,8 @@ export default {
       }).then(res => {
         if (res.data) {
           this.goods = res.data
+          this.$refs['goods_comment_el'].getCommentList()
+          this.$refs['goods_comment_el'].getScoreInfo()
           console.log('goods:', this.goods)
         } else {
           wx.showToast({
@@ -202,7 +204,7 @@ export default {
                 num: that.num
               }).then(res => {
                 console.log(res)
-                if (res.status) {
+                if (res.data) {
                   wx.showToast({
                     title: '添加成功',
                     icon: 'success',

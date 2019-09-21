@@ -5,17 +5,7 @@ export default {
     statusList: [
       '待付款', '待发货', '待收货', '已完成', '已取消'
     ],
-    order: {
-      status: 0,
-      remark: '',
-      createTime: '',
-      addressInfo: {
-        name: '',
-        phone: '',
-        address: ''
-      },
-      goodsList: []
-    },
+    order: {},
     orderList: orderList
   },
   getters: {

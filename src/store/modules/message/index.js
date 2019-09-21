@@ -31,10 +31,10 @@ export default {
           })
     },
     messageNum: state => {
-      return state.messageList.length
+      return state.messageList ? state.messageList.length : 0
     },
     newMessageNum: (state, getters) => {
-      return getters.newMessageList.length
+      return getters.newMessageList.length || 0
     }
   },
   mutations: {

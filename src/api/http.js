@@ -37,7 +37,7 @@ fly.interceptors.request.use(request => {
   // console.log('key:' + key)
   const data = request.body ? JSON.stringify(request.body) : '' // 需要加密的请求数据，转成字符串
   // const data = request.body
-  // console.log('data:', data)
+  console.log('data:', data)
   // const q = SignApi.getQ(data, accountKey) // 利用请求参数data和密钥key
   const q = data
   // console.log('q:' + q)

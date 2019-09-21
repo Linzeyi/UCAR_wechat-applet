@@ -103,6 +103,7 @@ export default {
     }
   },
   onLoad (option) {
+    console.log(option.addressId, 'addrId')
     let addressList = this.$store.getters['UserCenter/addressList']
     let addr = addressList.find(item => {
       return item.addressId + '' === option.addressId
@@ -164,11 +165,28 @@ export default {
         // 检验表单内容合法性
         if (this.validateForm()) {
           console.log('提交！')
-          // todo 提交修改表单接口
-          mpvue.navigateBack()
-          this.showToast('修改成功', 'success')
-        } else {
-          console.log('not commit!')
+          let param = {
+            id: this.formData.id,
+            receiver: this.formData.receiverName,
+            phone: this.formData.receiverPhone,
+            postCode: this.formData.postCode,
+            province: this.formData.region[0],
+            city: this.formData.region[1],
+            district: this.formData.region[2],
+            addressDetail: this.formData.address,
+            isDefault: Number(this.formData.isDefault)
+          }
+          console.log(param, 'para')
+          // this.$http.post('/action/addr/update', param).then(res => {
+          //   if (res) {
+          //     if (res.status === 20000) {
+          //       mpvue.navigateBack()
+          //       this.showToast('修改成功', 'success')
+          //     } else {
+          //       this.showToast('修改失败', 'none')
+          //     }
+          //   }
+          // })
         }
       } else {
         this.showToast('地址信息未填写完整', 'none')
