@@ -146,8 +146,10 @@ export default {
       if (type === 'add') {
         mpvue.navigateTo({ url: '/pages/addAddress/main' })
       } else if (type === 'modify') {
+        console.log(index, 'index')
+        console.log(this.addressList, 'address list')
         console.log(this.addressList[index].addressId, 'addressId')
-        mpvue.navigateTo({ url: '/pages/modifyAddress/main?addressId=' + this.addressList[index].addressId })
+        mpvue.navigateTo({ url: '/pages/modifyAddress/main?addressId=' + this.addressList[index].id })
       }
     }
   }

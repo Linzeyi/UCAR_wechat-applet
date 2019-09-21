@@ -106,9 +106,10 @@ export default {
     console.log(option.addressId, 'addrId')
     let addressList = this.$store.getters['UserCenter/addressList']
     let addr = addressList.find(item => {
-      return item.addressId + '' === option.addressId
+      return item.id + '' === option.addressId
     })
     this.formData = {...addr}
+    console.log(this.formData, 'form data')
     this.$store.commit('UserCenter/SET_EDITADDRESS', addr)
   },
   onUnload () {
@@ -176,17 +177,16 @@ export default {
             addressDetail: this.formData.address,
             isDefault: Number(this.formData.isDefault)
           }
-          console.log(param, 'para')
-          // this.$http.post('/action/addr/update', param).then(res => {
-          //   if (res) {
-          //     if (res.status === 20000) {
-          //       mpvue.navigateBack()
-          //       this.showToast('修改成功', 'success')
-          //     } else {
-          //       this.showToast('修改失败', 'none')
-          //     }
-          //   }
-          // })
+          this.$http.post('/action/addr/update', param).then(res => {
+            if (res) {
+              if (res.status === 20000) {
+                mpvue.navigateBack()
+                this.showToast('修改成功', 'success')
+              } else {
+                this.showToast('修改失败', 'none')
+              }
+            }
+          })
         }
       } else {
         this.showToast('地址信息未填写完整', 'none')
