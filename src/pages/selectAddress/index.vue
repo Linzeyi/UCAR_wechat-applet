@@ -6,15 +6,15 @@
           class="address-box" 
           v-for="(item, index) in addressList" 
           :key="index"
-          @click="selectAddress(index)">
+          @click="selectAddress(item.id, index)">
           <div class="address-select"> 
-            <i class="iconfont icon-select-no" v-if="!item.isSelected">&#xe656;</i>
-            <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
+            <i class="iconfont icon-select-fill" v-if="selected === item.id">&#xe655;</i>
+            <i class="iconfont icon-select-no" v-else>&#xe656;</i>
           </div>
           <div class="address-info">
             <div class="receiver-info">
               <span class="receiver-name">{{ item.receiverName }}</span>
-              <span>{{ item.encodePhone }}</span>
+              <span>{{ item.receiverPhone }}</span>
               <p class="address">{{ item.region[0] + item.region[1] + item.region[2] + item.address }}</p>
             </div>
             <p class="default-address" v-if="item.isDefault">默认地址</p>
@@ -30,40 +30,31 @@
 export default {
   data () {
     return {
-      addressList: this.$store.state.UserCenter.addressList,
-      selectedAddress: this.$store.state.UserCenter.selectedAddress,
       selected: 0 // 记录选中了哪条地址
     }
   },
-  onLoad () {
-    let that = this
-    let addr = this.addressList
-    let hasSelected = Boolean(this.$store.state.UserCenter.selectedAddress)
-    for (let i = 0; i < addr.length; i++) {
-      if (!hasSelected && addr[i].isDefault) {
-        this.selected = i
-        addr[i].isSelected = true
-      } else if (hasSelected && that.selectedAddress.addressId === addr[i].addressId) {
-        this.selected = i
-        addr[i].isSelected = true
-      } else {
-        addr[i].isSelected = false
-      }
+  onShow () {
+    let addr = this.addressList.find(item => {
+      return item.isDefault
+    })
+    this.selected = addr.id
+  },
+  computed: {
+    addressList () {
+      let addrList = this.$store.getters['UserCenter/addressList']
+      return addrList
+    },
+    test () {
+      console.log(this.selected)
     }
   },
   methods: {
-    selectAddress (index) {
-      if (index !== this.selected) {
-        let addrList = this.addressList
-        addrList[this.selected].isSelected = !addrList[this.selected].isSelected
-        addrList[index].isSelected = !addrList[index].isSelected
-        this.selected = index
-      }
+    selectAddress (addrId, index) {
+      this.selected = addrId
     },
     confirm () {
-      let store = this.$store.state.UserCenter
-      store.selectedAddress = store.addressList[this.selected]
-      this.selectedAddress = store.selectedAddress
+      this.$store.commit('UserCenter/SET_SELECTED_ADDRESS', this.selected)
+      console.log(this.$store.getters['UserCenter/selectedAddress'], 'selected address')
       mpvue.navigateBack()
     }
   }
@@ -103,16 +94,22 @@ export default {
       .address-info {
         flex: 8;
         font-size: 13px;
+        min-height: 47px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
         .receiver-name {
           margin-right: 10px;
         }
         .address {
           color: #7a7a7a;
+          margin-top: 2px;
         }
         .default-address {
           display: block;
           color: @orange;
           font-size: 13px;
+          margin-top: 1px;
         }
       }
     }

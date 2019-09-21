@@ -1,4 +1,4 @@
-import { addressList } from '@/fake.js'
+import Vue from 'vue'
 export default {
   namespaced: true,
   state: {
@@ -8,35 +8,39 @@ export default {
     phone: undefined, // 手机号
     orderNum: undefined, // 订单条数
     message: undefined, // 消息条数
-    defaultAddress: undefined,
-    selectedAddress: undefined,
-    addressList: addressList,
+    selectedAddress: undefined, // 选择地址id
+    addressList: [],
     editAddress: undefined,
     isEdited: false
   },
   getters: {
     defaultAddress: state => {
-      return state.addressList.find(item => {
-        if (item.isDefault) {
-          state.defaultAddress = item
-          return item
-        }
-      })
+      if (state.addressList.length) {
+        return state.addressList.find(item => {
+          if (item.isDefault) {
+            return item.id
+          }
+        })
+      } else {
+        return undefined
+      }
     },
     selectedAddress: (state, getters) => {
-      let addr = state.selectedAddress
-      if (!addr) {
-        addr = getters.defaultAddress
-        if (!addr) {
-          addr = ''
-          return addr
-        }
-      }
-      if (addr && addr.region) {
+      if (state.selectedAddress) {
+        let addr = state.addressList.find(item => {
+          return item.id === state.selectedAddress
+        })
         addr.address = addr.region.toString().replace(/,/g, '') + addr.address
+        return addr
+      } else {
+        let addr = getters.addressList[0]
+        if (addr) {
+          addr.address = addr.region.toString().replace(/,/g, '') + addr.address
+        }
+        return addr
       }
-      return addr
     },
+    // 排序，默认地址在最前
     addressList: state => {
       let addrList = state.addressList
       for (let i = 0; i < addrList.length; i++) {
@@ -52,6 +56,9 @@ export default {
   mutations: {
     SET_EDITADDRESS (state, addr) {
       state.editAddress = addr
+    },
+    SET_SELECTED_ADDRESS (state, addrId) {
+      state.selectedAddress = addrId
     },
     ADDR_IS_EIDT (state, addr) {
       state.isEdited = false
@@ -73,13 +80,41 @@ export default {
           }
         }
       }
+    },
+    SET_ADDRESS_LIST (state, addrList) {
+      console.log(state.selectedAddress, '[selected]set addressList')
+      if (addrList && addrList.length !== 0) {
+        state.addressList.length = 0
+        for (const addr of addrList) {
+          let data = {
+            id: addr.id,
+            receiverName: addr.receiver,
+            receiverPhone: addr.phone,
+            postCode: addr.postCode,
+            region: [addr.province, addr.city, addr.district],
+            address: addr.addressDetail,
+            isDefault: Boolean(addr.isDefault)
+          }
+          if (data.isDefault) {
+            if (!state.selectedAddress) {
+              state.selectedAddress = addr.id
+              Vue.set(data, 'isSelected', true)
+              // data.isSelected = true
+            } else {
+              Vue.set(data, 'isSelected', false)
+              // data.isSelected = false
+            }
+          } else if (!state.selectedAddress && addr.id === state.selectedAddress) {
+            Vue.set(data, 'isSelected', true)
+            // data.isSelected = true
+          } else {
+            Vue.set(data, 'isSelected', false)
+            // data.isSelected = false
+          }
+          state.addressList.push(data)
+        }
+      }
     }
   },
-  actions: {
-    modifyAddress (addr) {},
-    deleteSAddress (addrId) {},
-    setDefaultAddress (addr) {
-      this.state.defaultAddress = addr
-    }
-  }
+  actions: {}
 }

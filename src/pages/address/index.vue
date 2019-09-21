@@ -12,7 +12,7 @@
             damping="100">
             <div class="receiver-info">
               <span class="receiver-name">{{ item.receiverName }}</span>
-              <span>{{ item.encodePhone }}</span>
+              <span>{{ item.receiverPhone }}</span>
               <p class="address">{{ item.region[0] + item.region[1] + item.region[2] + item.address}}</p>
             </div>
             <div class="info-edit">
@@ -50,6 +50,20 @@ export default {
       editScoll: undefined
     }
   },
+  onShow () {
+    // 获取地址
+    this.$http.get('/action/addr/list').then(res => {
+      if (res) {
+        console.log(res.data.addressList, 'all address')
+        this.$store.commit('UserCenter/SET_ADDRESS_LIST', res.data.addressList)
+      } else {
+        wx.showToast({
+          title: '获取地址失败',
+          icon: 'none'
+        })
+      }
+    })
+  },
   computed: {
     addressList () {
       return this.$store.getters['UserCenter/addressList']
@@ -58,6 +72,7 @@ export default {
   methods: {
     // 删除地址
     deleteAddress (index) {
+      let that = this
       let address = this.addressList
       if (address[index].isDefault) {
         wx.showModal({
@@ -75,7 +90,15 @@ export default {
           confirmColor: '#d34e44',
           success: function (res) {
             if (res.confirm) {
-              address.splice(index, 1)
+              console.log(address[index].id, 'delete addrId')
+              that.$http.post('/action/addr/delete', {addrId: address[index].id}).then(res => {
+                if (res !== '' && res.status === 20000) {
+                  that.showToast('删除成功', 'success')
+                  address.splice(index, 1)
+                } else {
+                  that.showToast('删除失败')
+                }
+              })
             }
           }
         })
@@ -84,6 +107,7 @@ export default {
 
     // 设置默认地址
     setDefault (index) {
+      let that = this
       let address = this.addressList
       if (!address[index].isDefault) {
         wx.showModal({
@@ -93,6 +117,13 @@ export default {
           cancelText: '取消',
           success: function (res) {
             if (res.confirm) {
+              that.$http.post('/action/addr/setDefault', {addrId: address[index].id}).then(res => {
+                if (res.status === 20000) {
+                  that.showToast('设置成功', 'success')
+                } else {
+                  that.showToast('设置失败')
+                }
+              })
               address[0].isDefault = false
               address[index].isDefault = true
             }
@@ -101,11 +132,21 @@ export default {
       }
     },
 
+    // 提示
+    showToast(content, i, dur) {
+      wx.showToast({
+        title: content,
+        icon: i || 'none',
+        duration: dur || 1500
+      })
+    },
+
     // 路由跳转
     routeTo (type, index) {
       if (type === 'add') {
         mpvue.navigateTo({ url: '/pages/addAddress/main' })
       } else if (type === 'modify') {
+        console.log(this.addressList[index].addressId, 'addressId')
         mpvue.navigateTo({ url: '/pages/modifyAddress/main?addressId=' + this.addressList[index].addressId })
       }
     }

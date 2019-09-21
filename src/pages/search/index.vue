@@ -12,7 +12,7 @@
       class="popular-list" 
       v-for="(item, index) in popularSearch" 
       :key="index"
-      @click="showSearchPage(item.tagName)">
+      @click="showSearchPage(item)">
       <p>{{ item.tagName }}</p>
     </div>
     <div class="page search-page" v-if="isShowSearchPage">
@@ -22,7 +22,7 @@
           <input 
             type="text" 
             class="weui-cell__bd" 
-            :placeholder="popularSearch[0].tagName" 
+            :placeholder="'搜索'" 
             v-model="searchContent"
             :focus="isShowSearchPage"
             @input="submitSearch">
@@ -71,9 +71,11 @@ export default {
   onLoad () {
     // 获取热门搜索
     this.$http.get('/action/goods/getPopularSearch').then(res => {
-      let result = res.data.data
-      this.popularSearch = JSON.parse(result)
-      console.log(this.popularSearch, 1111)
+      if (res) {
+        let para = JSON.parse(res.data.data)
+        this.popularSearch = para
+        console.log(this.popularSearch, 'popular search')
+      }
     })
   },
   onUnload () {
@@ -85,10 +87,20 @@ export default {
     showSearchPage (arg) {
       this.isShowSearchPage = !this.isShowSearchPage
       if (arg) {
-        this.searchContent = arg
+        this.searchContent = arg.tagName
       } else {
         this.searchContent = ''
       }
+      this.$http.post('/action/goods/searchGoods', {
+        tagNo: arg.tagNo,
+        tagName: arg.tagName,
+        elasticPageParam: {
+          start: 0,
+          size: 10
+        }
+      }).then(res => {
+        console.log(res, 'searchGoods')
+      })
     },
     // 点击推荐搜索
     searchByRecommend (arg) {
@@ -116,7 +128,7 @@ export default {
   height: 100%;
   background-color: #f3f3f3;
   .search-bar {
-    border: 0.1px solid #ff824d;
+    border: 0.1px solid @orange;
     border-radius: 20px;
     box-shadow: 0 0.08px 3px @orange;
     background: #ffffff;
@@ -159,7 +171,7 @@ export default {
       display: flex;
       align-content: center;
       .search-bar__bd {
-        border: 0.1px solid #ff824d;
+        border: 0.1px solid @orange;
         border-radius: 20px;
         box-shadow: 0 0.08px 3px @orange;
         background: #ffffff;

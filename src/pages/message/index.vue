@@ -66,6 +66,7 @@ export default {
     // 展示未读消息
     showUnread (index) {
       if (!this.unreadMessageList[index].isRead) {
+        this.$http.post('/action/message/setMessageReaded', {msgId: this.unreadMessageList[index].id})
         this.setMessageRead.push(this.unreadMessageList[index].id)
       }
       this.unreadMessageList[index].isRead = true
