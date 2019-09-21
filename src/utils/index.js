@@ -55,6 +55,12 @@ export function getSquareDefaultImg () {
   return '/static/images/default-img_80x80.png'
 }
 
+export function sleep(interval) {
+  return new Promise(resolve => {
+    setTimeout(resolve, interval);
+  })
+}
+
 export default {
   formatNumber,
   formatTime,
@@ -65,5 +71,6 @@ export default {
   timestampTo,
   getSwiperDefaultImg,
   getSquareDefaultImg,
-  switchTab
+  switchTab,
+  sleep
 }
