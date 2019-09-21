@@ -29,10 +29,16 @@
           该商品已下架
         </div>
         <div class="tab-footer lzy-footer">
-          <div class="left-box" :class="{'small': getTotalPrice >= 100000}">
+          <div class="left-box" v-if="goods.categoryName === '积分'">
+            <span class="goods-integral">兑换需要 {{getCurrentIntegral}} 分</span>
+          </div>
+          <div class="left-box" :class="{'small': getTotalPrice >= 100000}" v-else>
             <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
           </div>
-          <div class="right-box">
+          <div class="right-box" v-if="goods.categoryName === '积分'">
+            <button class="toOrderConfirm-btn integral-btn" type="primary" @click="toOrderConfirm" :disabled="checkInvalid">我要兑换</button>
+          </div>
+          <div class="right-box" v-else>
             <button class="shoppingCart-btn" @click="addToShoppingCart" :disabled="checkInvalid">加入购物车</button>
             <button class="toOrderConfirm-btn" type="primary" @click="toOrderConfirm" :disabled="checkInvalid">立即购买</button>
           </div>
@@ -78,6 +84,13 @@ export default {
     }
   },
   computed: {
+    getCurrentIntegral () {
+      if (this.checkProperty) {
+        return this.property.discountPrice
+      } else {
+        return 0
+      }
+    },
     checkPropertyList () {
       return this.goods.hasOwnProperty('propertyList')
     },
@@ -325,6 +338,13 @@ export default {
           }
         }
       }
+      .goods-integral {
+        font-size: 32rpx;
+        color: #ff6421;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       .price {
         color: #ff6421;
         font-size: 16px;
@@ -357,6 +377,9 @@ export default {
           background-color: #ff6421;
           &:active {
             background-color: #ec4e09;
+          }
+          &.integral-btn {
+            border-radius: 20px;
           }
         }
       }

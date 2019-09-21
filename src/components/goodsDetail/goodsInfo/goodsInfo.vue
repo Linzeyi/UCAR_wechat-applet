@@ -3,7 +3,10 @@
     <div class="panel-box imgList-box">
       <com-swiper :imgList="getImgList"></com-swiper>
     </div>
-    <div class="panel-box title-box">
+    <div class="panel-box title-box integral-panel" v-if="goods.categoryName === '积分'">
+      <h2 class="goods-title"><span class="integral-tips">积分商品</span> {{goods.goodsName}}<span class="score">{{getGoodsScore}}</span></h2>
+    </div>
+    <div class="panel-box title-box" v-else>
       <p class="price-panel section-price" v-if="!checkProperty">
         <span class="price">
           <span class="logo">¥</span>{{getGoodsPriceSection}}
@@ -119,7 +122,6 @@ export default {
       return this.goods.goodsScore.toFixed(1)
     },
     getImgList () {
-      console.log('商品信息获取图片列表：')
       if (this.checkProperty) {
         return this.property.picList
       } else {
@@ -128,10 +130,8 @@ export default {
     },
     checkProperty () {
       if (JSON.stringify(this.property) !== '{}' && JSON.stringify(this.property) !== 'undefined') {
-        console.log('有选中规格！')
         return true
       } else {
-        console.log('无选中规格！')
         return false
       }
     },
@@ -144,6 +144,13 @@ export default {
         }
       } else {
         return false
+      }
+    },
+    getCurrentIntegral () {
+      if (this.checkProperty) {
+        return this.property.discountPrice
+      } else {
+        return 0
       }
     },
     getCurrentPrice () {
@@ -174,7 +181,6 @@ export default {
           }
         })
       }
-      console.log('区间：' + minPrice + '-' + maxPrice)
       if (minPrice === maxPrice) {
         return minPrice.toFixed(2)
       } else {
@@ -194,6 +200,20 @@ export default {
   background-color: #f8f8f8;
   .title-box {
     // border-bottom: 1px solid #ddd;
+    &.integral-panel {
+      .goods-title {
+        padding-top: 8px;
+      }
+    }
+    .integral-tips {
+      display: inline-block;
+      padding: 2px 4px;
+      font-size: 13px;
+      border-radius: 4px;
+      background-color: rgb(253, 107, 22);
+      color: #fff;
+      margin-right: 5px;
+    }
     .price-panel {
       &:last-child {
         margin-bottom: 10px;

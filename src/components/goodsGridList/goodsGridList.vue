@@ -103,7 +103,7 @@ export default {
       setTimeout(function() {
         if (that.isLoading) {
           that.setLoading(false)
-          if (that.size >= that.pageSize) {
+          if (that.size - that.pageSize !== 0) {
             that.$emit('update:size', that.size - that.pageSize)
           }
         }
@@ -112,7 +112,7 @@ export default {
   },
   methods: {
     loadErr () {
-      if (this.size >= this.pageSize) {
+      if (this.size - this.pageSize !== 0) {
         this.$emit('update:size', this.size - this.pageSize)
       }
       this.setLoading(false)
@@ -201,6 +201,9 @@ export default {
           .price {
             flex: 1;
             color: #ff6421;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
             .logo {
               font-size: 11px;
             }

@@ -95,7 +95,10 @@ export default {
           key: '4'
         }
       ],
-      orderList: []
+      orderList: [],
+      start: 0,
+      size: 8,
+      pageSize: 8
     }
   },
   onLoad () {
@@ -107,6 +110,11 @@ export default {
     }
   },
   async onPullDownRefresh() {
+    this.getOrderList()
+  },
+  async onReachBottom () {
+    console.log('触底')
+    this.size += this.pageSize
     this.getOrderList()
   },
   computed: {
@@ -125,7 +133,9 @@ export default {
         mask: true
       })
       this.$http.get('/action/order/getOrderList', {
-        status: this.selectTypeKey
+        status: this.selectTypeKey,
+        start: this.start,
+        size: this.size
       }).then(res => {
         console.log(res)
         if (res.data) {
