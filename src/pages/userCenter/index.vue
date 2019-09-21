@@ -266,6 +266,7 @@ export default {
     .weui-cell__hd .iconfont {
       font-size: 0.5rem;
       margin-right: 9px;
+      color: @orange;
     }
     .weui-cell__bd {
       p {
