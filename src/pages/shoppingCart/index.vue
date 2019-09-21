@@ -289,7 +289,36 @@ export default {
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
     },
     deleteItem (list, item, index) {
-      list.splice(index, 1)
+      wx.showLoading({
+        title: '正在删除',
+        mask: true
+      })
+      this.$http.get('/action/order/deleteShopGoods', {
+        goodsNo: item.goodsNo,
+        propertyId: item.property.id
+      }).then(res => {
+        console.log(res)
+        if (res.data) {
+          list.splice(index, 1)
+        } else {
+          wx.showToast({
+            title: '删除失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title: '删除失败',
+          icon: 'none',
+          duration: 2000
+        })
+      })
     },
     toGoodsDetail (goodsItem) {
       this.$store.commit('Goods/SET_GOODS', goodsItem)
