@@ -22,13 +22,13 @@
       </div>
       <div class="input-item">
         <div class="captcha">
-          <captcha :phone="form.phone" :type=3></captcha>
+          <captcha :phone="form.phone" :type="3"></captcha>
         </div>
         <span>验证码</span>
         <input type="text" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
       </div>
     </div>
-    <base-button @click="handleSubmit">确定</base-button>
+    <base-button @click="handleCheck">确定</base-button>
     <base-message></base-message>
   </div>
 </template>
@@ -62,9 +62,12 @@ export default {
     BaseMessage
   },
   methods: {
-    async handleSubmit() {
+    async handleCheck() {
       let flag = false;
-      flag = await this.$store.dispatch("BaseStore/checkPhone", this.form.phone);
+      flag = await this.$store.dispatch(
+        "BaseStore/checkPhone",
+        this.form.phone
+      );
       if (!flag) {
         return;
       }
@@ -82,7 +85,14 @@ export default {
       if (!flag) {
         return;
       }
-      console.log("验证成功");
+      this.findPassword();
+    },
+    async findPassword() {
+      await this.$http.post("/action/user/forgetPassword", {
+        phone: this.form.phone,
+        captcha: this.form.captcha,
+        password: this.form.password
+      });
     }
   }
 };

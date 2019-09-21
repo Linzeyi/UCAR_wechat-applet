@@ -47,6 +47,14 @@ export function timestampTo(time = +new Date()) {
   return date.toJSON().substr(0, 19).replace('T', ' ');
 }
 
+export function getSwiperDefaultImg () {
+  return '/static/images/default-img_swiper.png'
+}
+
+export function getSquareDefaultImg () {
+  return '/static/images/default-img_80x80.png'
+}
+
 export default {
   formatNumber,
   formatTime,
@@ -54,5 +62,8 @@ export default {
   getHMSTime,
   regularRule,
   navigateTo,
-  timestampTo
+  timestampTo,
+  getSwiperDefaultImg,
+  getSquareDefaultImg,
+  switchTab
 }

@@ -10,6 +10,8 @@ const config = {
   },
   AccessUrl: [
     '/action/user/login',
+    '/action/user/register',
+    '/action/user/getCaptcha',
     '/action/goods/getPopularSearch'
   ]
 }

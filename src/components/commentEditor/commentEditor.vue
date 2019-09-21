@@ -35,25 +35,30 @@ export default {
       default () {
         return {}
       }
+    },
+    orderNo: {
+      type: String,
+      default () {
+        return ''
+      }
     }
   },
   data () {
     return {
-      goodsId: undefined,
+      goodsNo: undefined,
       content: '',
       score: 0
     }
   },
-  mounted () {
-    this.goodsId = this.$root.$mp.query.id
+  onLoad () {
+    this.goodsNo = this.$root.$mp.query.id
   },
   onUnload () {
     this.init()
   },
   methods: {
     init () {
-      this.goodsId = undefined
-      this.title = ''
+      this.goodsNo = undefined
       this.content = ''
       this.score = 0
     },
@@ -75,20 +80,29 @@ export default {
         })
       } else {
         this.$http.post('/action/comment/sendComment', {
-          goodsNo: 'GD00001',
-          orderNo: 28,
-          goodsPropertyId: 1,
-          goodsPropertyName: '小盒装',
+          goodsNo: this.goods.goodsNo,
+          orderNo: this.orderNo,
+          goodsPropertyId: this.goods.property.id,
+          goodsPropertyName: this.goods.property.propertyName,
           content: this.content,
           goodsScore: this.score
         }).then(res => {
           console.log(res)
-          wx.showToast({
-            title: '成功发表评论',
-            icon: 'success',
-            duration: 2000
-          })
-          this.$emit('commentSucceed')
+          if (res.data) {
+            wx.showToast({
+              title: '成功发表评论',
+              icon: 'success',
+              duration: 2000
+            })
+            this.$emit('commentSucceed')
+            mpvue.navigateBack({ delta: 1 })
+          } else {
+            wx.showToast({
+              title: '发表失败',
+              icon: 'none',
+              duration: 2000
+            })
+          }
         })
       }
     }

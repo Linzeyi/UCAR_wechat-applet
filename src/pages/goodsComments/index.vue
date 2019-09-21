@@ -1,18 +1,18 @@
 <template>
   <div class="goodsComments-wrap">
-    <div class="comment-panel" v-for="(goodsItem, goodsIndex) in order.goodsList" :key="goodsIndex">
+    <div class="comment-panel" v-for="(goodsItem, goodsIndex) in order.shopGoodsList" :key="goodsIndex">
       <div class="goods-box">
         <div class="left-box">
           <div class="img-box">
-            <image :src="goodsItem.type.imgList[0]" alt="商品图片" mode="aspectFit"></image>
+            <image :src="goodsItem.property.picList[0]" alt="商品图片" mode="aspectFit"></image>
           </div>
         </div>
         <div class="right-box">
-          <p class="title">{{goodsItem.title}}</p>
+          <p class="title">{{goodsItem.goodsName}}</p>
         </div>
       </div>
       <div class="comment-box">
-        <comment-editor :goods.sync="goodsItem" @commentSucceed="commentSucceed"></comment-editor>
+        <comment-editor :goods.sync="goodsItem" :orderNo="order.orderNo" @commentSucceed="commentSucceed"></comment-editor>
       </div>
     </div>
   </div>

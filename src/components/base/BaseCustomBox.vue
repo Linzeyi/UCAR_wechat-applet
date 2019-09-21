@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-content" :style="{height: getUsableHeight+'px'}">
+  <div class="custom-content" :style="{height: getUsableHeight+'px', top: getCustomNavHeight+'px'}">
     <slot></slot>
   </div>
 </template>
@@ -12,6 +12,9 @@ export default {
       const customNavHeight = this.$store.getters["SystemInfo/customNavHeight"]
       const usableHeight = systemInfo.windowHeight - customNavHeight
       return usableHeight;
+    },
+    getCustomNavHeight() {
+      return this.$store.getters["SystemInfo/customNavHeight"]
     }
   }
 };
@@ -20,5 +23,6 @@ export default {
 <style lang="less" scoped>
 .custom-content {
   transform: scale(1);
+  position: relative;
 }
 </style>

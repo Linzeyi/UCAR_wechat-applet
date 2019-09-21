@@ -60,7 +60,10 @@ export default {
   methods: {
     async handleCheck() {
       let flag = false;
-      flag = await this.$store.dispatch("BaseStore/checkPhone", this.form.phone);
+      flag = await this.$store.dispatch(
+        "BaseStore/checkPhone",
+        this.form.phone
+      );
       if (!flag) {
         return;
       }
@@ -78,6 +81,12 @@ export default {
         phone: this.form.phone,
         password: this.form.password
       });
+      if (result.status !== 20000) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "账号或密码不正确"
+        });
+      }
       const token = result.data.token;
       if (token) {
         wx.setStorage({
@@ -85,8 +94,11 @@ export default {
           data: token
         });
       }
-      const userInfo = result.data.memberInfo
-      this.$store.commit('UserInfo/SET_USERINFO', userInfo)
+      let userInfo = result.data.memberInfo;
+      if (userInfo) {
+        userInfo = { ...userInfo, phone: this.form.phone };
+      }
+      this.$store.commit("UserInfo/SET_USERINFO", userInfo);
     }
   }
 };

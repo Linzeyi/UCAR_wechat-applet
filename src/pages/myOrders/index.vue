@@ -10,66 +10,76 @@
         <span>{{item.name}}</span>
       </div>
     </div>
-    <div class="order-list-wrap">
+    <div class="order-list-wrap" v-if="orderList.length !== 0">
       <div class="order-box" v-for="(orderItem, orderIndex) in orderList" :key="orderIndex">
         <div class="header">
           <div class="left-box">
-            <span class="order-id">订单编号：{{orderItem.orderId}}</span>
+            <span class="order-id">订单编号：{{orderItem.orderNo}}</span>
           </div>
           <div class="right-box">
-            <span class="status">{{getStatusList[orderItem.status]}}</span>
+            <span class="status">{{typeTabList[orderItem.status + 1].name}}</span>
           </div>
         </div>
         <div class="goods-list">
-          <div class="goods-box" v-for="(goodsItem, goodsIndex) in orderItem.goodsList" :key="goodsIndex">
+          <div class="goods-box" v-for="(goodsItem, goodsIndex) in orderItem.shopGoodsList" :key="goodsIndex">
             <div class="flex-box">
               <div class="left-box">
                 <div class="img-box">
-                  <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
+                  <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片"></image>
                 </div>
               </div>
               <div class="content-box">
-                <p class="title">{{goodsItem.title}}</p>
-                <p class="type">{{goodsItem.type.title}}:{{goodsItem.type.content}}</p>
+                <p class="title">{{goodsItem.goodsName}}</p>
+                <p class="type">规格:{{goodsItem.property.propertyName}}</p>
               </div>
               <div class="right-box">
                 <p class="price">
-                  <span class="logo">¥</span>{{goodsItem.type.price}}
+                  <span class="logo">¥</span>{{goodsItem.property.discountPrice}}
                 </p>
                 <p class="num">x{{goodsItem.num}}</p>
               </div>
             </div>
           </div>
           <div class="computed-info">
-            <span class="num">共{{orderItem.goodsList.length}}件商品，</span>
-            合计：<span class="price"><span class="logo">¥</span><comTotalPrice :goodsList="orderItem.goodsList"></comTotalPrice></span>
+            <span class="num">共{{orderItem.shopGoodsList.length}}件商品，</span>
+            合计：<span class="price"><span class="logo">¥</span>{{orderItem.payPrice}}</span>
           </div>
           <div class="goods-footer">
-            <span class="option-btn" @click="toOrderDetail(orderItem)">查看订单</span>
-            <span class="option-btn" v-if="orderItem.status <= 1 ">取消订单</span>
-            <span class="option-btn" v-if="orderItem.status === 0">去支付</span>
-            <span class="option-btn" @click="toGoodsComments(orderItem)">评价</span>
+            <span class="option-btn" @click="toOrderDetail(orderItem.orderNo)">查看订单</span>
+            <span class="option-btn" v-if="orderItem.status === 0" @click="toPayOrder(orderItem.orderNo)">去支付</span>
+            <span class="option-btn" v-if="orderItem.status < 1" @click="cancelOrder(orderItem.orderNo)">取消订单</span>
+            <span class="option-btn" v-if="orderItem.status === 2" @click="confirmReceipt(orderItem.orderNo)">确认收货</span>
+            <span class="option-btn" @click="toGoodsComments(orderItem)" v-if="orderItem.status > 1 && orderItem.status < 3">评价</span>
           </div>
         </div>
       </div>
+    </div>
+    <div class="no-orders-panel" v-else>
+      <p>
+        <i class="iconfont icon-no-orders">&#xe6ee;</i>
+        订单列表暂时为空...
+      </p>
     </div>
   </div>
 </template>
 
 <script>
-import comTotalPrice from '../../components/myOrders/totalPrice'
 
 export default {
   data () {
     return {
-      selectTypeKey: 0,
+      selectTypeKey: '-1',
       typeTabList: [
         {
           name: '全部',
-          key: '0'
+          key: '-1'
         },
         {
           name: '待付款',
+          key: '0'
+        },
+        {
+          name: '待发货',
           key: '1'
         },
         {
@@ -85,145 +95,146 @@ export default {
           key: '4'
         }
       ],
-      orderList: [
-        {
-          orderId: 'XD215135',
-          status: '等待付款',
-          goodsList: [
-            {
-              id: undefined,
-              title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-              src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
-              store: {
-                name: '米其林4S店'
-              },
-              type: {
-                title: '规格/型号',
-                content: '最大/2090',
-                price: 54
-              },
-              num: 3
-            },
-            {
-              id: undefined,
-              title: '【二手9成新】苹果8Plus Apple iPhone8',
-              src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
-              store: {
-                name: '苹果旗舰店店'
-              },
-              type: {
-                title: '内存',
-                content: '64G',
-                price: 3162
-              },
-              num: 1
-            }
-          ]
-        },
-        {
-          orderId: 'XD532325',
-          status: '交易成功',
-          goodsList: [
-            {
-              id: undefined,
-              title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-              src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
-              store: {
-                name: '米其林4S店'
-              },
-              type: {
-                title: '规格/型号',
-                content: '最大/9595',
-                price: 80
-              },
-              num: 6
-            },
-            {
-              id: undefined,
-              title: '【二手9成新】苹果8Plus Apple iPhone8',
-              src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
-              store: {
-                name: '苹果旗舰店店'
-              },
-              type: {
-                title: '内存',
-                content: '256G',
-                price: 4999
-              },
-              num: 2
-            }
-          ]
-        },
-        {
-          orderId: 'XD532325',
-          status: '未支付',
-          goodsList: [
-            {
-              id: undefined,
-              title: '车载打火器，X3汽车应急启动电源12v移动搭电宝车载备用电瓶充电打火器',
-              src: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=895649508,3172694042&fm=11&gp=0.jpg',
-              store: {
-                name: '米其林4S店'
-              },
-              type: {
-                title: '规格/型号',
-                content: '最大/9595',
-                price: 80
-              },
-              num: 6
-            },
-            {
-              id: undefined,
-              title: '【二手9成新】苹果8Plus Apple iPhone8',
-              src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3269194731,1185787292&fm=11&gp=0.jpg',
-              store: {
-                name: '苹果旗舰店店'
-              },
-              type: {
-                title: '内存',
-                content: '256G',
-                price: 4999
-              },
-              num: 2
-            }
-          ]
-        }
-      ]
+      orderList: []
     }
   },
-  components: {
-    comTotalPrice
-  },
-  onShow () {
-    console.log('onShow')
-  },
   onLoad () {
-    this.init()
+    this.getOrderList()
   },
   watch: {
+    selectTypeKey () {
+      this.getOrderList()
+    }
   },
   async onPullDownRefresh() {
-    console.log('下拉刷新')
-    console.log(this)
-    // 停止下拉刷新
-    // wx.stopPullDownRefresh()
+    this.getOrderList()
   },
   computed: {
+    getDefaultImg () {
+      return this.Utils.getSquareDefaultImg()
+    },
     getStatusList () {
       return this.$store.getters['Order/statusList']
     }
   },
   methods: {
-    init () {
-      this.orderList = this.$store.getters['Order/orderList']
-      console.log("我的订单列表获取：", this.orderList)
+    getOrderList () {
+      this.orderList = []
+      wx.showLoading({
+        title: '正在加载',
+        mask: true
+      })
+      this.$http.get('/action/order/getOrderList', {
+        status: this.selectTypeKey
+      }).then(res => {
+        console.log(res)
+        if (res.data) {
+          this.orderList = res.data
+        } else {
+          wx.showToast({
+            title: '加载失败！',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title: '加载失败！',
+          icon: 'none',
+          duration: 2000
+        })
+      })
+    },
+    confirmReceipt (orderNo) {
+      let that = this
+      wx.showModal({
+        title: '确认收货',
+        content: '是否确认收货',
+        cancelText: '否',
+        confirmText: '是',
+        success (res) {
+          if (res.confirm) {
+            that.$http.get('/action/order/confirmOrder', {
+              orderNo: orderNo
+            }).then(res => {
+              if (res.data) {
+                wx.showToast({
+                  title: '确认成功',
+                  icon: 'success',
+                  duration: 2000
+                })
+                that.getOrderList()
+              } else {
+                wx.showToast({
+                  title: '确认失败！',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
+            }).catch(err => {
+              console.log(err)
+              wx.showToast({
+                title: '确认失败！',
+                icon: 'none',
+                duration: 2000
+              })
+            })
+          }
+        }
+      })
+    },
+    cancelOrder (orderNo) {
+      let that = this
+      wx.showModal({
+        title: '取消订单',
+        content: '是否取消订单',
+        cancelText: '否',
+        confirmText: '是',
+        success (res) {
+          if (res.confirm) {
+            that.$http.get('//action/order/cancelOrder', {
+              orderNo: orderNo
+            }).then(res => {
+              if (res.data) {
+                wx.showToast({
+                  title: '取消成功',
+                  icon: 'success',
+                  duration: 2000
+                })
+                that.getOrderList()
+              } else {
+                wx.showToast({
+                  title: '取消失败！',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
+            }).catch(err => {
+              console.log(err)
+              wx.showToast({
+                title: '取消失败！',
+                icon: 'none',
+                duration: 2000
+              })
+            })
+          }
+        }
+      })
+    },
+    toPayOrder (orderNo) {
+      this.toOrderDetail(orderNo)
     },
     toGoodsComments (order) {
       this.$store.commit('Comment/SET_ORDER', order)
-      mpvue.navigateTo({ url: '/pages/goodsComments/main?orderId=' + order.orderId })
+      mpvue.navigateTo({ url: '/pages/goodsComments/main?orderNo=' + order.orderNo })
     },
-    toOrderDetail (item) {
-      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderId=' + item.orderId })
+    toOrderDetail (orderNo) {
+      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderNo=' + orderNo })
     }
   }
 }
@@ -233,6 +244,23 @@ export default {
 .myOrders-wrap {
   height: 100%;
   background-color: #f3f3f3;
+  .no-orders-panel {
+    position: relative;
+    top: 40px;
+    padding: 30px 0;
+    p {
+      font-size: 16px;
+      color: #bbb;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .iconfont {
+        font-size: 36px;
+        margin-right: 3px;
+      }
+    }
+  }
   .tab-panel {
     position: fixed;
     left: 0;
@@ -326,7 +354,7 @@ export default {
               .type {
                 font-size: 10px;
                 padding: 2px 4px;
-                background-color: #f6f6f6;
+                background-color: #f3f3f3;
                 border-radius: 4px;
                 color: #999;
               }

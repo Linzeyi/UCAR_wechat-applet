@@ -7,7 +7,11 @@
       <div class="orderPay-wrap lzy-list-wrap">
         <div class="wrap-panel top-panel">
           <div class="left-box">
-            <p class="status" v-if="order.status == 0">等待买家付款...</p>
+            <p class="status" v-if="order.status === 0"><i class="iconfont">&#xe694;</i>等待买家付款...</p>
+            <p class="status" v-if="order.status === 1"><i class="iconfont">&#xe6cf;</i>已付款，等待卖家发货...</p>
+            <p class="status" v-if="order.status === 2"><i class="iconfont">&#xe67e;</i>已发货，等待签收...</p>
+            <p class="status" v-if="order.status === 3"><i class="iconfont">&#xe6a5;</i>订单已完成</p>
+            <p class="status" v-if="order.status === 4"><i class="iconfont">&#xe6a6;</i>订单已取消</p>
           </div>
         </div>
         <div class="wrap-panel goods-panel">
@@ -16,24 +20,24 @@
             <span class="title">选购商品</span>
           </div>
           <div class="goods-list">
-            <div class="goods-box" v-for="(goodsItem, goodsIndex) in order.goodsList" :key="goodsIndex">
+            <div class="goods-box" v-for="(goodsItem, goodsIndex) in order.shopGoodsList" :key="goodsIndex">
               <div class="info-box lzy-flex-box">
                 <div class="left-box">
                   <div class="img-box">
-                    <image :src="goodsItem.type.imgList[0]" alt="商品图片"></image>
+                    <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片"></image>
                   </div>
                 </div>
                 <div class="content-box">
-                  <p class="title">{{goodsItem.title}}</p>
+                  <p class="title">{{goodsItem.goodsName}}</p>
                   <p class="type">
                     <span class="type-title">
-                      {{goodsItem.type.title}}:
+                      规格:
                     </span>
-                    <span class="type-item">{{goodsItem.type.content}}；</span>
+                    <span class="type-item">{{goodsItem.property.propertyName}}；</span>
                   </p>
                 </div>
                 <div class="right-box">
-                  <p class="price"><span class="logo">¥</span>{{goodsItem.type.discountPrice ? goodsItem.type.discountPrice : goodsItem.type.price}}</p>
+                  <p class="price"><span class="logo">¥</span>{{goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice}}</p>
                   <p class="num">x{{goodsItem.num}}</p>
                 </div>
               </div>
@@ -42,7 +46,7 @@
           <div class="goods-footer">
             <p class="small-font">
               <span class="left">商品总价</span>
-              <span class="right">¥ {{getTotalPrice}}</span>
+              <span class="right">¥ {{order.payPrice}}</span>
             </p>
             <p class="small-font">
               <span class="left">其他开销</span>
@@ -50,11 +54,15 @@
             </p>
             <p class="order-price-font">
               <span class="left">订单总价</span>
-              <span class="right">¥ {{getTotalPrice}}</span>
+              <span class="right">¥ {{order.payPrice}}</span>
             </p>
-            <p class="total-price-font">
+            <p class="total-price-font" v-if="order.status === 0">
               <span class="left">需付款</span>
-              <span class="right"><span class="logo">¥</span> {{getTotalPrice}}</span>
+              <span class="right"><span class="logo">¥</span> {{order.payPrice}}</span>
+            </p>
+            <p class="total-price-font" v-else>
+              <span class="left">已付款</span>
+              <span class="right"><span class="logo">¥</span> {{order.payPrice}}</span>
             </p>
           </div>
         </div>
@@ -65,15 +73,15 @@
           </div>
           <div class="content-panel">
             <span class="title">收货人</span>
-            <span>{{order.addressInfo.receiverName}}</span>
+            <span>{{order.receiptInfo.receiptName}}</span>
           </div>
           <div class="content-panel">
             <span class="title">联系方式</span>
-            <span>{{order.addressInfo.receiverPhone}}</span>
+            <span>{{order.receiptInfo.receiptTel}}</span>
           </div>
           <div class="content-panel">
             <span class="title">收货地址</span>
-            <span>{{order.addressInfo.address}}</span>
+            <span>{{order.receiptInfo.receiptAddress}}</span>
           </div>
         </div>
         <div class="wrap-panel order-info-panel">
@@ -83,7 +91,7 @@
           </div>
           <div class="content-panel">
             <span class="title">订单编号</span>
-            <span>{{order.orderId}}</span>
+            <span>{{order.orderNo}}</span>
           </div>
           <div class="content-panel">
             <span class="title">订单状态</span>
@@ -98,7 +106,7 @@
             <span>{{order.remark}}</span>
           </div>
         </div>
-        <div class="wrap-panel pay-type-panel">
+        <div class="wrap-panel pay-type-panel" v-if="order.status === 0">
           <div class="header">
             <span class="iconfont icon-pay-type">&#xe60e;</span>
             <span class="title">支付方式</span>
@@ -116,8 +124,10 @@
         </div>
         <div class="pay-footer lzy-footer">
           <div class="right-box">
-            <button class="cancel-btn" @click="cancelOrder">取消订单</button>
-            <button class="pay-btn" @click="payOrder">付款</button>
+            <button class="pay-btn" @click="payOrder" v-if="order.status === 0">付款</button>
+            <button class="cancel-btn" @click="cancelOrder" v-if="order.status < 1">取消订单</button>
+            <button class="cancel-btn" @click="confirmReceipt" v-if="order.status === 1">确认收货</button>
+            <button class="cancel-btn" @click="toGoodsComments()" v-if="checkOrderCommentStatus">评价</button>
           </div>
         </div>
       </div>
@@ -136,11 +146,10 @@ export default {
   data () {
     return {
       order: {
-        orderId: 'XDD0001',
+        orderNo: '',
         createTime: this.Utils.formatTime(new Date()),
         status: '0',
-        addressInfo: {},
-        goodsList: []
+        receiptInfo: {}
       },
       payTypeList: [
         {
@@ -155,9 +164,10 @@ export default {
       selectPayType: {}
     }
   },
-  onLoad () {
-    this.selectPayType = this.payTypeList[0]
-    this.order = JSON.parse(JSON.stringify(this.$store.getters['Order/order']))
+  onLoad (option) {
+    this.order.orderNo = option.orderNo
+    console.log(option)
+    this.getOrder()
     let title = '订单详情'
     if (this.order.status === 0 || this.order.status === '0') {
       title = '订单支付'
@@ -170,35 +180,78 @@ export default {
     this.init()
   },
   async onPullDownRefresh() {
-    console.log('下拉刷新')
-    console.log(this)
-    // 停止下拉刷新
-    // wx.stopPullDownRefresh()
+    this.getOrder()
   },
   computed: {
-    getTotalPrice () {
-      let price = 0
-      if (JSON.stringify(this.order) === '{}') {
-        return 0
-      } else {
-        this.order.goodsList.map(item => {
-          price += item.num * (item.type.discountPrice ? item.type.discountPrice : item.type.price)
-        })
-        return price
-      }
+    getDefaultImg () {
+      return this.Utils.getSquareDefaultImg()
     },
     getStatusList () {
       return this.$store.getters['Order/statusList'][parseInt(this.order.status)]
+    },
+    checkAllGoodsIsCommented () {
+      let flag = true
+      if (this.order.shopGoodsList) {
+        this.order.shopGoodsList.map(item => {
+          if (!item.commentStatus) {
+            flag = false
+          }
+        })
+      }
+      return flag
+    },
+    checkOrderCommentStatus () {
+      if (this.order.status > 1 && this.order.status < 3 && this.checkAllGoodsIsCommented) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   methods: {
     init () {
       console.log('orderDetail页面销毁')
-      this.$store.commit('Order/INIT_ORDER')
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
     },
     backOff () {
       mpvue.navigateBack({ delta: 1 })
+    },
+    getBalance () {
+      this.$http.get('/action/wallet/getUserBalance').then(res => {
+        console.log(res)
+      })
+    },
+    getOrder () {
+      wx.showLoading({
+        title: '获取订单信息',
+        mask: true
+      })
+      this.$http.get('/action/order/getOrder', {
+        orderNo: this.order.orderNo
+      }).then(res => {
+        console.log(res)
+        if (res.data) {
+          this.order = res.data
+          this.order.createTime = this.Utils.formatTime(this.order.createTime)
+        } else {
+          wx.showToast({
+            title: '获取失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title: '获取失败',
+          icon: 'none',
+          duration: 2000
+        })
+      })
     },
     cancelOrder () {
       wx.showModal({
@@ -215,44 +268,64 @@ export default {
     },
     payOrder () {
       let that = this
-      if (this.getTotalPrice > this.selectPayType.balance) {
-        wx.showModal({
-          title: '您的余额已不足',
-          content: '请充值或选用其他支付方式',
-          cancelText: '选用其他',
-          confirmText: '前往充值',
-          success (res) {
-            if (res.confirm) {
-
-            }
-          }
+      if (JSON.stringify(this.selectPayType) === '{}') {
+        wx.showToast({
+          title: '请选择支付方式',
+          icon: 'none',
+          duration: 2000
         })
       } else {
-        wx.showModal({
-          title: '确认付款',
-          content: '本次应付金额共计' + this.getTotalPrice + '\r\n是否用' + this.selectPayType.name + '支付方式付款',
-          confirmText: '支付',
-          success (res) {
-            if (res.confirm) {
-              wx.showModal({
-                title: '支付成功',
-                content: '将为您跳转至我的订单界面',
-                showCancel: false,
-                success (res) {
-                  console.log('付款成功，支付订单：', that.order)
-                  that.$store.commit('Order/ADD_ORDER', that.order)
-                  mpvue.navigateTo({ url: '/pages/myOrders/main' })
-                }
-              })
-            } else {
-              wx.showToast({
-                title: '取消支付',
-                icon: 'none',
-                duration: 2000
-              })
+        if (this.order.payPrice > this.selectPayType.balance) {
+          wx.showModal({
+            title: '您的余额已不足',
+            content: '请充值或选用其他支付方式',
+            cancelText: '选用其他',
+            confirmText: '前往充值',
+            success (res) {
+              if (res.confirm) {
+
+              }
             }
-          }
-        })
+          })
+        } else {
+          wx.showModal({
+            title: '确认付款',
+            content: '本次应付金额共计' + this.order.payPrice,
+            confirmText: '支付',
+            success (res) {
+              if (res.confirm) {
+                that.$http.get('/action/order/payOrder', {
+                  orderNo: that.order.orderNo
+                }).then(res => {
+                  console.log(res)
+                  if (res.data) {
+                    wx.showModal({
+                      title: '支付成功',
+                      content: '将为您跳转至我的订单界面',
+                      showCancel: false,
+                      success (res) {
+                        console.log('付款成功，支付订单：', that.order)
+                        mpvue.navigateTo({ url: '/pages/myOrders/main' })
+                      }
+                    })
+                  } else {
+                    wx.showToast({
+                      title: '支付失败',
+                      icon: 'none',
+                      duration: 2000
+                    })
+                  }
+                })
+              } else {
+                wx.showToast({
+                  title: '取消支付',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
+            }
+          })
+        }
       }
     }
   }
@@ -311,6 +384,11 @@ export default {
           color: #fff;
           .status {
             font-size: 14px;
+            .iconfont {
+              font-size: 14px;
+              margin-right: 4px;
+              color: #fff;
+            }
           }
         }
       }

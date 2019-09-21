@@ -52,12 +52,12 @@
         <span>修改密码</span>
         <i class="iconfont icon-size">&#xe6ab;</i>
       </div>
-      <div>
+      <div @click="logout">
         <span>注销</span>
         <i class="iconfont icon-size">&#xe6ab;</i>
       </div>
     </div>
-    <div class="save-bottom">
+    <div class="save-bottom" @click="saveUserInfo">
       <span>保存用户信息</span>
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
@@ -75,16 +75,19 @@
       <div class="action-sheet-item" @click="chooseImage('album')">从相册选择</div>
       <div class="action-sheet-item" @click="chooseImage('camera')">拍照</div>
     </base-action-sheet>
+    <mp-loading :showLoading="showLoading" loadingText="上传图片中" :mask="true"></mp-loading>
   </div>
 </template>
 
 <script>
 import mpToast from "mpvue-weui/src/toast";
 import BaseActionSheet from "@/components/base/BaseActionSheet";
+import mpLoading from "mpvue-weui/src/loading";
 export default {
   components: {
     mpToast,
-    BaseActionSheet
+    BaseActionSheet,
+    mpLoading
   },
   data() {
     return {
@@ -96,11 +99,15 @@ export default {
       showToast: false,
       showAvatarSheet: false,
       showGenderSheet: false,
-      focusIndex: ""
+      focusIndex: "",
+      showLoading: false
     };
   },
   onShow() {
     this.id = this.$store.getters["UserInfo/id"];
+    if (this.id === "") {
+      this.Utils.switchTab("/pages/login/main");
+    }
     this.avatarUrl = this.$store.getters["UserInfo/avatarUrl"];
     this.nickname = this.$store.getters["UserInfo/nickname"];
     this.email = this.$store.getters["UserInfo/email"];
@@ -113,7 +120,6 @@ export default {
         return;
       }
       const _this = this;
-      console.log(_this.avatarUrl);
       wx.previewImage({
         current: _this.avatarUrl,
         urls: [_this.avatarUrl]
@@ -127,17 +133,86 @@ export default {
         sourceType: [type],
         success(res) {
           const tempFilePaths = res.tempFilePaths;
-          _this.avatarUrl = tempFilePaths[0];
+          const tempUrl = tempFilePaths[0];
+          _this.handleTempAvatar(tempUrl);
+          _this.avatarUrl = tempUrl;
         }
       });
     },
-    getUserInfo(e) {
+    async getUserInfo(e) {
       const detail = e.mp.detail;
       if (detail.userInfo) {
-        this.avatarUrl = detail.userInfo.avatarUrl;
-      } else {
-        this.showToast = true;
+        const url = detail.userInfo.avatarUrl;
+        await this.handleRemoteAvatar(url);
+        this.avatarUrl = url;
       }
+    },
+    handleWechat(tempUrl) {
+      const token = wx.getStorageSync("token");
+      wx.uploadFile({
+        url:
+          "https://apiproxytest.ucarinc.com/ucarincapiproxy/action/user/uploadAvatar",
+        filePath: tempUrl,
+        name: "file",
+        header: {
+          apigroupcode: "tranning",
+          token: token
+        },
+        formData: {
+          sign: '4191131821855832366960060265169801929',
+          cid: '007001'
+          // fileName: ''
+        },
+        success(res) {
+          console.log("上传文件结束");
+        }
+      });
+    },
+    handleTempAvatar(tempUrl) {
+      let base64 = wx.getFileSystemManager().readFileSync(tempUrl, "base64");
+      console.log(base64.length);
+      this.uploadAvatar(base64);
+    },
+    handleRemoteAvatar(url) {
+      const _this = this;
+      wx.request({
+        url: url,
+        responseType: "arraybuffer",
+        success(res) {
+          console.log("res：", res);
+          let base64 = wx.arrayBufferToBase64(res.data);
+          _this.uploadAvatar(base64);
+        }
+      });
+    },
+    async uploadAvatar(base64) {
+      base64 = "data:image/png;base64," + base64;
+      const encodeBase64 = base64.replace(/\+/g, ".");
+      try {
+        await this.$http.post("/action/user/uploadAvatar", {
+          fileName: "image",
+          file: encodeBase64
+        });
+      } catch (error) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "您的网络不太给力"
+        });
+      }
+    },
+    saveUserInfo() {
+      this.$http.post("/action/user/modifyInfo", {
+        nickname: this.nickname,
+        email: this.email,
+        sex: this.sex
+      });
+    },
+    logout() {
+      this.$store.commit("UserInfo/REMOVE_USERINFO");
+      wx.removeStorage({
+        key: "token"
+      });
+      this.Utils.switchTab("/pages/login/main");
     }
   }
 };
@@ -251,6 +326,12 @@ export default {
 
       &:last-child {
         border-bottom: 0;
+      }
+      &:active {
+        span {
+          display: inline-block;
+          transform: scale(0.9);
+        }
       }
     }
   }

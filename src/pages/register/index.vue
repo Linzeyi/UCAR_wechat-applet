@@ -4,7 +4,7 @@
     <div class="form">
       <div class="input-item">
         <span>账号</span>
-        <input type="text" placeholder="手机号" v-model="form.phone" />
+        <input type="text" placeholder="手机号" v-model="form.phone" maxlength="11" />
       </div>
       <div class="input-item">
         <div class="switch-button">
@@ -53,17 +53,17 @@ import BaseMessage from "@/components/base/BaseMessage";
 export default {
   onUnload() {
     this.form.phone = "";
-    this.form.captcha = "";
     this.form.password = "";
+    this.form.captcha = "";
     this.showPassword = false;
     this.agreementActive = false;
   },
   data() {
     return {
       form: {
-        phone: "",
-        captcha: "",
-        password: ""
+        phone: "15605026927",
+        password: "hjs123456",
+        captcha: "123456"
       },
       showPassword: false,
       agreementActive: false
@@ -99,15 +99,22 @@ export default {
       if (!flag) {
         return;
       }
+      if (!this.agreementActive) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "请先同意用户协议"
+        });
+        return;
+      }
       this.register();
+    },
+    async register() {
+      await this.$http.post("/action/user/register", {
+        phone: this.form.phone,
+        captcha: this.form.captcha,
+        password: this.form.password
+      });
     }
-  },
-  register() {
-    this.$http.post("/action/user/register", {
-      phone: this.form.phone,
-      captcha: this.form.captcha,
-      password: this.form.password
-    });
   }
 };
 </script>

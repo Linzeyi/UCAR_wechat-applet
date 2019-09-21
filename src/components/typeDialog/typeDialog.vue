@@ -69,10 +69,10 @@ export default {
         return 'goodsDetail'
       }
     },
-    goodsNo: {
-      type: String,
+    goods: {
+      type: Object,
       default () {
-        return ''
+        return {}
       }
     },
     property: {
@@ -99,6 +99,12 @@ export default {
     this.init()
   },
   watch: {
+    goods: {
+      handler (val) {
+        console.log(val)
+      },
+      deep: true
+    },
     checkOpenTypeDialog (val) {
       if (val) {
         this.getPropertyByNo()
@@ -106,8 +112,11 @@ export default {
     }
   },
   computed: {
+    getDefaultImg () {
+      return this.Utils.getSquareDefaultImg()
+    },
     checkProperty () {
-      if (JSON.stringify(this.selectedProperty) !== '{}') {
+      if (JSON.stringify(this.selectedProperty) !== '{}' && this.selectedProperty) {
         console.log('有选中规格！', this.selectedProperty)
         return true
       } else {
@@ -151,9 +160,9 @@ export default {
     getImgSrc () {
       if (this.checkProperty) {
         console.log('规格组件图片显示', this.selectedProperty.picList)
-        return this.selectedProperty.picList[0] ? this.selectedProperty.picList[0] : ''
+        return this.selectedProperty.picList[0] ? this.selectedProperty.picList[0] : 'https://fs.zhenjiang365.cn/bbsimg/fcmb/image/nopic590.jpg'
       } else {
-        return ''
+        return this.getDefaultImg
       }
     },
     checkOpenTypeDialog () {
@@ -163,27 +172,33 @@ export default {
   methods: {
     init () {
       this.propertyList = []
-      this.property = {}
     },
     getPropertyByNo () {
+      this.propertyList = []
+      this.selectedProperty = {}
       this.$http.get('/action/goods/getGoodsPropertyByGoodsNo', {
-        goodsNo: this.goodsNo
+        goodsNo: this.goods.goodsNo
       }).then(res => {
-        console.log('规格数组：', res.data.propertyReList)
-        this.propertyList = res.data.propertyReList
-        this.num = this.pNum ? this.pNum : 1
-        if (JSON.stringify(this.property) === '{}') {
-          this.selectedProperty = this.propertyList[0]
-        } else {
-          this.selectedProperty = this.property
+        if (res.data) {
+          console.log('规格数组：', res.data.propertyReList)
+          this.propertyList = res.data.propertyReList
+          this.num = this.pNum ? this.pNum : 1
+          if (JSON.stringify(this.property) === '{}') {
+            this.selectedProperty = this.propertyList[0]
+          } else {
+            this.selectedProperty = this.property
+          }
         }
       })
     },
     showTypeDialog (flag) {
-      this.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
+      let that = this
+      this.$nextTick(function() {
+        that.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
+      })
     },
     handlerSelectedType () {
-      this.$emit('changeType', this.selectedProperty, this.num)
+      this.$emit('changeProperty', this.selectedProperty, this.num, this.property, this.pNum, this.goods)
       this.showTypeDialog(false)
     },
     selectType (property) {

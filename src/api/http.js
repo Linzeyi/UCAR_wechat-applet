@@ -26,7 +26,7 @@ const headers = {
 Object.assign(fly.config, {
   headers: headers,
   baseURL: baseURL,
-  timeout: 10000,
+  timeout: 20000,
   widthCredentials: true
 })
 
@@ -37,7 +37,7 @@ fly.interceptors.request.use(request => {
   // console.log('key:' + key)
   const data = request.body ? JSON.stringify(request.body) : '' // 需要加密的请求数据，转成字符串
   // const data = request.body
-  // console.log('data:', data)
+  console.log('data:', data)
   // const q = SignApi.getQ(data, accountKey) // 利用请求参数data和密钥key
   const q = data
   // console.log('q:' + q)
@@ -76,6 +76,7 @@ fly.interceptors.request.use(request => {
       wx.showToast({
         title: '请先登录账号',
         image: '/static/images/login.svg',
+        icon: 'none',
         mask: true,
         duration: 1500
       })

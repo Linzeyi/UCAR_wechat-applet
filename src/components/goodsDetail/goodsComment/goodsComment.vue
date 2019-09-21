@@ -11,7 +11,7 @@
           <div class="progress-box">
             <div class="progress-panel" v-for="(item, index) in scoreList" :key="index">
               <div class="star-box">
-                <i class="iconfont icon-star" v-for="(scoreItem, scoreIndex) in (index + 1)" :key="scoreIndex">&#xe663;</i>
+                <i class="iconfont icon-star" v-for="(scoreItem, scoreIndex) in (5 - index)" :key="scoreIndex">&#xe663;</i>
               </div>
               <div class="progress">
                 <progress :percent="(item / totalComment) * 100" color="#666" stroke-width="4"></progress>
@@ -27,7 +27,7 @@
         <div class="list-panel" v-for="(item, index) in commentList" :key="index">
           <div class="left-box">
             <div class="img-box">
-              <image :src="item.sender.avatar" alt="用户头像" mode="aspectFit"></image>
+              <image :src="item.memberImageUrl" alt="用户头像" mode="aspectFill"></image>
             </div>
           </div>
           <div class="info-box">
@@ -55,93 +55,49 @@
 <script>
 export default {
   props: [
-    'goodsNo'
+    'goods'
   ],
   data () {
     return {
-      goodsScore: 4.2,
-      totalComment: 1253,
-      scoreList: [
-        {
-          score: 5,
-          num: 549
-        },
-        {
-          score: 4,
-          num: 502
-        },
-        {
-          score: 3,
-          num: 125
-        },
-        {
-          score: 2,
-          num: 67
-        },
-        {
-          score: 1,
-          num: 10
-        }
-      ],
-      commentList: [
-        {
-          content: '伤口恢复上课接电话跟接口，萨和苏高，是大国来说都很高科技阿花克里塞蒂格好，是大国和雕塑高忽低过！阿空加后付款时光，萨的感觉很健康啊？？？',
-          sender: {
-            avatar: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1568203213364&di=1f26bdec512e7c8ebcd548d12f293879&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20180126%2F2a2d78a3e7c047bab01e3f3142da5497.jpeg',
-            name: '捷克斯洛伐克'
-          },
-          type: '新i5 8G 512G固态 95%屏占比',
-          sendTime: this.Utils.getYMDTime(new Date()),
-          score: 4
-        },
-        {
-          content: '伤阿双方山高水低噶蛋糕是224，阿双方萨方式1范德萨发蛋糕。啊2442看看是否就是会计法。',
-          sender: {
-            avatar: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1568203238618&di=03ef9ccca7858b45874e30a9827b59b0&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201808%2F23%2F20180823154729_ZzrQX.thumb.700_0.jpeg',
-            name: '克里斯'
-          },
-          type: '新i7 8G 512G固态 95%屏占比',
-          sendTime: this.Utils.getYMDTime(new Date()),
-          score: 2
-        }
-      ]
+      goodsScore: 0,
+      totalComment: 0,
+      scoreList: [0, 0, 0, 0, 0],
+      commentList: []
     }
   },
-  watch: {
-    goodsNo: {
-      handler () {
-        this.getCommentList()
-        this.getScoreInfo()
-      },
-      immediate: true
-    }
+  watch: {},
+  onUnload () {
+    this.init()
   },
   methods: {
+    init () {
+      this.commentList = []
+      this.scoreList = [0, 0, 0, 0, 0]
+      this.goodsScore = 0
+      this.totalComment = 0
+    },
     getCommentList () {
       this.$http.get('/action/comment/getGoodsCommentList', {
-        goodsNo: this.goodsNo
+        goodsNo: this.goods.goodsNo
       }).then(res => {
-        this.commentList = res.data
-        this.commentList.map(item => {
-          item.createTime = this.Utils.getYMDTime(item.createTime)
-        })
+        if (res.data) {
+          this.commentList = res.data ? res.data : []
+          this.commentList.map(item => {
+            item.createTime = this.Utils.getYMDTime(item.createTime)
+          })
+        }
       })
     },
     getScoreInfo () {
       this.$http.get('/action/comment/getGoodsScoreInfo', {
-        goodsNo: this.goodsNo
+        goodsNo: this.goods.goodsNo
       }).then(res => {
         this.goodsScore = res.data.aveScore
         this.totalComment = res.data.allNum
-        this.scoreList = res.data.scoreNumList
-      })
-    },
-    selectScore (index) {
-      this.myScore = index + 1
-      wx.showToast({
-        title: '感谢评分',
-        icon: 'success',
-        duration: 2000
+        this.scoreList = []
+        for (let i = 5; i > 0; i--) {
+          this.scoreList.push(res.data.scoreNumMap[i])
+        }
       })
     }
   }

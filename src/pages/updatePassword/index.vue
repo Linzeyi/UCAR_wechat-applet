@@ -1,26 +1,18 @@
 <template>
   <div class="wrap">
     <div class="input-item">
-      <span>旧密码</span>
-      <input type="password" placeholder="点击输入密码" maxlength="20" v-model="form.oldPassword" />
-    </div>
-    <div class="input-item">
       <span>新密码</span>
-      <input type="password" placeholder="请输入新密码" maxlength="20" v-model="form.newPassword" />
-    </div>
-    <div class="input-item">
-      <span>确认密码</span>
-      <input type="password" placeholder="请再次输入新密码" maxlength="20" v-model="form.againPassword" />
+      <input type="password" placeholder="请输入新密码" maxlength="20" v-model="form.password" />
     </div>
     <div class="input-item captcha">
       <span>短信验证码</span>
       <input type="text" maxlength="6" placeholder="短信验证码" v-model="form.captcha" />
       <div class="captcha">
-        <captcha></captcha>
+        <captcha :phone="form.phone" :type="3"></captcha>
       </div>
     </div>
     <div class="submit">
-      <base-button @click="handleSubmit">保存</base-button>
+      <base-button @click="handleCheck">保存</base-button>
     </div>
     <base-message></base-message>
   </div>
@@ -31,13 +23,17 @@ import Captcha from "@/components/captcha/Captcha";
 import BaseButton from "@/components/base/BaseButton";
 import BaseMessage from "@/components/base/BaseMessage";
 export default {
+  onLoad() {
+    this.form.phone = this.$store.getters["UserInfo/phone"];
+  },
   data() {
     return {
       form: {
-        oldPassword: "",
-        newPassword: "",
+        oldPwd: "",
+        password: "",
         againPassword: "",
-        captcha: ""
+        captcha: "",
+        phone: ""
       }
     };
   },
@@ -47,11 +43,11 @@ export default {
     BaseMessage
   },
   methods: {
-    async handleSubmit() {
+    async handleCheck() {
       let flag = false;
       flag = await this.$store.dispatch(
         "BaseStore/checkPassword",
-        this.form.newPassword
+        this.form.password
       );
       if (!flag) {
         return;
@@ -63,15 +59,14 @@ export default {
       if (!flag) {
         return;
       }
-      if (this.form.newPassword !== this.form.againPassword) {
-        this.$store.commit("BaseStore/SHOW_TOAST", {
-          type: "error",
-          content: "两次密码不一致"
-        });
-        return
-      }
-      // 判断旧密码是否一致，需调接口
-      console.log("修改成功");
+      this.updatePassword();
+    },
+    async updatePassword() {
+      await this.$http.post("/action/user/forgetPassword", {
+        phone: this.form.phone,
+        password: this.form.password,
+        captcha: this.form.captcha
+      });
     }
   }
 };
@@ -117,8 +112,8 @@ export default {
   }
 
   .submit {
-    margin-top: 120rpx;
-    text-align: center;
+    margin: 120rpx auto 0;
+    width: 500rpx;
   }
 }
 </style>

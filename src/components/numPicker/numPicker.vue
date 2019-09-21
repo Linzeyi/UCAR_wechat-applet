@@ -11,6 +11,12 @@
 <script>
 export default {
   props: {
+    objItem: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
     isSmall: {
       type: Boolean,
       default () {
@@ -47,6 +53,7 @@ export default {
   watch: {
     num () {
       this.value = this.num
+      this.$emit('changeObjectNum', this.objItem)
     }
   },
   methods: {

@@ -6,33 +6,29 @@
     <base-custom-box>
       <div class="shoppingCart-wrap lzy-list-wrap">
         <div class="goods-list-wrap">
-          <div class="goods-list">
+          <div class="goods-list" v-if="goodsList.length !== 0">
             <div class="goods-box" v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex">
               <movable-area class="movable-area">
                 <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
                   <div class="left-box">
                     <div class="select-box" @click="selectGoods(goodsItem)">
-                      <i class="iconfont icon-select-no" v-if="!goodsItem.isSelected">&#xe656;</i>
+                      <i class="iconfont icon-select-no" v-if="goodsItem.isSelected">&#xe656;</i>
                       <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
                     </div>
-                    <div class="img-box" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                      <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit" @click="showImg(typeItem)"></image>
+                    <div class="img-box">
+                      <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片" mode="aspectFit" @click="showImg(goodsItem.property)"></image>
                     </div>
                   </div>
                   <div class="content-box">
                     <div class="info-box">
-                      <p class="title" @click="toGoodsDetail(goodsItem)">{{goodsItem.title}}</p>
-                      <p class="type" 
-                      v-for="(typeItem, typeIndex) in goodsItem.type" 
-                      :key="typeIndex" 
-                      :class="{'isSelected': typeItem.isSelected}"
-                      @click="handlerShowTypeDialog(goodsItem)">
-                        {{typeItem.title}}:{{typeItem.content}}
+                      <p class="title" @click="toGoodsDetail(goodsItem)">{{goodsItem.goodsName}}</p>
+                      <p class="type" @click="handlerShowTypeDialog(goodsItem)">
+                        规格:{{goodsItem.property.propertyName}}
                       </p>
-                      <p class="bottom-p" v-for="(typeItem, typeIndex) in goodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                        <span class="price"><span class="logo">¥</span>{{(typeItem.discountPrice ? typeItem.discountPrice : typeItem.price )* goodsItem.num}}</span>
+                      <p class="bottom-p">
+                        <span class="price"><span class="logo">¥</span>{{(goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice )* goodsItem.num}}</span>
                         <span class="numPicker-box">
-                          <num-picker :min="1" :isSmall="true" :max="typeItem.stock" :num.sync="goodsItem.num" @changeType="changeType"></num-picker>
+                          <num-picker :objItem="goodsItem" :min="1" :isSmall="true" :max="goodsItem.stock" :num.sync="goodsItem.num" @changeObjectNum="changeShopGoodsNum" @changeProperty="changeProperty"></num-picker>
                         </span>
                       </p>
                     </div>
@@ -42,7 +38,13 @@
               </movable-area>
             </div>
           </div>
-          <div class="invalid-goods-list">
+          <div class="no-goods-panel" v-else>
+            <p>
+              <i class="iconfont icon-no-goods">&#xe617;</i>
+              购物车空啦！
+            </p>
+          </div>
+          <div class="invalid-goods-list" v-if="invalidGoodsList.length !== 0">
             <div class="header">
               <span class="title">失效商品{{invalidGoodsList.length}}件</span>
             </div>
@@ -53,14 +55,14 @@
                     <div class="tips-box">
                       <span class="invalid-tips">失效</span>
                     </div>
-                    <div class="img-box" v-for="(typeItem, typeIndex) in unGoodsItem.type" :key="typeIndex" :class="{'isSelected': typeItem.isSelected}">
-                      <image :src="typeItem.imgList[0]" alt="商品图片" mode="aspectFit"></image>
+                    <div class="img-box" :key="typeIndex">
+                      <image :src="unGoodsItem.property.picList[0] ? unGoodsItem.property.picList[0] : getDefaultImg" alt="商品图片" mode="aspectFit"></image>
                     </div>
                   </div>
                   <div class="content-box">
                     <div class="info-box">
-                      <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.title}}</p>
-                      <p class="invalid-msg">{{unGoodsItem.invalidMsg}}</p>
+                      <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.goodsName}}</p>
+                      <p class="invalid-msg">失效原因：{{unGoodsItem.remark}}</p>
                     </div>
                   </div>
                 </movable-view>
@@ -83,7 +85,7 @@
             <button class="to-pay-btn" @click="toOrderConfirm">结算({{getSelectedNum}})</button>
           </div>
         </div>
-        <type-dialog :parentType="'shoppingCart'" @changeType="changeType"></type-dialog>
+        <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
       </div>
     </base-custom-box>
   </div>
@@ -106,23 +108,26 @@ export default {
     return {
       isAllSelected: false,
       goodsList: [],
-      invalidGoodsList: []
+      invalidGoodsList: [],
+      selectedGoods: {
+        goodsNo: ''
+      }
     }
   },
   computed: {
+    getDefaultImg () {
+      return this.Utils.getSquareDefaultImg()
+    },
     getTotalPrice () {
       let price = 0
-      this.goodsList.map(goodsItem => {
-        if (goodsItem.isSelected) {
-          let selectedType
-          goodsItem.type.map(typeItem => {
-            if (typeItem.isSelected) {
-              selectedType = typeItem
-            }
-          })
-          price += ((selectedType.discountPrice ? selectedType.discountPrice : selectedType.price) * goodsItem.num)
-        }
-      })
+      if (this.goodsList.length !== 0) {
+        this.goodsList.map(goodsItem => {
+          if (goodsItem.isSelected) {
+            console.log('选中商品：', goodsItem)
+            price += ((goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice) * goodsItem.num)
+          }
+        })
+      }
       return price
     },
     getSelectedNum () {
@@ -138,29 +143,110 @@ export default {
       let selectedGoodsList = []
       this.goodsList.map(item => {
         if (item.isSelected) {
+          console.log('选中商品：', item)
           selectedGoodsList.push(item)
         }
       })
       return selectedGoodsList
     }
   },
-  onLoad () {
+  onShow () {
     this.getShoppingCartGoodsList()
   },
   async onPullDownRefresh() {
     this.getShoppingCartGoodsList()
-    // 停止下拉刷新
-    // wx.stopPullDownRefresh()
   },
   methods: {
     showImg (item) {
       wx.previewImage({
-        current: item.imgList[0],
-        urls: item.imgList
+        current: item.picList[0],
+        urls: item.picList
       })
     },
-    changeType () {
+    changeProperty (newProperty, newNum, oldProperty, oldNum, goods) {
+      console.log('新的规格：', newProperty, '新的数量：', newNum, '旧的规格：', oldProperty, '旧的数量：', oldNum)
+      wx.showLoading({
+        title: '修改规格',
+        mask: true
+      })
+      let oldCartItem = JSON.parse(JSON.stringify(goods))
+      oldCartItem.property = oldProperty
+      oldCartItem.num = oldNum
+      let newCartItem = JSON.parse(JSON.stringify(goods))
+      newCartItem.property = newProperty
+      newCartItem.num = newNum
+      this.$http.get('/action/order/setShopGoods', {
+        oldCartItem: oldCartItem,
+        newCartItem: newCartItem
+      }).then(res => {
+        if (res.data) {
+          this.getShoppingCartGoodsList()
+          wx.showToast({
+            title: '修改成功',
+            icon: 'success',
+            duration: 2000
+          })
+        } else {
+          wx.showToast({
+            title: '修改失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title: '修改失败',
+          icon: 'none',
+          duration: 2000
+        })
+      })
       this.getShoppingCartGoodsList()
+    },
+    changeShopGoodsNum (goods) {
+      wx.showLoading({
+        title: '修改数量',
+        mask: true
+      })
+      this.$http.get('/action/order/updateGoodsInCart', {
+        goodsNo: goods.goodsNo,
+        goodsName: goods.goodsName,
+        property: goods.property,
+        num: goods.num
+      }).then(res => {
+        if (res.data) {
+          wx.showToast({
+            title: '修改成功',
+            icon: 'success',
+            duration: 2000
+          })
+        } else {
+          this.goodsList = []
+          this.getShoppingCartGoodsList()
+          wx.showToast({
+            title: '修改失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        this.goodsList = []
+        this.getShoppingCartGoodsList()
+        wx.showToast({
+          title: '修改失败',
+          icon: 'none',
+          duration: 2000
+        })
+      })
     },
     getShoppingCartGoodsList () {
       wx.showLoading({
@@ -169,24 +255,35 @@ export default {
       })
       this.$http.get('/action/order/getShoppingCartList').then(res => {
         console.log(res)
+        if (res.data) {
+          this.goodsList = res.data.validCart
+          this.invalidGoodsList = res.data.invalidCart
+        } else {
+          wx.showToast({
+            title: '加载失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
         wx.hideLoading()
         wx.stopPullDownRefresh()
-      })
-      let goodsList = this.$store.getters['ShoppingCart/goodsList']
-      console.log(goodsList)
-      this.goodsList = []
-      this.invalidGoodsList = []
-      goodsList.map(item => {
-        if (item.isValid) {
-          this.goodsList.push(item)
-        } else {
-          this.invalidGoodsList.push(item)
-        }
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title: '加载失败',
+          icon: 'none',
+          duration: 2000
+        })
       })
     },
     handlerShowTypeDialog (goodsItem) {
-      this.$store.commit('Goods/SET_GOODS', goodsItem)
-      this.showTypeDialog(true)
+      this.selectedGoods = goodsItem
+      let that = this
+      setTimeout(function() {
+        that.showTypeDialog(true)
+      }, 0)
     },
     showTypeDialog (flag) {
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', flag)
@@ -196,7 +293,7 @@ export default {
     },
     toGoodsDetail (goodsItem) {
       this.$store.commit('Goods/SET_GOODS', goodsItem)
-      mpvue.navigateTo({ url: '/pages/goodsDetail/main' })
+      mpvue.navigateTo({ url: '/pages/goodsDetail/main?goodsNo=' + goodsItem.goodsNo })
     },
     toOrderConfirm () {
       if (this.getSelectedNum === 0) {
@@ -207,16 +304,6 @@ export default {
         })
       } else {
         let selectedGoodsList = JSON.parse(JSON.stringify(this.getSelectedGoodsList))
-        selectedGoodsList.map(goodsItem => {
-          let selectedType
-          for (let i = 0; i < goodsItem.type.length; i++) {
-            if (goodsItem.type[i].isSelected) {
-              selectedType = goodsItem.type[i]
-              break
-            }
-          }
-          goodsItem.type = selectedType
-        })
         this.$store.commit('Order/SET_GOODSLIST', selectedGoodsList)
         console.log('购物车选中商品：', selectedGoodsList)
         console.log('购物车发起订单')
@@ -263,6 +350,21 @@ export default {
   .goods-list-wrap {
     padding: 0 10px 30px 10px;
     box-sizing: border-box;
+    .no-goods-panel {
+      padding: 30px 0;
+      p {
+        font-size: 16px;
+        color: #bbb;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .iconfont {
+          font-size: 24px;
+          margin-right: 9px;
+        }
+      }
+    }
     .goods-list, .invalid-goods-list {
       .goods-box, .invalid-goods-box {
         padding: 10px;
@@ -292,10 +394,6 @@ export default {
                 width: 70px;
                 height: 70px;
                 overflow: hidden;
-                display: none;
-                &.isSelected {
-                  display: inline-block;
-                }
                 image {
                   width: 100%;
                   height: 100%;
@@ -357,15 +455,11 @@ export default {
               color: #333;
             }
             &.type {
-              display: none;
               font-size: 10px;
               padding: 2px 4px;
               background-color: #f6f6f6;
               border-radius: 4px;
               color: #999;
-              &.isSelected {
-                display: block;
-              }
             }
             .price {
               font-size: 12px;
@@ -376,14 +470,10 @@ export default {
               }
             }
             &.bottom-p {
-              display: none;
               margin-top: 5px;
               height: 30px;
               position: relative;
               padding: 0;
-              &.isSelected {
-                display: block;
-              }
               .price {
                 display: inline-block;
                 height: 30px;
@@ -428,11 +518,15 @@ export default {
           }
         }
         .title {
-          margin-bottom: 15px;
-          color: #888;
+          margin-bottom: 10px;
+          color: #333;
         }
         .invalid-msg {
-          color: #333;
+          font-size: 10px;
+          padding: 2px 4px;
+          background-color: #f6f6f6;
+          border-radius: 4px;
+          color: #999;
         }
       }
     }

@@ -14,7 +14,12 @@
             </span>
           </div>
           <div class="list-content">
-            <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
+            <goods-grid-list
+            ref="goods_grid_list_el"
+            :start.sync="start" 
+            :size.sync="size" 
+            :goodsList="goodsList" 
+            :col="2"></goods-grid-list>
           </div>
         </div>
       </div>
@@ -36,13 +41,10 @@ export default {
         nickName: 'mpvue',
         avatarUrl: 'http://mpvue.com/assets/logo.png'
       },
-      imgList: [
-        'https://images.unsplash.com/photo-1567494355252-047444d52a43?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80',
-        'https://images.unsplash.com/photo-1530977875151-aae9742fde19?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=975&q=80',
-        'https://images.unsplash.com/photo-1455894127589-22f75500213a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1579&q=80',
-        'https://images.unsplash.com/photo-1563062067-bb3786dc5855?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80'
-      ],
-      goodsList: []
+      imgList: [],
+      goodsList: [],
+      start: 0,
+      size: 4
     }
   },
   components: {
@@ -54,21 +56,78 @@ export default {
   onLoad () {
     this.getRecommendGoodsList()
   },
+  watch: {
+    size: {
+      handler (newVal, oldVal) {
+        if (newVal > oldVal) {
+          this.getRecommendGoodsList()
+        }
+      },
+      deep: true
+    }
+  },
   async onPullDownRefresh() {
     console.log('下拉刷新')
     this.getRecommendGoodsList()
     // 停止下拉刷新
   },
   methods: {
+    getRandomImgList () {
+      this.imgList = []
+      let goodsList = JSON.parse(JSON.stringify(this.goodsList))
+      let arr = []
+      let count = goodsList.length
+      let swiperNum = count < 3 ? count : Math.floor(Math.random() * 2 + 3)
+      for (let i = 0; i < swiperNum; i++) {
+        let randomIndex = Math.floor(Math.random() * count)
+        let el = {
+          pic: goodsList[randomIndex].pic,
+          goodsNo: goodsList[randomIndex].goodsNo
+        }
+        arr.push(el)
+        goodsList.splice(randomIndex, 1)
+        count = goodsList.length
+      }
+      console.log('随机图片数组：', arr)
+      console.log('=-----------------------------------------=')
+      this.imgList = arr
+    },
     getRecommendGoodsList () {
-      this.$http.get('/action/goods/getRecommendGoodsList').then(res => {
+      wx.showLoading({
+        title: '正在加载',
+        mask: true
+      })
+      this.$http.get('/action/goods/getRecommendGoodsList', {
+        start: this.start,
+        size: this.size
+      }).then(res => {
         console.log(res)
         if (res.data) {
           this.goodsList = res.data
+          this.getRandomImgList()
+        } else {
+          this.size -= 4
+          this.$refs['goods_grid_list_el'].setLoading(false)
+          wx.showToast({
+            title: '加载失败',
+            icon: 'none',
+            duration: 2000
+          })
         }
+        wx.hideLoading()
         wx.stopPullDownRefresh()
+      }).catch(err => {
+        console.log(err)
+        wx.hideLoading()
+        wx.stopPullDownRefresh()
+        this.size -= 4
+        this.$refs['goods_grid_list_el'].setLoading(false)
+        wx.showToast({
+          title: '加载失败',
+          icon: 'none',
+          duration: 2000
+        })
       })
-      // this.goodsList = this.$store.getters['Goods/goodsList']
     },
     switchTab (url) {
       mpvue.switchTab({ url })
