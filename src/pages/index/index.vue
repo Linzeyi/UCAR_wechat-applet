@@ -103,6 +103,7 @@ export default {
         title: '正在加载',
         mask: true
       })
+      let that = this
       this.$http.get('/action/goods/getRecommendGoodsList', {
         start: this.start,
         size: this.size
@@ -117,7 +118,9 @@ export default {
             duration: 2000
           })
         } else {
-          this.$refs['goods_grid_list_el'].loadErr()
+          this.$nextTick(function () {
+            that.$refs['goods_grid_list_el'].loadErr()
+          })
           wx.showToast({
             title: '加载失败',
             icon: 'none',
@@ -130,7 +133,9 @@ export default {
         console.log('err:' + err)
         wx.hideLoading()
         wx.stopPullDownRefresh()
-        this.$refs['goods_grid_list_el'].loadErr()
+        this.$nextTick(function () {
+          that.$refs['goods_grid_list_el'].loadErr()
+        })
         wx.showToast({
           title: '加载失败',
           icon: 'none',
