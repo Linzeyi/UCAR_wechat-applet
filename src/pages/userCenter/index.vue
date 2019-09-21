@@ -1,82 +1,94 @@
 <template>
   <div class="userCenter-wrap">
-    <div class="not-logged" v-if="!isLogged">
-      <div class="log-in">
-        <img src="../../../static/images/user.png" alt="我的头像" class="user-icon">
-        <div class="btn-login" @click="login">登录</div>
-      </div>
-    </div>
-    <div class="logged-in" v-else>
-      <div class="user-info" @click="routeTo('personalSettings')">
-        <div>
-          <img src="../../../static/images/user.png" alt="" class="user-icon">
+    <BaseNavigationBar name="个人中心">
+      <i class="iconfont" @click="back">&#xe625;</i>
+    </BaseNavigationBar>
+    <BaseCustomBox>
+      <div class="not-logged" v-if="!isLogged">
+        <div class="log-in">
+          <img src="../../../static/images/user.png" alt="我的头像" class="user-icon">
+          <div class="btn-login" @click="login">登录</div>
         </div>
-        <div class="info">
-          <div class="user-name">
-            <p class="name">{{ accountName }}</p><span>{{ accountLevel }}</span>
+      </div>
+      <div class="logged-in" v-else>
+        <div class="user-info" @click="routeTo('personalSettings')">
+          <div>
+            <img src="../../../static/images/user.png" alt="" class="user-icon">
           </div>
-          <p>积分：{{ integral }}</p>
+          <div class="info">
+            <div class="user-name">
+              <p class="name">{{ accountName }}</p><span>{{ accountLevel }}</span>
+            </div>
+            <p>积分：{{ integral }}</p>
+          </div>
+          <i class="iconfont setting">&#xe61f;</i>
         </div>
-        <i class="iconfont setting">&#xe61f;</i>
+        <div class="phone">
+          <p>{{ encodePhone }}</p>
+        </div>
       </div>
-      <div class="phone">
-        <p>{{ encodePhone }}</p>
+      <div class="weui-cells">
+        <div class="weui-cell" @click="routeTo('wallet')">
+          <div class="weui-cell__hd">
+            <i class="iconfont">&#xe62b;</i>
+          </div>
+          <div class="weui-cell__bd">
+            <p>我的钱包</p>
+          </div>
+          <span class="weui-cell__ft">
+            <p>{{ balance }}元<i class="iconfont">&#xe601;</i></p>
+          </span>
+        </div>
+        <div class="weui-cell" @click="routeTo('order')">
+          <div class="weui-cell__hd">
+            <i class="iconfont">&#xe602;</i>
+          </div>
+          <div class="weui-cell__bd">
+            <p>我的订单</p>
+          </div>
+          <span class="weui-cell__ft">
+            <p>{{ orderNum }}条<i class="iconfont">&#xe601;</i></p>
+          </span>
+        </div>
+        <div class="weui-cell" @click="routeTo('address')">
+          <div class="weui-cell__hd">
+            <i class="iconfont">&#xe686;</i>
+          </div>
+          <div class="weui-cell__bd">
+            <p>地址管理</p>
+          </div>
+          <span class="weui-cell__ft">
+            <i class="iconfont">&#xe601;</i>
+          </span>
+        </div>
+        <div class="weui-cell" @click="routeTo('message')">
+          <div class="weui-cell__hd">
+            <i class="iconfont">&#xe7a2;</i>
+          </div>
+          <div class="weui-cell__bd">
+            <p>我的消息</p>
+            <span class="weui-badge" v-if="newMessageNum > 0" style="background-color: #ff6421">{{ newMessageNum }}</span>
+          </div>
+          <span class="weui-cell__ft">
+            <p>{{ messageNum }}条<i class="iconfont">&#xe601;</i></p>
+          </span>
+        </div>
       </div>
-    </div>
-    <div class="weui-cells">
-      <div class="weui-cell" @click="routeTo('wallet')">
-        <div class="weui-cell__hd">
-          <i class="iconfont">&#xe62b;</i>
-        </div>
-        <div class="weui-cell__bd">
-          <p>我的钱包</p>
-        </div>
-        <span class="weui-cell__ft">
-          <p>{{ balance }}元<i class="iconfont">&#xe601;</i></p>
-        </span>
-      </div>
-      <div class="weui-cell" @click="routeTo('order')">
-        <div class="weui-cell__hd">
-          <i class="iconfont">&#xe602;</i>
-        </div>
-        <div class="weui-cell__bd">
-          <p>我的订单</p>
-        </div>
-        <span class="weui-cell__ft">
-          <p>{{ orderNum }}条<i class="iconfont">&#xe601;</i></p>
-        </span>
-      </div>
-      <div class="weui-cell" @click="routeTo('address')">
-        <div class="weui-cell__hd">
-          <i class="iconfont">&#xe686;</i>
-        </div>
-        <div class="weui-cell__bd">
-          <p>地址管理</p>
-        </div>
-        <span class="weui-cell__ft">
-          <i class="iconfont">&#xe601;</i>
-        </span>
-      </div>
-      <div class="weui-cell" @click="routeTo('message')">
-        <div class="weui-cell__hd">
-          <i class="iconfont">&#xe7a2;</i>
-        </div>
-        <div class="weui-cell__bd">
-          <p>我的消息</p>
-          <span class="weui-badge" v-if="newMessageNum > 0" style="background-color: #ff6421">{{ newMessageNum }}</span>
-        </div>
-        <span class="weui-cell__ft">
-          <p>{{ messageNum }}条<i class="iconfont">&#xe601;</i></p>
-        </span>
-      </div>
-    </div>
-    <button class="weui-btn" @click="routeTo('selectAddress')" style="margin-top: 20px;">选择地址</button>
-    <button class="weui-btn" @click="testApi" style="margin-top: 20px;">接口调试</button>
+      <button class="weui-btn" @click="routeTo('selectAddress')" style="margin-top: 20px;">选择地址</button>
+      <button class="weui-btn" @click="testApi" style="margin-top: 20px;">接口调试</button>
+    </BaseCustomBox>
   </div>
 </template>
 
 <script>
+import BaseNavigationBar from "@/components/base/BaseNavigationBar";
+import BaseCustomBox from "@/components/base/BaseCustomBox";
+
 export default {
+  components: {
+    BaseNavigationBar,
+    BaseCustomBox
+  },
   data () {
     return {
       accountName: 'ThO', // 用户名
@@ -89,20 +101,14 @@ export default {
     }
   },
   onLoad () {
-    console.log('userCenter onload')
-  },
-  onShow () {
-    console.log('userCenter onShow')
-    // 判断登录状态
     if (wx.getStorageSync('token')) {
       this.isLogged = true
     }
-    // 获取个人中心页面的所有实时信息
-    if (this.isLogged) {
-      this.$http.get('/action/message/getAllMessage').then(res => {
-        console.log(res.data, 'all message')
-        this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
-      })
+  },
+  onShow () {
+    // 判断登录状态
+    if (wx.getStorageSync('token')) {
+      this.isLogged = true
     }
   },
   computed: {
@@ -118,6 +124,22 @@ export default {
     // 总消息条数
     messageNum () {
       return this.$store.getters['Message/messageNum']
+    },
+    // 获取个人中心页面的所有实时信息
+    getRealTimeData () {
+      if (this.isLogged) {
+        // 获取个人信息
+        this.$http.get('/action/user/getInfo').then(res => {
+          if (res !== '') {
+            console.log(res.data, 'user info')
+          }
+        })
+        // 获取所有消息
+        this.$http.get('/action/message/getAllMessage').then(res => {
+          console.log(res.data, 'all message')
+          this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
+        })
+      }
     }
   },
   methods: {
@@ -150,9 +172,6 @@ export default {
       }
     },
     testApi () {
-      this.$http.get('/action/addr/list').then(res => {
-        console.log(res, 'all address')
-      })
       // this.$http.post('/action/message/setMessageReaded', { msgId: 1 }).then(res => {
       //   console.log(res, 'set message readed')
       // })
@@ -169,6 +188,7 @@ export default {
 .userCenter-wrap {
   color: @baoWoBlack;
   font-family: @baoWoFont;
+  height: 100%;
   .not-logged {
     height: 111px;
     .log-in {
