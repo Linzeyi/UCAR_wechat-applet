@@ -134,7 +134,7 @@ export default {
         success(res) {
           const tempFilePaths = res.tempFilePaths;
           const tempUrl = tempFilePaths[0];
-          _this.handleTempAvatar(tempUrl);
+          _this.handleWechat(tempUrl);
           _this.avatarUrl = tempUrl;
         }
       });
@@ -153,10 +153,12 @@ export default {
         url:
           "https://apiproxytest.ucarinc.com/ucarincapiproxy/action/user/uploadAvatar",
         filePath: tempUrl,
+
         name: "file",
         header: {
           apigroupcode: "tranning",
-          token: token
+          token: token,
+          enctype: 'multipart/form-data'
         },
         formData: {
           sign: '4191131821855832366960060265169801929',

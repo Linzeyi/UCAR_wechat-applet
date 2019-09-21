@@ -26,7 +26,7 @@ const headers = {
 Object.assign(fly.config, {
   headers: headers,
   baseURL: baseURL,
-  timeout: 20000,
+  timeout: 5000,
   widthCredentials: true
 })
 
@@ -72,18 +72,6 @@ fly.interceptors.request.use(request => {
     const token = wx.getStorageSync('token')
     if (token) {
       request.headers["token"] = token;
-    } else {
-      wx.showToast({
-        title: '请先登录账号',
-        image: '/static/images/login.svg',
-        icon: 'none',
-        mask: true,
-        duration: 1500
-      })
-      // login页面改为普通page后需改为mpvue.navigateTo
-      setTimeout(() => {
-        mpvue.switchTab({ url: '/pages/login/main' })
-      }, 1500)
     }
   }
 
@@ -91,6 +79,9 @@ fly.interceptors.request.use(request => {
 })
 
 fly.interceptors.response.use(response => {
+  if (response.data.code === 5) {
+    mpvue.switchTab({ url: '/pages/login/main' })
+  }
   return response.data.content
 }, err => {
   log(err)

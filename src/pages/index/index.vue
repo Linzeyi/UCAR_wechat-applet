@@ -18,6 +18,7 @@
             ref="goods_grid_list_el"
             :start.sync="start" 
             :size.sync="size" 
+            :pageSize="3"
             :goodsList="goodsList" 
             :col="2"></goods-grid-list>
           </div>
@@ -44,7 +45,7 @@ export default {
       imgList: [],
       goodsList: [],
       start: 0,
-      size: 4
+      size: 3
     }
   },
   components: {
@@ -78,8 +79,13 @@ export default {
       let arr = []
       let count = goodsList.length
       let swiperNum = count < 3 ? count : Math.floor(Math.random() * 2 + 3)
+      if (swiperNum > count) {
+        swiperNum = count
+      }
+      console.log('轮播图数量：' + swiperNum)
       for (let i = 0; i < swiperNum; i++) {
         let randomIndex = Math.floor(Math.random() * count)
+        console.log('随机到的下标：' + randomIndex)
         let el = {
           pic: goodsList[randomIndex].pic,
           goodsNo: goodsList[randomIndex].goodsNo
@@ -105,9 +111,13 @@ export default {
         if (res.data) {
           this.goodsList = res.data
           this.getRandomImgList()
+          wx.showToast({
+            title: '加载成功',
+            icon: 'success',
+            duration: 2000
+          })
         } else {
-          this.size -= 4
-          this.$refs['goods_grid_list_el'].setLoading(false)
+          this.$refs['goods_grid_list_el'].loadErr()
           wx.showToast({
             title: '加载失败',
             icon: 'none',
@@ -117,11 +127,10 @@ export default {
         wx.hideLoading()
         wx.stopPullDownRefresh()
       }).catch(err => {
-        console.log(err)
+        console.log('err:' + err)
         wx.hideLoading()
         wx.stopPullDownRefresh()
-        this.size -= 4
-        this.$refs['goods_grid_list_el'].setLoading(false)
+        this.$refs['goods_grid_list_el'].loadErr()
         wx.showToast({
           title: '加载失败',
           icon: 'none',
@@ -171,9 +180,6 @@ export default {
     }
     .list-content {
       flex: 1;
-    }
-    .weui-panel__bd {
-      padding-top: 10px;
     }
   }
 }

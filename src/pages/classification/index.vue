@@ -3,7 +3,7 @@
     <base-navigation-bar name="分类">
       <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
     </base-navigation-bar>
-    <base-custom-box>
+    <base-custom-box v-if="isOnline === 'online'">
       <div class="wrap">
         <scroll-view class="scroll-left" scroll-y scroll-with-animation :scroll-top="scrollTop">
           <div
@@ -27,6 +27,13 @@
         </scroll-view>
       </div>
     </base-custom-box>
+    <div class="loading-box" v-if="isOnline === 'loading'">
+      <img src="/static/images/loading.gif" alt="加载中..." />
+    </div>
+    <div class="offline-box" v-if="isOnline === 'offline'">
+      <img src="/static/images/offline.svg" alt="您的信号飞到外星球了哦~" />
+      <p>您的信号飞到外星球了哦~</p>
+    </div>
   </div>
 </template>
 
@@ -48,7 +55,8 @@ export default {
       scrollTop: 0,
       selectClassIndex: 0,
       goodsList: [],
-      classList: []
+      classList: [],
+      isOnline: true
     };
   },
   created() {
@@ -59,10 +67,21 @@ export default {
     this.itemHeight = 100 * scale;
   },
   async onShow() {
-    await this.getAllCategory();
-    await this.getGoodsByCategory();
+    this.resetData();
+    this.loadData();
   },
   methods: {
+    resetData() {
+      this.systemInfo = {};
+      this.scrollTop = 0;
+      this.selectClassIndex = 0;
+      this.goodsList = [];
+      this.classList = [];
+    },
+    async loadData() {
+      await this.getAllCategory();
+      this.getGoodsByCategory();
+    },
     scrollHandle(e) {
       console.log(e.mp.detail);
     },
@@ -83,14 +102,21 @@ export default {
       }
     },
     async getAllCategory() {
-      const result = await this.$http.post("/action/goods/getAllCategory");
-      this.classList = result.data;
+      try {
+        this.isOnline = "loading";
+        await this.Utils.sleep(3000)
+        const result = await this.$http.post("/action/goods/getAllCategory");
+        this.isOnline = "online";
+        this.classList = result.data;
+      } catch (error) {
+        this.isOnline = "offline";
+      }
     },
     async getGoodsByCategory() {
       const result = await this.$http.post("/action/goods/getGoodsByCategory", {
         categoryName: this.classList[this.selectClassIndex]
       });
-      this.goodsList = result.data
+      this.goodsList = result.data;
     }
   }
 };
@@ -149,6 +175,27 @@ export default {
     height: 100rpx;
     line-height: 100rpx;
     font-size: 30rpx;
+  }
+}
+
+.loading-box {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: wrap;
+}
+.offline-box {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: wrap;
+  img {
+    width: 500rpx;
+  }
+  p {
+    color: #a8a6a5;
   }
 }
 </style>
