@@ -12,7 +12,7 @@
                 <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
                   <div class="left-box">
                     <div class="select-box" @click="selectGoods(goodsItem)">
-                      <i class="iconfont icon-select-no" v-if="goodsItem.isSelected">&#xe656;</i>
+                      <i class="iconfont icon-select-no" v-if="!goodsItem.isSelected">&#xe656;</i>
                       <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
                     </div>
                     <div class="img-box">
@@ -81,8 +81,8 @@
           </div>
           <div class="right-box">
             <span class="total">合计：</span>
-            <span class="price"><span class="logo">¥</span>{{getTotalPrice}}</span>
-            <button class="to-pay-btn" @click="toOrderConfirm">结算({{getSelectedNum}})</button>
+            <span class="price"><span class="logo">¥</span>{{totalPrice}}</span>
+            <button class="to-pay-btn" @click="toOrderConfirm">结算({{selectedNum}})</button>
           </div>
         </div>
         <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
@@ -111,7 +111,9 @@ export default {
       invalidGoodsList: [],
       selectedGoods: {
         goodsNo: ''
-      }
+      },
+      totalPrice: 0,
+      selectedNum: 0
     }
   },
   computed: {
@@ -123,7 +125,6 @@ export default {
       if (this.goodsList.length !== 0) {
         this.goodsList.map(goodsItem => {
           if (goodsItem.isSelected) {
-            console.log('选中商品：', goodsItem)
             price += ((goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice) * goodsItem.num)
           }
         })
@@ -139,15 +140,14 @@ export default {
       })
       return num
     },
-    getSelectedGoodsList () {
-      let selectedGoodsList = []
+    checkSelectedAll () {
+      let flag = true
       this.goodsList.map(item => {
-        if (item.isSelected) {
-          console.log('选中商品：', item)
-          selectedGoodsList.push(item)
+        if (!item.isSelected) {
+          flag = false
         }
       })
-      return selectedGoodsList
+      return flag
     }
   },
   onShow () {
@@ -157,6 +157,19 @@ export default {
     this.getShoppingCartGoodsList()
   },
   methods: {
+    getSelectedGoodsList () {
+      let selectedGoodsList = []
+      console.log('1r5892361873th1093ht08h4')
+      console.log('获取选中的商品列表：', this.goodsList)
+      this.goodsList.map(item => {
+        console.log(item)
+        if (item.isSelected) {
+          console.log('选中商品：', item)
+          selectedGoodsList.push(item)
+        }
+      })
+      return selectedGoodsList
+    },
     showImg (item) {
       wx.previewImage({
         current: item.picList[0],
@@ -325,18 +338,20 @@ export default {
       mpvue.navigateTo({ url: '/pages/goodsDetail/main?goodsNo=' + goodsItem.goodsNo })
     },
     toOrderConfirm () {
-      if (this.getSelectedNum === 0) {
+      if (this.selectedNum === 0) {
         wx.showToast({
           title: '商品数量不能为0',
           icon: 'none',
           duration: 2000
         })
       } else {
-        let selectedGoodsList = JSON.parse(JSON.stringify(this.getSelectedGoodsList))
-        this.$store.commit('Order/SET_GOODSLIST', selectedGoodsList)
-        console.log('购物车选中商品：', selectedGoodsList)
-        console.log('购物车发起订单')
-        mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
+        let selectedGoodsList = this.getSelectedGoodsList()
+        if (selectedGoodsList.length !== 0) {
+          this.$store.commit('Order/SET_GOODSLIST', selectedGoodsList)
+          console.log('购物车选中商品：', selectedGoodsList)
+          console.log('购物车发起订单')
+          mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
+        }
       }
     },
     selectAll (flag) {
@@ -344,17 +359,41 @@ export default {
       for (let index in this.goodsList) {
         this.goodsList[index].isSelected = flag
       }
+      this.totalPrice = 0
+      this.selectedNum = 0
+      this.goodsList.map(goodsItem => {
+        if (JSON.stringify(goodsItem.isSelected) === 'undefined') {
+          goodsItem.isSelected = false
+        }
+        if (goodsItem.isSelected) {
+          this.totalPrice += (goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice) * goodsItem.num
+          this.selectedNum++
+        }
+      })
     },
     selectGoods (item) {
       item.isSelected = !item.isSelected
+      let flag = true
       for (let index in this.goodsList) {
-        let flag = this.goodsList[index].isSelected
-        if (!flag) {
+        if (!this.goodsList[index].isSelected) {
+          flag = false
           this.isAllSelected = false
-          return void 0
         }
       }
-      this.isAllSelected = true
+      if (flag) {
+        this.isAllSelected = true
+      }
+      this.totalPrice = 0
+      this.selectedNum = 0
+      this.goodsList.map(goodsItem => {
+        if (JSON.stringify(goodsItem.isSelected) === 'undefined') {
+          goodsItem.isSelected = false
+        }
+        if (goodsItem.isSelected) {
+          this.totalPrice += (goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice) * goodsItem.num
+          this.selectedNum++
+        }
+      })
     }
   }
 }

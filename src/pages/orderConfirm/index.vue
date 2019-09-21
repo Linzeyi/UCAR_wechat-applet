@@ -104,7 +104,7 @@ export default {
     this.getDefaultAddress()
   },
   onUnload () {
-    // this.init()
+    this.init()
   },
   async onPullDownRefresh() {
     this.getDefaultAddress()
@@ -138,7 +138,6 @@ export default {
     init () {
       this.order.remark = ''
       this.order.goodsList = []
-      // this.orderId = ''
       console.log('orderConfirm页面销毁')
       this.$store.commit('Order/INIT_ORDER')
     },

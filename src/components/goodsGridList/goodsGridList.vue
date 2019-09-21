@@ -201,6 +201,9 @@ export default {
           .price {
             flex: 1;
             color: #ff6421;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
             .logo {
               font-size: 11px;
             }

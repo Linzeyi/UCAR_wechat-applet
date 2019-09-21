@@ -133,9 +133,9 @@ export default {
         console.log('err:' + err)
         wx.hideLoading()
         wx.stopPullDownRefresh()
-        this.$nextTick(function () {
+        setTimeout(function () {
           that.$refs['goods_grid_list_el'].loadErr()
-        })
+        }, 200)
         wx.showToast({
           title: '加载失败',
           icon: 'none',
