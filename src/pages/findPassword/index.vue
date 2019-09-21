@@ -29,7 +29,7 @@
       </div>
     </div>
     <base-button @click="handleCheck">确定</base-button>
-    <base-message></base-message>
+    <base-toast></base-toast>
   </div>
 </template>
 
@@ -37,7 +37,7 @@
 import Captcha from "@/components/captcha/Captcha";
 import SwitchButton from "@/components/switchButton/SwitchButton";
 import BaseButton from "@/components/base/BaseButton";
-import BaseMessage from "@/components/base/BaseMessage";
+import BaseToast from "@/components/base/BaseToast";
 export default {
   onUnload() {
     this.form.phone = "";
@@ -59,7 +59,7 @@ export default {
     Captcha,
     SwitchButton,
     BaseButton,
-    BaseMessage
+    BaseToast
   },
   methods: {
     async handleCheck() {

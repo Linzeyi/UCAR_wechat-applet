@@ -8,7 +8,10 @@
         </div>
         <div class="title-box">
           <i class="iconfont icon-close" @click="showTypeDialog(false)">&#xe711;</i>
-          <p class="price">
+          <p class="price intergral" v-if="goods.categoryName === '积分'">
+            <span class="intergral-price">积分 {{getIntergralPrice}}</span>
+          </p>
+          <p class="price" v-else>
             <span class="original-price" :class="{'hasDiscount': checkDiscount}">
               <span class="logo">¥</span> {{getPrice}}
             </span>
@@ -99,12 +102,6 @@ export default {
     this.init()
   },
   watch: {
-    goods: {
-      handler (val) {
-        console.log(val)
-      },
-      deep: true
-    },
     checkOpenTypeDialog (val) {
       if (val) {
         this.getPropertyByNo()
@@ -117,10 +114,8 @@ export default {
     },
     checkProperty () {
       if (JSON.stringify(this.selectedProperty) !== '{}' && this.selectedProperty) {
-        console.log('有选中规格！', this.selectedProperty)
         return true
       } else {
-        console.log('无选中规格！')
         return false
       }
     },
@@ -141,6 +136,13 @@ export default {
         return this.selectedProperty.salePrice.toFixed(2)
       } else {
         return 0.00
+      }
+    },
+    getIntergralPrice () {
+      if (this.checkProperty) {
+        return this.selectedProperty.discountPrice
+      } else {
+        return 0
       }
     },
     getDiscountPrice () {
@@ -202,7 +204,6 @@ export default {
       this.showTypeDialog(false)
     },
     selectType (property) {
-      console.log('选中规格：', property)
       this.selectedProperty = property
     },
     toOrderConfirm () {

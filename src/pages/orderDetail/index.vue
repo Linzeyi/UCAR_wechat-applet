@@ -7,11 +7,11 @@
       <div class="orderPay-wrap lzy-list-wrap">
         <div class="wrap-panel top-panel">
           <div class="left-box">
-            <p class="status" v-if="order.status === 0"><i class="iconfont">&#xe694;</i>等待买家付款...</p>
-            <p class="status" v-if="order.status === 1"><i class="iconfont">&#xe6cf;</i>已付款，等待卖家发货...</p>
-            <p class="status" v-if="order.status === 2"><i class="iconfont">&#xe67e;</i>已发货，等待签收...</p>
-            <p class="status" v-if="order.status === 3"><i class="iconfont">&#xe6a5;</i>订单已完成</p>
-            <p class="status" v-if="order.status === 4"><i class="iconfont">&#xe6a6;</i>订单已取消</p>
+            <p class="status" v-if="order.status === 0"><i class="iconfont">&#xe694;</i> 等待买家付款...</p>
+            <p class="status" v-if="order.status === 1"><i class="iconfont">&#xe6cf;</i> 已付款，等待卖家发货...</p>
+            <p class="status" v-if="order.status === 2"><i class="iconfont">&#xe67e;</i> 已发货，等待签收...</p>
+            <p class="status" v-if="order.status === 3"><i class="iconfont">&#xe6a5;</i> 订单已完成</p>
+            <p class="status" v-if="order.status === 4"><i class="iconfont">&#xe6a6;</i> 订单已取消</p>
           </div>
         </div>
         <div class="wrap-panel goods-panel">
@@ -126,7 +126,7 @@
           <div class="right-box">
             <button class="pay-btn" @click="payOrder" v-if="order.status === 0">付款</button>
             <button class="cancel-btn" @click="cancelOrder" v-if="order.status < 1">取消订单</button>
-            <button class="cancel-btn" @click="confirmReceipt" v-if="order.status === 1">确认收货</button>
+            <button class="cancel-btn" @click="confirmReceipt" v-if="order.status === 2">确认收货</button>
             <button class="cancel-btn" @click="toGoodsComments()" v-if="checkOrderCommentStatus">评价</button>
           </div>
         </div>
@@ -168,6 +168,7 @@ export default {
     this.order.orderNo = option.orderNo
     console.log(option)
     this.getOrder()
+    this.getBalance()
     let title = '订单详情'
     if (this.order.status === 0 || this.order.status === '0') {
       title = '订单支付'
@@ -181,6 +182,7 @@ export default {
   },
   async onPullDownRefresh() {
     this.getOrder()
+    this.getBalance()
   },
   computed: {
     getDefaultImg () {
@@ -217,7 +219,7 @@ export default {
       mpvue.navigateBack({ delta: 1 })
     },
     getBalance () {
-      this.$http.get('/action/wallet/getUserBalance').then(res => {
+      this.$http.get('/action/wallet/getBalance').then(res => {
         console.log(res)
       })
     },
@@ -262,6 +264,44 @@ export default {
         success (res) {
           if (res.confirm) {
             console.log('取消订单')
+          }
+        }
+      })
+    },
+    confirmReceipt () {
+      let that = this
+      wx.showModal({
+        title: '确认收货',
+        content: '是否确认收货',
+        cancelText: '否',
+        confirmText: '是',
+        success (res) {
+          if (res.confirm) {
+            that.$http.get('/action/order/confirmOrder', {
+              orderNo: that.order.orderNo
+            }).then(res => {
+              if (res.data) {
+                wx.showToast({
+                  title: '确认成功',
+                  icon: 'success',
+                  duration: 2000
+                })
+                that.getOrderList()
+              } else {
+                wx.showToast({
+                  title: '确认失败！',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
+            }).catch(err => {
+              console.log(err)
+              wx.showToast({
+                title: '确认失败！',
+                icon: 'none',
+                duration: 2000
+              })
+            })
           }
         }
       })
@@ -382,7 +422,7 @@ export default {
         p {
           text-indent: 35px;
           color: #fff;
-          .status {
+          &.status {
             font-size: 14px;
             .iconfont {
               font-size: 14px;

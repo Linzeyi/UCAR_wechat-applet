@@ -14,14 +14,14 @@
     <div class="submit">
       <base-button @click="handleCheck">保存</base-button>
     </div>
-    <base-message></base-message>
+    <base-toast></base-toast>
   </div>
 </template>
 
 <script>
 import Captcha from "@/components/captcha/Captcha";
 import BaseButton from "@/components/base/BaseButton";
-import BaseMessage from "@/components/base/BaseMessage";
+import BaseToast from "@/components/base/BaseToast";
 export default {
   onLoad() {
     this.form.phone = this.$store.getters["UserInfo/phone"];
@@ -40,7 +40,7 @@ export default {
   components: {
     Captcha,
     BaseButton,
-    BaseMessage
+    BaseToast
   },
   methods: {
     async handleCheck() {
