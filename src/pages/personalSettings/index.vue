@@ -76,16 +76,17 @@
       <div class="action-sheet-item" @click="chooseImage('camera')">拍照</div>
     </base-action-sheet>
     <mp-loading :showLoading="showLoading" loadingText="上传图片中" :mask="true"></mp-loading>
+    <base-toast></base-toast>
   </div>
 </template>
 
 <script>
-import mpToast from "mpvue-weui/src/toast";
+import BaseToast from "@/components/base/BaseToast";
 import BaseActionSheet from "@/components/base/BaseActionSheet";
 import mpLoading from "mpvue-weui/src/loading";
 export default {
   components: {
-    mpToast,
+    BaseToast,
     BaseActionSheet,
     mpLoading
   },
@@ -104,10 +105,6 @@ export default {
     };
   },
   onShow() {
-    this.id = this.$store.getters["UserInfo/id"];
-    if (this.id === "") {
-      this.Utils.switchTab("/pages/login/main");
-    }
     this.avatarUrl = this.$store.getters["UserInfo/avatarUrl"];
     this.nickname = this.$store.getters["UserInfo/nickname"];
     this.email = this.$store.getters["UserInfo/email"];
@@ -134,7 +131,7 @@ export default {
         success(res) {
           const tempFilePaths = res.tempFilePaths;
           const tempUrl = tempFilePaths[0];
-          _this.handleWechat(tempUrl);
+          _this.handleTempAvatar(tempUrl);
           _this.avatarUrl = tempUrl;
         }
       });
@@ -147,32 +144,16 @@ export default {
         this.avatarUrl = url;
       }
     },
-    handleWechat(tempUrl) {
-      const token = wx.getStorageSync("token");
-      wx.uploadFile({
-        url:
-          "https://apiproxytest.ucarinc.com/ucarincapiproxy/action/user/uploadAvatar",
-        filePath: tempUrl,
-
-        name: "file",
-        header: {
-          apigroupcode: "tranning",
-          token: token,
-          enctype: 'multipart/form-data'
-        },
-        formData: {
-          sign: '4191131821855832366960060265169801929',
-          cid: '007001'
-          // fileName: ''
-        },
-        success(res) {
-          console.log("上传文件结束");
-        }
-      });
-    },
     handleTempAvatar(tempUrl) {
       let base64 = wx.getFileSystemManager().readFileSync(tempUrl, "base64");
-      console.log(base64.length);
+      console.log(base64.length)
+      // if (base64.length > 2796000) {
+      //   this.$store.commit('BaseStore/SHOW_TOAST', {
+      //     type: 'error',
+      //     content: '图片大小超出限制'
+      //   })
+      //   return
+      // }
       this.uploadAvatar(base64);
     },
     handleRemoteAvatar(url) {
@@ -181,7 +162,7 @@ export default {
         url: url,
         responseType: "arraybuffer",
         success(res) {
-          console.log("res：", res);
+          console.log(res)
           let base64 = wx.arrayBufferToBase64(res.data);
           _this.uploadAvatar(base64);
         }
@@ -190,17 +171,10 @@ export default {
     async uploadAvatar(base64) {
       base64 = "data:image/png;base64," + base64;
       const encodeBase64 = base64.replace(/\+/g, ".");
-      try {
-        await this.$http.post("/action/user/uploadAvatar", {
-          fileName: "image",
-          file: encodeBase64
-        });
-      } catch (error) {
-        this.$store.commit("BaseStore/SHOW_TOAST", {
-          type: "error",
-          content: "您的网络不太给力"
-        });
-      }
+      await this.$http.post("/action/user/uploadAvatar", {
+        fileName: "image",
+        file: encodeBase64
+      });
     },
     saveUserInfo() {
       this.$http.post("/action/user/modifyInfo", {

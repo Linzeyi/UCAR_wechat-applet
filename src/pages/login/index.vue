@@ -30,7 +30,7 @@
       <base-button @click="handleCheck">登录</base-button>
       <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
     </div>
-    <base-message></base-message>
+    <base-toast></base-toast>
   </div>
 </template>
 
@@ -38,7 +38,7 @@
 import SwitchButton from "@/components/switchButton/SwitchButton";
 import BaseButton from "@/components/base/BaseButton";
 import BaseText from "@/components/base/BaseText";
-import BaseMessage from "@/components/base/BaseMessage";
+import BaseToast from "@/components/base/BaseToast";
 export default {
   data() {
     return {
@@ -55,7 +55,7 @@ export default {
     SwitchButton,
     BaseButton,
     BaseText,
-    BaseMessage
+    BaseToast
   },
   methods: {
     async handleCheck() {
