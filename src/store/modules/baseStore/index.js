@@ -4,7 +4,7 @@ export default {
     showToast: false,
     type: 'default',
     content: '',
-    duration: 1500
+    duration: 2000
   },
   getters: {
     showToast: state => state.showToast,

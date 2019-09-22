@@ -124,15 +124,32 @@ export default {
     },
     chooseImage(type) {
       const _this = this;
+      const allowExt = ["jpg", "png", "gif", "ico"];
       wx.chooseImage({
         count: 1,
         sizeType: ["original", "compressed"],
         sourceType: [type],
         success(res) {
-          const tempFilePaths = res.tempFilePaths;
-          const tempUrl = tempFilePaths[0];
-          _this.handleTempAvatar(tempUrl);
-          _this.avatarUrl = tempUrl;
+          const tempFile = res.tempFiles[0];
+          if (tempFile.size > 1260000) {
+            _this.$store.commit("BaseStore/SHOW_TOAST", {
+              type: "error",
+              content: "图片需小于1.2MB"
+            });
+            return;
+          }
+          const tempPath = tempFile.path;
+          const splits = tempPath.split(".");
+          const ext = splits[splits.length - 1];
+          if (!allowExt.includes(ext)) {
+            _this.$store.commit("BaseStore/SHOW_TOAST", {
+              type: "error",
+              content: "请上传jpg/png/ico/gif格式的图片"
+            });
+            return;
+          }
+          _this.handleTempAvatar(tempPath);
+          _this.avatarUrl = tempPath;
         }
       });
     },
@@ -140,29 +157,20 @@ export default {
       const detail = e.mp.detail;
       if (detail.userInfo) {
         const url = detail.userInfo.avatarUrl;
-        await this.handleRemoteAvatar(url);
+        await this.handleWechhatAvatar(url);
         this.avatarUrl = url;
       }
     },
-    handleTempAvatar(tempUrl) {
-      let base64 = wx.getFileSystemManager().readFileSync(tempUrl, "base64");
-      console.log(base64.length)
-      // if (base64.length > 2796000) {
-      //   this.$store.commit('BaseStore/SHOW_TOAST', {
-      //     type: 'error',
-      //     content: '图片大小超出限制'
-      //   })
-      //   return
-      // }
+    handleTempAvatar(tempPath) {
+      let base64 = wx.getFileSystemManager().readFileSync(tempPath, "base64");
       this.uploadAvatar(base64);
     },
-    handleRemoteAvatar(url) {
+    handleWechhatAvatar(url) {
       const _this = this;
       wx.request({
         url: url,
         responseType: "arraybuffer",
         success(res) {
-          console.log(res)
           let base64 = wx.arrayBufferToBase64(res.data);
           _this.uploadAvatar(base64);
         }
@@ -171,10 +179,19 @@ export default {
     async uploadAvatar(base64) {
       base64 = "data:image/png;base64," + base64;
       const encodeBase64 = base64.replace(/\+/g, ".");
-      await this.$http.post("/action/user/uploadAvatar", {
-        fileName: "image",
-        file: encodeBase64
-      });
+      this.showLoading = true;
+      try {
+        await this.$http.post("/action/user/uploadAvatar", {
+          fileName: "image",
+          file: encodeBase64
+        });
+      } catch (error) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "图片上传失败"
+        });
+      }
+      this.showLoading = false;
     },
     saveUserInfo() {
       this.$http.post("/action/user/modifyInfo", {
