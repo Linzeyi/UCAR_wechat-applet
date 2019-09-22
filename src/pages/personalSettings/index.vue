@@ -41,7 +41,7 @@
         <div class="form-item" @click="showGenderSheet=true;focusIndex=''">
           <span>性别</span>
           <div>
-            <span>{{sex}}</span>
+            <span>{{getSex}}</span>
             <i class="iconfont icon-size">&#xe6ab;</i>
           </div>
         </div>
@@ -62,9 +62,9 @@
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
     <base-action-sheet :show.sync="showGenderSheet">
-      <div class="action-sheet-item" @click="sex='男'">男</div>
-      <div class="action-sheet-item" @click="sex='女'">女</div>
-      <div class="action-sheet-item" @click="sex='保密'">保密</div>
+      <div class="action-sheet-item" @click="sex=1">男</div>
+      <div class="action-sheet-item" @click="sex=2">女</div>
+      <div class="action-sheet-item" @click="sex=-1">保密</div>
     </base-action-sheet>
     <base-action-sheet :show.sync="showAvatarSheet">
       <button
@@ -96,7 +96,7 @@ export default {
       avatarUrl: "",
       nickname: "",
       email: "",
-      sex: "",
+      sex: 0,
       showToast: false,
       showAvatarSheet: false,
       showGenderSheet: false,
@@ -104,13 +104,23 @@ export default {
       showLoading: false
     };
   },
-  onShow() {
-    this.avatarUrl = this.$store.getters["UserInfo/avatarUrl"];
-    this.nickname = this.$store.getters["UserInfo/nickname"];
-    this.email = this.$store.getters["UserInfo/email"];
-    this.sex = this.$store.getters["UserInfo/sex"];
+  async onShow() {
+    this.loadUserInfo();
+  },
+  computed: {
+    getSex() {
+      return this.sex === -1 ? "保密" : this.sex === 1 ? "男" : "女";
+    }
   },
   methods: {
+    async loadUserInfo() {
+      const result = await this.$http.get("/action/user/getInfo");
+      this.id = result.data.memberInfo.id;
+      this.avatarUrl = result.data.memberInfo.avatarUrl;
+      this.nickname = result.data.memberInfo.nickname;
+      this.email = result.data.memberInfo.email;
+      this.sex = result.data.memberInfo.sex;
+    },
     previewImage() {
       if (this.avatarUrl === "") {
         this.showAvatarSheet = true;
@@ -140,7 +150,7 @@ export default {
           }
           const tempPath = tempFile.path;
           const splits = tempPath.split(".");
-          const ext = splits[splits.length - 1];
+          const ext = splits[splits.length - 1].toLowerCase();
           if (!allowExt.includes(ext)) {
             _this.$store.commit("BaseStore/SHOW_TOAST", {
               type: "error",
@@ -149,7 +159,6 @@ export default {
             return;
           }
           _this.handleTempAvatar(tempPath);
-          _this.avatarUrl = tempPath;
         }
       });
     },
@@ -158,21 +167,20 @@ export default {
       if (detail.userInfo) {
         const url = detail.userInfo.avatarUrl;
         await this.handleWechhatAvatar(url);
-        this.avatarUrl = url;
       }
     },
-    handleTempAvatar(tempPath) {
+    async handleTempAvatar(tempPath) {
       let base64 = wx.getFileSystemManager().readFileSync(tempPath, "base64");
-      this.uploadAvatar(base64);
+      await this.uploadAvatar(base64);
     },
-    handleWechhatAvatar(url) {
+    handleWechhatAvatar(tempPath) {
       const _this = this;
       wx.request({
-        url: url,
+        url: tempPath,
         responseType: "arraybuffer",
-        success(res) {
+        async success(res) {
           let base64 = wx.arrayBufferToBase64(res.data);
-          _this.uploadAvatar(base64);
+          await _this.uploadAvatar(base64);
         }
       });
     },
@@ -181,20 +189,23 @@ export default {
       const encodeBase64 = base64.replace(/\+/g, ".");
       this.showLoading = true;
       try {
-        await this.$http.post("/action/user/uploadAvatar", {
+        const result = await this.$http.post("/action/user/uploadAvatar", {
           fileName: "image",
           file: encodeBase64
         });
+        this.avatarUrl = result.data.imgUrl;
       } catch (error) {
+        this.showLoading = false;
         this.$store.commit("BaseStore/SHOW_TOAST", {
           type: "error",
-          content: "图片上传失败"
+          content: "上传失败，请检查网络~"
         });
       }
       this.showLoading = false;
     },
     saveUserInfo() {
       this.$http.post("/action/user/modifyInfo", {
+        avatarUrl: this.avatarUrl,
         nickname: this.nickname,
         email: this.email,
         sex: this.sex
