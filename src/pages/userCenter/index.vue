@@ -1,8 +1,6 @@
 <template>
   <div class="userCenter-wrap">
-    <BaseNavigationBar name="个人中心">
-      <i class="iconfont" @click="back">&#xe625;</i>
-    </BaseNavigationBar>
+    <BaseNavigationBar name="个人中心"></BaseNavigationBar>
     <BaseCustomBox>
       <div class="not-logged" v-if="!isLogged">
         <div class="log-in">

@@ -71,8 +71,8 @@ export default {
   onLoad () {
     // 获取热门搜索
     this.$http.get('/action/goods/getPopularSearch').then(res => {
-      if (res !== '' && res.data.status === 20000) {
-        let para = JSON.parse(res.data.data)
+      if (res !== '' && res.status === 20000) {
+        let para = JSON.parse(res.data)
         this.popularSearch = para
         console.log(this.popularSearch, 'popular search')
       }

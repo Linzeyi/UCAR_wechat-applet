@@ -22,6 +22,9 @@ export default {
       amount: null
     }
   },
+  onUnload () {
+    this.amount = null
+  },
   computed: {
     canConfirm () {
       if (this.amount) {
