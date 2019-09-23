@@ -27,14 +27,8 @@ export default {
     },
     INIT_ORDER (state) {
       state.order = {
-        status: 0,
         remark: '',
         createTime: '',
-        addressInfo: {
-          name: '',
-          phone: '',
-          address: ''
-        },
         goodsList: []
       }
     },
@@ -42,7 +36,7 @@ export default {
       state.orderList.push(order)
     },
     INIT_ORDERLIST (state) {
-      state.orderList = orderList
+      state.orderList = []
     }
   },
   actions: {

@@ -1,6 +1,6 @@
 <template>
   <div class="goodsComments-wrap">
-    <div class="comment-panel" v-for="(goodsItem, goodsIndex) in order.shopGoodsList" :key="goodsIndex">
+    <div class="comment-panel" v-for="(goodsItem, goodsIndex) in getUnCommentGoods" :key="goodsIndex">
       <div class="goods-box">
         <div class="left-box">
           <div class="img-box">
@@ -32,16 +32,39 @@ export default {
   watch: {
   },
   onLoad () {
+    this.order = this.$store.getters['Comment/order']
+  },
+  onUnload() {
     this.init()
   },
   computed: {
+    getUnCommentGoods () {
+      let arr = []
+      this.order.shopGoodsList.map(item => {
+        if (!item.commentStatus) {
+          arr.push(item)
+        }
+      })
+      return arr
+    }
   },
   methods: {
     init () {
-      this.order = this.$store.getters['Comment/order']
+      this.order = {}
     },
     commentSucceed () {
       console.log('评论成功')
+      if (this.getUnCommentGoods.length === 0) {
+        wx.showModal({
+          title: '评价完成',
+          content: '该订单的商品已评价完毕',
+          showCancel: false,
+          confirmText: '知道了',
+          success (res) {
+            mpvue.navigateBack({ delta: 1 })
+          }
+        })
+      }
     }
   }
 }

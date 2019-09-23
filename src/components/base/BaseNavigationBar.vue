@@ -1,5 +1,8 @@
 <template>
-  <div class="navigation-bar" :style="{'height': customNavHeight, 'background-color': bgColor}">
+  <div
+    class="navigation-bar"
+    :style="{'height': customNavHeight, 'background-color': bgColor, 'color': fontColor}"
+  >
     <div
       class="nav-icon"
       :style="{'top': iconTop, 'left': iconLeft, 'height': iconHeight, 'line-height': iconHeight}"
@@ -19,7 +22,11 @@ export default {
     name: String,
     bgColor: {
       type: String,
-      default: 'white'
+      default: "white"
+    },
+    fontColor: {
+      type: String,
+      default: "black"
     }
   },
   created() {

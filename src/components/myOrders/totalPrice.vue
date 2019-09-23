@@ -20,7 +20,7 @@ export default {
       for (let key in this.goodsList) {
         totalPrice += this.goodsList[key].type.price * this.goodsList[key].num
       }
-      return totalPrice
+      return totalPrice.toFixed(2)
     }
   }
 }

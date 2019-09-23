@@ -1,71 +1,109 @@
 <template>
-  <div class="myOrders-wrap">
-    <div class="tab-panel">
-      <div 
-      class="tab-item" 
-      v-for="(item, index) in typeTabList" 
-      :key="index" 
-      :class="{'on': item.key == selectTypeKey}" 
-      @click="selectTypeKey = item.key">
-        <span>{{item.name}}</span>
-      </div>
-    </div>
-    <div class="order-list-wrap" v-if="orderList.length !== 0">
-      <div class="order-box" v-for="(orderItem, orderIndex) in orderList" :key="orderIndex">
-        <div class="header">
-          <div class="left-box">
-            <span class="order-id">订单编号：{{orderItem.orderNo}}</span>
+  <div style="height: 100%">
+    <base-navigation-bar name="我的订单">
+      <i class="iconfont" @click="backOff">&#xe625;</i>
+    </base-navigation-bar>
+    <base-custom-box>
+      <div class="myOrders-wrap">
+        <div class="order-list-wrap">
+          <div class="tab-panel" :style="{'top': customTabTop}">
+            <div 
+            class="tab-item" 
+            v-for="(item, index) in typeTabList" 
+            :key="index" 
+            :class="{'on': item.key == selectTypeKey}" 
+            @click="selectTypeKey = item.key">
+              <span>{{item.name}}</span>
+            </div>
           </div>
-          <div class="right-box">
-            <span class="status">{{typeTabList[orderItem.status + 1].name}}</span>
-          </div>
-        </div>
-        <div class="goods-list">
-          <div class="goods-box" v-for="(goodsItem, goodsIndex) in orderItem.shopGoodsList" :key="goodsIndex">
-            <div class="flex-box">
+          <div class="order-box" v-for="(orderItem, orderIndex) in orderList" :key="orderIndex">
+            <div class="header">
               <div class="left-box">
-                <div class="img-box">
-                  <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片"></image>
-                </div>
-              </div>
-              <div class="content-box">
-                <p class="title">{{goodsItem.goodsName}}</p>
-                <p class="type">规格:{{goodsItem.property.propertyName}}</p>
+                <span class="order-id">订单编号：{{orderItem.orderNo}}</span>
               </div>
               <div class="right-box">
-                <p class="price">
-                  <span class="logo">¥</span>{{goodsItem.property.discountPrice}}
-                </p>
-                <p class="num">x{{goodsItem.num}}</p>
+                <span class="status">{{typeTabList[orderItem.status + 1].name}}</span>
+              </div>
+            </div>
+            <div class="goods-list">
+              <div class="goods-box" v-for="(goodsItem, goodsIndex) in orderItem.shopGoodsList" :key="goodsIndex">
+                <div class="flex-box" @click="toGoodsDetail(goodsItem)">
+                  <div class="left-box">
+                    <div class="img-box">
+                      <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片"></image>
+                    </div>
+                  </div>
+                  <div class="content-box">
+                    <p class="title" :class="{'inValid': !goodsItem.status}">
+                      <span class="valid-tips">商品失效</span>
+                      <span class="goods-name">{{goodsItem.goodsName}}</span>
+                    </p>
+                    <p class="type">规格:{{goodsItem.property.propertyName}}</p>
+                  </div>
+                  <div class="right-box">
+                    <p class="price" v-if="orderItem.orderType">
+                      {{goodsItem.property.discountPrice}} 分
+                    </p>
+                    <p class="price" v-else>
+                      <span class="logo">¥</span>{{goodsItem.property.discountPrice}}
+                    </p>
+                    <p class="num">x{{goodsItem.num}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="computed-info">
+                <span class="num">共{{orderItem.shopGoodsList.length}}件商品，</span>
+                合计：
+                <span class="price" v-if="orderItem.orderType">{{orderItem.payPrice}} 点积分</span>
+                <span class="price" v-else><span class="logo">¥</span>{{orderItem.payPrice}}</span>
+              </div>
+              <div class="goods-footer">
+                <span class="option-btn" v-if="orderItem.status < 1" @click="cancelOrder(orderItem.orderNo)">取消订单</span>
+                <span class="option-btn" @click="toOrderDetail(orderItem.orderNo)">查看订单</span>
+                <span class="option-btn change-status-btn" v-if="orderItem.status === 0" @click="toPayOrder(orderItem.orderNo)">去支付</span>
+                <span class="option-btn change-status-btn" v-if="orderItem.status === 2" @click="confirmReceipt(orderItem.orderNo)">确认收货</span>
+                <span class="option-btn change-status-btn" @click="toGoodsComments(orderItem)" v-if="orderItem.commentStatus === 0 && orderItem.status === 3">评价</span>
+                <span class="option-btn has-comment" v-if="orderItem.commentStatus">已评价</span>
               </div>
             </div>
           </div>
-          <div class="computed-info">
-            <span class="num">共{{orderItem.shopGoodsList.length}}件商品，</span>
-            合计：<span class="price"><span class="logo">¥</span>{{orderItem.payPrice}}</span>
+          <div class="bottom-font-panel" v-if="!loading && size > orderList.length && orderList.length > 2">
+            <p>
+              到底啦
+            </p>
           </div>
-          <div class="goods-footer">
-            <span class="option-btn" @click="toOrderDetail(orderItem.orderNo)">查看订单</span>
-            <span class="option-btn" v-if="orderItem.status === 0" @click="toPayOrder(orderItem.orderNo)">去支付</span>
-            <span class="option-btn" v-if="orderItem.status < 1" @click="cancelOrder(orderItem.orderNo)">取消订单</span>
-            <span class="option-btn" v-if="orderItem.status === 2" @click="confirmReceipt(orderItem.orderNo)">确认收货</span>
-            <span class="option-btn" @click="toGoodsComments(orderItem)" v-if="orderItem.status > 1 && orderItem.status < 3">评价</span>
+          <div class="bottom-font-panel" v-if="!loading && size <= orderList.length">
+            <p>
+              下拉获取更多
+            </p>
+          </div>
+          <div class="bottom-font-panel" v-if="loading">
+            <p>
+              <i class="iconfont"></i>
+              加载中...
+            </p>
           </div>
         </div>
+        <div class="no-orders-panel" v-if="orderList.length === 0">
+          <p>
+            <i class="iconfont icon-no-orders">&#xe6ee;</i>
+            您还没有相关订单
+          </p>
+        </div>
       </div>
-    </div>
-    <div class="no-orders-panel" v-else>
-      <p>
-        <i class="iconfont icon-no-orders">&#xe6ee;</i>
-        订单列表暂时为空...
-      </p>
-    </div>
+    </base-custom-box>
   </div>
 </template>
 
 <script>
+import BaseCustomBox from "@/components/base/BaseCustomBox"
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 
 export default {
+  components: {
+    BaseCustomBox,
+    BaseNavigationBar
+  },
   data () {
     return {
       selectTypeKey: '-1',
@@ -98,11 +136,18 @@ export default {
       orderList: [],
       start: 0,
       size: 8,
-      pageSize: 8
+      pageSize: 8,
+      loading: false
     }
   },
   onLoad () {
     this.getOrderList()
+  },
+  onShow () {
+    this.getOrderList()
+  },
+  onUnload () {
+    this.size = this.pageSize
   },
   watch: {
     selectTypeKey () {
@@ -114,10 +159,15 @@ export default {
   },
   async onReachBottom () {
     console.log('触底')
-    this.size += this.pageSize
-    this.getOrderList()
+    if (this.size <= this.orderList.length) {
+      this.size += this.pageSize
+      this.getOrderList()
+    }
   },
   computed: {
+    customTabTop () {
+      return this.$store.getters["SystemInfo/customNavHeight"] + "px"
+    },
     getDefaultImg () {
       return this.Utils.getSquareDefaultImg()
     },
@@ -126,12 +176,14 @@ export default {
     }
   },
   methods: {
+    backOff () {
+      mpvue.navigateBack({ delta: 1 })
+    },
+    toGoodsDetail (goodsItem) {
+      mpvue.navigateTo({ url: '/pages/goodsDetail/main?goodsNo=' + goodsItem.goodsNo })
+    },
     getOrderList () {
-      this.orderList = []
-      wx.showLoading({
-        title: '正在加载',
-        mask: true
-      })
+      this.loading = true
       this.$http.get('/action/order/getOrderList', {
         status: this.selectTypeKey,
         start: this.start,
@@ -147,12 +199,14 @@ export default {
             duration: 2000
           })
         }
+        this.loading = false
         wx.hideLoading()
         wx.stopPullDownRefresh()
       }).catch(err => {
         console.log(err)
         wx.hideLoading()
         wx.stopPullDownRefresh()
+        this.loading = false
         wx.showToast({
           title: '加载失败！',
           icon: 'none',
@@ -207,7 +261,7 @@ export default {
         confirmText: '是',
         success (res) {
           if (res.confirm) {
-            that.$http.get('//action/order/cancelOrder', {
+            that.$http.get('/action/order/cancelOrder', {
               orderNo: orderNo
             }).then(res => {
               if (res.data) {
@@ -244,7 +298,7 @@ export default {
       mpvue.navigateTo({ url: '/pages/goodsComments/main?orderNo=' + order.orderNo })
     },
     toOrderDetail (orderNo) {
-      mpvue.navigateTo({ url: '/pages/orderDetail/main?orderNo=' + orderNo })
+      mpvue.redirectTo({ url: '/pages/orderDetail/main?orderNo=' + orderNo })
     }
   }
 }
@@ -254,9 +308,23 @@ export default {
 .myOrders-wrap {
   height: 100%;
   background-color: #f3f3f3;
+  .bottom-font-panel {
+    padding: 15px 0 20px;
+    p {
+      font-size: 12px;
+      color: #b5b5b5;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .iconfont {
+        font-size: 24px;
+        margin-right: 3px;
+      }
+    }
+  }
   .no-orders-panel {
     position: relative;
-    top: 40px;
     padding: 30px 0;
     p {
       font-size: 16px;
@@ -272,10 +340,12 @@ export default {
     }
   }
   .tab-panel {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
+    position: sticky;
+    z-index: 11;
+    top: 64px;
+    margin-bottom: 10px;
+    margin-left: -10px;
+    width: calc(100% + 20px);
     height: 40px;
     line-height: 40px;
     box-sizing: border-box;
@@ -296,9 +366,7 @@ export default {
   }
   .order-list-wrap {
     position: relative;
-    top: 40px;
-    height: calc(100% - 40px);
-    overflow-y: auto;
+    background-color: #f3f3f3;
     padding: 10px;
     box-sizing: border-box;
     .order-box {
@@ -355,11 +423,28 @@ export default {
               flex-grow: 1;
               .title {
                 margin-bottom: 5px;
-                font-size: 13px;
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                -webkit-line-clamp: 2;
-                overflow: hidden;
+                .goods-name {
+                  font-size: 13px;
+                }
+                .valid-tips {
+                  display: none;
+                  font-size: 10px;
+                  margin-right: 6px;
+                  padding: 2px 4px;
+                  border-radius: 2px;
+                  background-color: rgb(211, 25, 25);
+                  color: #fff;
+                  vertical-align: top;
+                  text-decoration: none;
+                }
+                &.inValid {
+                  .goods-name {
+                    text-decoration: line-through;
+                  }
+                  .valid-tips {
+                    display: inline-block;
+                  }
+                }
               }
               .type {
                 font-size: 10px;
@@ -416,9 +501,24 @@ export default {
             margin-left: 10px;
             box-sizing: border-box;
             background-color: #fff;
+            &.has-comment:active {
+              color: #777;
+              background-color: #fff;
+              border-color: #ddd;
+            }
             &:active {
               color: #555;
-              border: 1px solid #bbb;
+              background-color: #eee;
+              border-color: #bbb;
+            }
+            &.change-status-btn {
+              border-color: #ff6421;
+              color: #ff6421;
+              &:active {
+                color: orangered;
+                border-color: orangered;
+                background-color: #ffd8c7;
+              }
             }
           }
         }

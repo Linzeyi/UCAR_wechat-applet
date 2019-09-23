@@ -1,14 +1,16 @@
 <template>
   <div style="height: 100%">
     <base-navigation-bar name="订单详情">
-      <i class="iconfont" @click="backOff">&#xe625;</i>
+      <i class="iconfont" @click="toMyOrder">&#xe625;</i>
     </base-navigation-bar>
     <base-custom-box>
       <div class="orderPay-wrap lzy-list-wrap">
-        <div class="wrap-panel top-panel">
+        <div class="wrap-panel top-panel" :class="'top-status' + order.status + '-panel'">
           <div class="left-box">
-            <p class="status" v-if="order.status === 0"><i class="iconfont">&#xe694;</i> 等待买家付款...</p>
-            <p class="status" v-if="order.status === 1"><i class="iconfont">&#xe6cf;</i> 已付款，等待卖家发货...</p>
+            <p class="status" v-if="order.status === 0 && !checkIntegral"><i class="iconfont">&#xe694;</i> 等待买家付款...</p>
+            <p class="status" v-if="order.status === 0 && checkIntegral"><i class="iconfont">&#xe694;</i> 等待买家支付积分...</p>
+            <p class="status" v-if="order.status === 1 && !checkIntegral"><i class="iconfont">&#xe6cf;</i> 已付款，等待卖家发货...</p>
+            <p class="status" v-if="order.status === 1 && checkIntegral"><i class="iconfont">&#xe6cf;</i> 兑换成功，等待卖家发货...</p>
             <p class="status" v-if="order.status === 2"><i class="iconfont">&#xe67e;</i> 已发货，等待签收...</p>
             <p class="status" v-if="order.status === 3"><i class="iconfont">&#xe6a5;</i> 订单已完成</p>
             <p class="status" v-if="order.status === 4"><i class="iconfont">&#xe6a6;</i> 订单已取消</p>
@@ -21,14 +23,17 @@
           </div>
           <div class="goods-list">
             <div class="goods-box" v-for="(goodsItem, goodsIndex) in order.shopGoodsList" :key="goodsIndex">
-              <div class="info-box lzy-flex-box">
+              <div class="info-box lzy-flex-box" @click="toGoodsDetail(goodsItem)">
                 <div class="left-box">
                   <div class="img-box">
                     <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片"></image>
                   </div>
                 </div>
                 <div class="content-box">
-                  <p class="title">{{goodsItem.goodsName}}</p>
+                  <p class="title" :class="{'inValid': !goodsItem.status}">
+                    <span class="valid-tips">商品失效</span>
+                    <span class="goods-name">{{goodsItem.goodsName}}</span>
+                  </p>
                   <p class="type">
                     <span class="type-title">
                       规格:
@@ -37,14 +42,17 @@
                   </p>
                 </div>
                 <div class="right-box">
-                  <p class="price"><span class="logo">¥</span>{{goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice}}</p>
+                  <p class="price" v-if="goodsItem.categoryName === '积分'">
+                    {{goodsItem.property.discountPrice}} 分
+                  </p>
+                  <p class="price" v-else><span class="logo">¥</span>{{goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice}}</p>
                   <p class="num">x{{goodsItem.num}}</p>
                 </div>
               </div>
             </div>
           </div>
           <div class="goods-footer">
-            <p class="small-font">
+            <p class="small-font" v-if="!checkIntegral">
               <span class="left">商品总价</span>
               <span class="right">¥ {{order.payPrice}}</span>
             </p>
@@ -52,17 +60,30 @@
               <span class="left">其他开销</span>
               <span class="right">无</span>
             </p>
-            <p class="order-price-font">
+            <p class="order-price-font" v-if="checkIntegral">
+              <span class="left">商品积分</span>
+              <span class="right">{{order.payPrice}} 点积分</span>
+            </p>
+            <p class="order-price-font" v-else>
               <span class="left">订单总价</span>
               <span class="right">¥ {{order.payPrice}}</span>
             </p>
             <p class="total-price-font" v-if="order.status === 0">
-              <span class="left">需付款</span>
-              <span class="right"><span class="logo">¥</span> {{order.payPrice}}</span>
+              <span class="left" v-if="checkIntegral">需花费</span>
+              <span class="left" v-else>需付款</span>
+              <span class="right" v-if="checkIntegral">
+                {{order.payPrice}} 点积分
+              </span>
+              <span class="right" v-else><span class="logo">¥</span> {{order.payPrice}}</span>
             </p>
             <p class="total-price-font" v-else>
-              <span class="left">已付款</span>
-              <span class="right"><span class="logo">¥</span> {{order.payPrice}}</span>
+              <span class="left" v-if="checkIntegral && order.status !== 4">已花费</span>
+              <span class="left" v-if="!checkIntegral && order.status !== 4">已付款</span>
+              <span class="left" v-if="order.status === 4">订单取消</span>
+              <span class="right" v-if="checkIntegral && order.status !== 4">
+                {{order.payPrice}} 点积分
+              </span>
+              <span class="right" v-if="!checkIntegral && order.status !== 4"><span class="logo">¥</span> {{order.payPrice}}</span>
             </p>
           </div>
         </div>
@@ -118,16 +139,19 @@
                 <i class="iconfont icon-select-fill" v-else>&#xe655;</i>
               </span>
               <span class="pay-type-name">{{item.name}}</span>
-              <span class="balance"><span class="logo">¥</span> {{item.balance}}</span>
+              <span class="balance"><span class="logo" v-if="!checkIntegral">¥</span> {{item.balance}}</span>
             </p>
           </div>
         </div>
         <div class="pay-footer lzy-footer">
           <div class="right-box">
-            <button class="pay-btn" @click="payOrder" v-if="order.status === 0">付款</button>
+            <button class="toOrder-btn" @click="toMyOrder">我的订单</button>
             <button class="cancel-btn" @click="cancelOrder" v-if="order.status < 1">取消订单</button>
-            <button class="cancel-btn" @click="confirmReceipt" v-if="order.status === 2">确认收货</button>
-            <button class="cancel-btn" @click="toGoodsComments()" v-if="checkOrderCommentStatus">评价</button>
+            <button class="pay-btn change-status-btn" @click="payOrder" v-if="order.status === 0 && !checkIntegral">付款</button>
+            <button class="pay-btn change-status-btn" @click="payOrder" v-if="order.status === 0 && checkIntegral">兑换</button>
+            <button class="confirm-btn change-status-btn" @click="confirmReceipt" v-if="order.status === 2">确认收货</button>
+            <button class="has-comment" v-if="order.status === 3 && checkAllGoodsIsCommented">已评价</button>
+            <button class="comment-btn change-status-btn" @click="toGoodsComments()" v-if="order.status === 3 && !checkAllGoodsIsCommented">评价</button>
           </div>
         </div>
       </div>
@@ -149,16 +173,13 @@ export default {
         orderNo: '',
         createTime: this.Utils.formatTime(new Date()),
         status: '0',
-        receiptInfo: {}
+        receiptInfo: {},
+        shopGoodsList: []
       },
       payTypeList: [
         {
           name: '余额',
-          balance: 8551
-        },
-        {
-          name: '支付宝',
-          balance: 25000
+          balance: 0
         }
       ],
       selectPayType: {}
@@ -166,25 +187,20 @@ export default {
   },
   onLoad (option) {
     this.order.orderNo = option.orderNo
-    console.log(option)
+  },
+  onShow() {
     this.getOrder()
-    this.getBalance()
-    let title = '订单详情'
-    if (this.order.status === 0 || this.order.status === '0') {
-      title = '订单支付'
-    }
-    wx.setNavigationBarTitle({
-      title: title
-    })
   },
   onUnload () {
     this.init()
   },
   async onPullDownRefresh() {
     this.getOrder()
-    this.getBalance()
   },
   computed: {
+    checkIntegral () {
+      return this.order.orderType
+    },
     getDefaultImg () {
       return this.Utils.getSquareDefaultImg()
     },
@@ -201,13 +217,6 @@ export default {
         })
       }
       return flag
-    },
-    checkOrderCommentStatus () {
-      if (this.order.status > 1 && this.order.status < 3 && this.checkAllGoodsIsCommented) {
-        return true
-      } else {
-        return false
-      }
     }
   },
   methods: {
@@ -218,9 +227,26 @@ export default {
     backOff () {
       mpvue.navigateBack({ delta: 1 })
     },
+    toGoodsDetail (goodsItem) {
+      mpvue.navigateTo({ url: '/pages/goodsDetail/main?goodsNo=' + goodsItem.goodsNo })
+    },
+    toMyOrder () {
+      mpvue.redirectTo({ url: '/pages/myOrders/main' })
+    },
+    getIntergral () {
+      this.$http.get('/action/user/rewordPoint').then(res => {
+        console.log(res)
+        if (res.data) {
+          this.payTypeList[0].balance = res.data.rewordPoint
+        }
+      })
+    },
     getBalance () {
       this.$http.get('/action/wallet/getBalance').then(res => {
         console.log(res)
+        if (res.data) {
+          this.payTypeList[0].balance = res.data.balance
+        }
       })
     },
     getOrder () {
@@ -235,6 +261,33 @@ export default {
         if (res.data) {
           this.order = res.data
           this.order.createTime = this.Utils.formatTime(this.order.createTime)
+          if (this.order.status === 0 || this.order.status === '0') {
+            console.log('支付订单')
+            wx.setNavigationBarTitle({
+              title: '订单支付'
+            })
+          } else {
+            wx.setNavigationBarTitle({
+              title: '订单详情'
+            })
+          }
+          if (this.checkIntegral) {
+            this.payTypeList = [
+              {
+                name: '积分',
+                balance: 0
+              }
+            ]
+            this.getIntergral()
+          } else {
+            this.payTypeList = [
+              {
+                name: '余额',
+                balance: 0
+              }
+            ]
+            this.getBalance()
+          }
         } else {
           wx.showToast({
             title: '获取失败',
@@ -256,6 +309,7 @@ export default {
       })
     },
     cancelOrder () {
+      let that = this
       wx.showModal({
         title: '取消订单',
         content: '是否确认取消订单',
@@ -263,6 +317,31 @@ export default {
         confirmText: '是',
         success (res) {
           if (res.confirm) {
+            that.$http.get('/action/order/cancelOrder', {
+              orderNo: that.order.orderNo
+            }).then(res => {
+              if (res.data) {
+                wx.showToast({
+                  title: '取消成功',
+                  icon: 'success',
+                  duration: 2000
+                })
+                that.getOrder()
+              } else {
+                wx.showToast({
+                  title: '取消失败！',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
+            }).catch(err => {
+              console.log(err)
+              wx.showToast({
+                title: '取消失败！',
+                icon: 'none',
+                duration: 2000
+              })
+            })
             console.log('取消订单')
           }
         }
@@ -329,9 +408,9 @@ export default {
           })
         } else {
           wx.showModal({
-            title: '确认付款',
-            content: '本次应付金额共计' + this.order.payPrice,
-            confirmText: '支付',
+            title: this.checkIntegral ? '确认兑换' : '确认付款',
+            content: this.checkIntegral ? '本次应支付的积分共计' + this.order.payPrice + '点' : '本次应付的金额共计' + this.order.payPrice + '元',
+            confirmText: this.checkIntegral ? '兑换' : '支付',
             success (res) {
               if (res.confirm) {
                 that.$http.get('/action/order/payOrder', {
@@ -342,10 +421,15 @@ export default {
                     wx.showModal({
                       title: '支付成功',
                       content: '将为您跳转至我的订单界面',
-                      showCancel: false,
+                      confirmText: '跳转',
+                      cancelText: '不跳转',
                       success (res) {
-                        console.log('付款成功，支付订单：', that.order)
-                        mpvue.navigateTo({ url: '/pages/myOrders/main' })
+                        if (res.confirm) {
+                          mpvue.navigateTo({ url: '/pages/myOrders/main' })
+                        } else {
+                          console.log('付款成功，支付订单：', that.order)
+                          that.getOrder()
+                        }
                       }
                     })
                   } else {
@@ -367,6 +451,10 @@ export default {
           })
         }
       }
+    },
+    toGoodsComments () {
+      this.$store.commit('Comment/SET_ORDER', this.order)
+      mpvue.navigateTo({ url: '/pages/goodsComments/main?orderNo=' + this.order.orderNo })
     }
   }
 }
@@ -377,7 +465,6 @@ export default {
   box-sizing: border-box;
   padding: 0;
   background-color: #f3f3f3;
-  
   .wrap-panel {
     background-color: #fff;
     padding: 10px;
@@ -414,19 +501,36 @@ export default {
     &.top-panel {
       padding: 20px 0;
       margin-bottom: 0;
-      background-color: #ee1010;
       display: flex;
       align-items: center;
+      &.top-status0-panel {
+        background-color: #e05e5e;
+      }
+      &.top-status1-panel {
+        background-color: #3daeca;
+      }
+      &.top-status2-panel {
+        background-color: #5772cc;
+      }
+      &.top-status3-panel {
+        background-color: #48af76;
+      }
+      &.top-status4-panel {
+        background-color: #757575;
+      }
       .left-box {
-        width: 60%;
+        width: 100%;
         p {
           text-indent: 35px;
+          font-weight: 600;
           color: #fff;
+          display: flex;
+          align-items: center;
           &.status {
-            font-size: 14px;
+            font-size: 18px;
             .iconfont {
-              font-size: 14px;
-              margin-right: 4px;
+              font-size: 22px;
+              padding-right: 10px;
               color: #fff;
             }
           }
@@ -438,6 +542,33 @@ export default {
         padding-bottom: 10px;
         .goods-box {
           padding: 10px 0;
+          .content-box {
+            .title {
+              margin-bottom: 5px;
+              .goods-name {
+                font-size: 13px;
+              }
+              .valid-tips {
+                display: none;
+                font-size: 10px;
+                margin-right: 6px;
+                padding: 1px 4px;
+                border-radius: 2px;
+                background-color: rgb(211, 25, 25);
+                color: #fff;
+                vertical-align: top;
+                text-decoration: none;
+              }
+              &.inValid {
+                .goods-name {
+                  text-decoration: line-through;
+                }
+                .valid-tips {
+                  display: inline-block;
+                }
+              }
+            }
+          }
         }
       }
       .goods-footer {
@@ -517,28 +648,33 @@ export default {
   .pay-footer {
     .right-box {
       height: 34px;
-      line-height: 34px;
       button {
         height: 34px;
-        line-height: 34px;
+        line-height: 33px;
         border-radius: 20px;
-      }
-      .cancel-btn {
         background-color: #fff;
         border: 1px solid #ddd;
         color: #777;
         box-sizing: border-box;
+        &.has-comment:active {
+          color: #777;
+          background-color: #fff;
+          border-color: #ddd;
+        }
         &:active {
           color: #555;
-          border: 1px solid #bbb;
+          background-color: #eee;
+          border-color: #bbb;
+        }
+        &.change-status-btn {
+        border-color: #ff6421;
+        color: #ff6421;
+        &:active {
+          color: orangered;
+          border-color: orangered;
+          background-color: #ffd8c7;
         }
       }
-      .pay-btn {
-        background-color: #ff6421;
-        color: #fff;
-        &:active {
-          background-color: #ec4e09;
-        }
       }
     }
   }

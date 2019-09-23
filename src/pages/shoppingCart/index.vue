@@ -26,7 +26,10 @@
                         规格:{{goodsItem.property.propertyName}}
                       </p>
                       <p class="bottom-p">
-                        <span class="price"><span class="logo">¥</span>{{(goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice )* goodsItem.num}}</span>
+                        <span class="price">
+                          <span class="logo">¥</span>
+                          <com-price-fixed :price="(goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice )* goodsItem.num"></com-price-fixed>
+                        </span>
                         <span class="numPicker-box">
                           <num-picker :objItem="goodsItem" :min="1" :isSmall="true" :max="goodsItem.stock" :num.sync="goodsItem.num" @changeObjectNum="changeShopGoodsNum" @changeProperty="changeProperty"></num-picker>
                         </span>
@@ -96,13 +99,15 @@ import BaseCustomBox from "@/components/base/BaseCustomBox"
 import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 import numPicker from '@/components/numPicker/numPicker'
 import typeDialog from '@/components/typeDialog/typeDialog'
+import comPriceFixed from '@/components/comPriceFixed/comPriceFixed'
 
 export default {
   components: {
     numPicker,
     typeDialog,
     BaseCustomBox,
-    BaseNavigationBar
+    BaseNavigationBar,
+    comPriceFixed
   },
   data () {
     return {
@@ -159,7 +164,6 @@ export default {
   methods: {
     getSelectedGoodsList () {
       let selectedGoodsList = []
-      console.log('1r5892361873th1093ht08h4')
       console.log('获取选中的商品列表：', this.goodsList)
       this.goodsList.map(item => {
         console.log(item)
@@ -193,12 +197,14 @@ export default {
         newCartItem: newCartItem
       }).then(res => {
         if (res.data) {
-          this.getShoppingCartGoodsList()
+          goods.property = newProperty
+          goods.num = newNum
           wx.showToast({
             title: '修改成功',
             icon: 'success',
             duration: 2000
           })
+          this.updateSelectedInfo()
         } else {
           wx.showToast({
             title: '修改失败',
@@ -218,7 +224,6 @@ export default {
           duration: 2000
         })
       })
-      this.getShoppingCartGoodsList()
     },
     changeShopGoodsNum (goods) {
       wx.showLoading({
@@ -237,6 +242,7 @@ export default {
             icon: 'success',
             duration: 2000
           })
+          this.updateSelectedInfo()
         } else {
           this.goodsList = []
           this.getShoppingCartGoodsList()
@@ -271,6 +277,8 @@ export default {
         if (res.data) {
           this.goodsList = res.data.validCart
           this.invalidGoodsList = res.data.invalidCart
+          this.selectAll(false)
+          this.updateSelectedInfo()
         } else {
           wx.showToast({
             title: '加载失败',
@@ -349,8 +357,9 @@ export default {
         if (selectedGoodsList.length !== 0) {
           this.$store.commit('Order/SET_GOODSLIST', selectedGoodsList)
           console.log('购物车选中商品：', selectedGoodsList)
+          console.log('store', this.$store.getters['Order/goodsList'])
           console.log('购物车发起订单')
-          mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
+          mpvue.navigateTo({ url: '/pages/orderConfirm/main?orderSource=1' })
         }
       }
     },
@@ -359,17 +368,7 @@ export default {
       for (let index in this.goodsList) {
         this.goodsList[index].isSelected = flag
       }
-      this.totalPrice = 0
-      this.selectedNum = 0
-      this.goodsList.map(goodsItem => {
-        if (JSON.stringify(goodsItem.isSelected) === 'undefined') {
-          goodsItem.isSelected = false
-        }
-        if (goodsItem.isSelected) {
-          this.totalPrice += (goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice) * goodsItem.num
-          this.selectedNum++
-        }
-      })
+      this.updateSelectedInfo()
     },
     selectGoods (item) {
       item.isSelected = !item.isSelected
@@ -383,6 +382,9 @@ export default {
       if (flag) {
         this.isAllSelected = true
       }
+      this.updateSelectedInfo()
+    },
+    updateSelectedInfo () {
       this.totalPrice = 0
       this.selectedNum = 0
       this.goodsList.map(goodsItem => {
@@ -394,6 +396,7 @@ export default {
           this.selectedNum++
         }
       })
+      this.totalPrice = this.totalPrice.toFixed(2)
     }
   }
 }

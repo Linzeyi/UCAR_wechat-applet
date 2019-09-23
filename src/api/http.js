@@ -77,7 +77,17 @@ fly.interceptors.request.use(request => {
 
 fly.interceptors.response.use(response => {
   if (response.data.code === 5) {
-    mpvue.navigateTo({ url: '/pages/login/main' })
+    wx.showModal({
+      title: "跳转登录",
+      content: "您还未登陆，登录后即可查看。",
+      confirmColor: '#FF6421',
+      showCancel: false,
+      success(res) {
+        if (res.confirm) {
+          mpvue.navigateTo({ url: '/pages/login/main' })
+        }
+      }
+    });
   }
   return response.data.content
 }, err => {

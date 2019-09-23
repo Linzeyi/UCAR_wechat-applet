@@ -1,24 +1,23 @@
 <template>
-  <div style="height: 100%">
-    <base-navigation-bar name="首页">
+  <div class="main-page">
+    <base-navigation-bar name="首页" :bgColor="'rgb(236, 65, 59)'">
       <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
     </base-navigation-bar>
     <base-custom-box>
       <div class="home-wrap">
-        <com-swiper :imgList="imgList" :isLink="true"></com-swiper>
+        <div class="swiper-box">
+          <com-swiper :imgList="imgList" :isLink="true"></com-swiper>
+          <p class="panel-title">精选</p>
+          <p class="panel-title-tips">为您推荐</p>
+          <p class="icon-panel"><i class="iconfont">&#xe6a4;</i></p>
+        </div>
         <div class="goodsList-panel">
-          <div class="header">
-            <span class="panel-title">热门推荐</span>
-            <span class="more-btn" @click="switchTab('/pages/classification/main')">
-              更多
-            </span>
-          </div>
           <div class="list-content">
             <goods-grid-list
             ref="goods_grid_list_el"
             :start.sync="start" 
             :size.sync="size" 
-            :pageSize="3"
+            :pageSize="pageSize"
             :goodsList="goodsList" 
             :col="2"></goods-grid-list>
           </div>
@@ -45,7 +44,8 @@ export default {
       imgList: [],
       goodsList: [],
       start: 0,
-      size: 3
+      size: 6,
+      pageSize: 6
     }
   },
   components: {
@@ -82,10 +82,8 @@ export default {
       if (swiperNum > count) {
         swiperNum = count
       }
-      console.log('轮播图数量：' + swiperNum)
       for (let i = 0; i < swiperNum; i++) {
         let randomIndex = Math.floor(Math.random() * count)
-        console.log('随机到的下标：' + randomIndex)
         let el = {
           pic: goodsList[randomIndex].pic,
           goodsNo: goodsList[randomIndex].goodsNo
@@ -94,8 +92,6 @@ export default {
         goodsList.splice(randomIndex, 1)
         count = goodsList.length
       }
-      console.log('随机图片数组：', arr)
-      console.log('=-----------------------------------------=')
       this.imgList = arr
     },
     getRecommendGoodsList () {
@@ -151,40 +147,78 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.home-wrap {
+.main-page {
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: #f3f3f3;
-  .goodsList-panel {
-    width: 100%;
-    flex-grow: 1;
+  background-color: rgb(236, 65, 59);
+  /deep/ .navigation-bar {
+    color: #fff;
+    .nav-icon, .nav-title {
+      color: #fff;
+    }
+  }
+  .home-wrap {
+    // height: 100%;
     display: flex;
     flex-direction: column;
-    &:after {
-      border-bottom: none;
-    }
-    .header {
+    
+    .swiper-box {
+      background-color: rgb(236, 65, 59);
+      padding: 10px 0;
       z-index: 1;
-      background-color: #fff;
-      box-shadow: 0 3px 10px 0 #ddd;
-      font-weight: 600;
-      font-size: 26rpx;
-      color: #555;
-      padding: 22rpx 30rpx 22rpx;
-      .more-btn {
-        float: right;
-        color: #ddd;
-        .icon-more {
+      /deep/ .com-swiper {
+        margin-bottom: 15px;
+        border-radius: 6px;
+        height: 200px;
+      }
+      p {
+        text-align: center;
+        &.panel-title {
+          color: #fff;
+          font-size: 24px;
+          font-weight: 600;
+          position: relative;
+          &::before, &::after {
+            content: '';
+            position: absolute;
+            top: 51%;
+            background-color: #fff;
+            // opacity: 0.7;
+            width: 37%;
+            height: 1px;;
+          }
+          &::before {
+            left: 0;
+          }
+          &::after {
+            right: 0;
+          } 
+        }
+        &.panel-title-tips {
+          color: #fff;
+          opacity: 0.9;
           font-size: 12px;
+          font-weight: 300;
+        }
+        &.icon-panel {
+          line-height: 15px;
+          .iconfont {
+            font-size: 16px;
+            color: #fff;
+          }
         }
       }
+    }
+    .goodsList-panel {
+      width: 100%;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
       &:after {
         border-bottom: none;
       }
-    }
-    .list-content {
-      flex: 1;
+      .list-content {
+        flex: 1;
+      }
     }
   }
 }

@@ -4,7 +4,7 @@
       <i class="iconfont" @click="backOff">&#xe625;</i>
     </base-navigation-bar>
     <base-custom-box>
-      <div class="goodsDetail" :class="{'invalid': checkInvalid}">
+      <div class="goodsDetail" :class="{'invalid': checkInvalid || !checkStock}">
         <div class="tab-navbar">
           <div class="flex-box">
               <div class="tab-navbar-item" 
@@ -25,8 +25,11 @@
             </swiper-item>
           </swiper>
         </div>
-        <div class="invalid-tips">
+        <div class="invalid-tips" v-if="checkInvalid">
           该商品已下架
+        </div>
+        <div class="invalid-tips" v-if="!checkStock">
+          所有规格均已售罄
         </div>
         <div class="tab-footer lzy-footer">
           <div class="left-box" v-if="goods.categoryName === '积分'">
@@ -101,6 +104,17 @@ export default {
       } else {
         console.log('无选中规格！')
         return false
+      }
+    },
+    checkStock () {
+      let stock = 0
+      if (this.goods.propertyList) {
+        this.goods.propertyList.map(item => {
+          stock += item.stock
+        })
+        return stock !== 0
+      } else {
+        return true
       }
     },
     checkInvalid () {
@@ -191,73 +205,105 @@ export default {
     },
     addToShoppingCart () {
       let that = this
-      if (this.goods.num === 0) {
-        wx.showToast({
-          title: '商品数量不能为0',
-          icon: 'none',
-          duration: 2000
-        })
-      } else if (!this.checkProperty) {
-        wx.showToast({
-          title: '请选择一个规格类型',
-          icon: 'none',
-          duration: 2000
-        })
-      } else {
-        wx.showModal({
-          title: '添加购物车',
-          content: '是否将本商品加入购物车',
-          confirmText: '确定',
-          success (res) {
-            if (res.confirm) {
-              that.$http.get('/action/order/updateGoodsInCart', {
-                goodsNo: that.goods.goodsNo,
-                goodsName: that.goods.goodsName,
-                property: that.property,
-                num: that.num
-              }).then(res => {
-                console.log(res)
-                if (res.data) {
-                  wx.showToast({
-                    title: '添加成功',
-                    icon: 'success',
-                    duration: 2000
-                  })
-                } else {
-                  wx.showToast({
-                    title: '添加失败',
-                    icon: 'none',
-                    duration: 2000
-                  })
-                }
-              })
-            }
-          }
-        })
-      }
-    },
-    toShoppingCart () {
-      mpvue.navigateTo({ url: '/pages/shoppingCart/main' })
-    },
-    toOrderConfirm () {
-      if (this.checkProperty) {
+      if (!this.checkInvalid && this.checkStock) {
         if (this.goods.num === 0) {
           wx.showToast({
             title: '商品数量不能为0',
             icon: 'none',
             duration: 2000
           })
+        } else if (!this.checkProperty) {
+          wx.showToast({
+            title: '请选择一个规格类型',
+            icon: 'none',
+            duration: 2000
+          })
         } else {
-          let goods = JSON.parse(JSON.stringify(this.goods))
-          goods.num = this.num
-          goods.property = this.property
-          delete goods.propertyList
-          let goodsList = [goods]
-          this.$store.commit('Order/SET_GOODSLIST', goodsList)
-          mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
+          wx.showModal({
+            title: '添加购物车',
+            content: '是否将本商品加入购物车',
+            confirmText: '确定',
+            success (res) {
+              if (res.confirm) {
+                that.$http.get('/action/order/updateGoodsInCart', {
+                  goodsNo: that.goods.goodsNo,
+                  goodsName: that.goods.goodsName,
+                  property: that.property,
+                  num: that.num
+                }).then(res => {
+                  console.log(res)
+                  if (res.data) {
+                    wx.showToast({
+                      title: '添加成功',
+                      icon: 'success',
+                      duration: 2000
+                    })
+                  } else {
+                    wx.showToast({
+                      title: '添加失败',
+                      icon: 'none',
+                      duration: 2000
+                    })
+                  }
+                })
+              }
+            }
+          })
         }
       } else {
-        this.$store.commit('Goods/SET_SHOWTYPEDIALOG', true)
+        if (this.checkInvalid) {
+          wx.showToast({
+            title: '商品已被下架',
+            icon: 'none',
+            duration: 2000
+          })
+        } else if (!this.checkStock) {
+          wx.showToast({
+            title: '库存不足',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+      }
+    },
+    toShoppingCart () {
+      mpvue.navigateTo({ url: '/pages/shoppingCart/main' })
+    },
+    toOrderConfirm () {
+      if (!this.checkInvalid && this.checkStock) {
+        if (this.checkProperty) {
+          if (this.goods.num === 0) {
+            wx.showToast({
+              title: '商品数量不能为0',
+              icon: 'none',
+              duration: 2000
+            })
+          } else {
+            let goods = JSON.parse(JSON.stringify(this.goods))
+            goods.num = this.num
+            goods.property = this.property
+            delete goods.propertyList
+            let goodsList = [goods]
+            this.$store.commit('Order/SET_GOODSLIST', goodsList)
+            mpvue.navigateTo({ url: '/pages/orderConfirm/main?orderSource=0' })
+          }
+        } else {
+          this.$store.commit('Goods/SET_SHOWTYPEDIALOG', true)
+        }
+      } else {
+        if (this.checkInvalid) {
+          wx.showToast({
+            title: '商品已被下架',
+            icon: 'none',
+            duration: 2000
+          })
+        } else if (!this.checkStock) {
+          wx.showToast({
+            title: '库存不足',
+            icon: 'none',
+            duration: 2000
+          })
+        }
       }
     }
   }
