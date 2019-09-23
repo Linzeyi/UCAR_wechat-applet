@@ -121,7 +121,11 @@ export default {
   },
   computed: {
     getSex() {
-      return this.userInfo.sex === -1 ? "保密" : this.userInfo.sex === 1 ? "男" : "女";
+      return this.userInfo.sex === -1
+        ? "保密"
+        : this.userInfo.sex === 1
+          ? "男"
+          : "女";
     }
   },
   methods: {
@@ -216,11 +220,21 @@ export default {
       });
     },
     logout() {
-      this.$store.commit("UserInfo/REMOVE_USERINFO");
-      wx.removeStorage({
-        key: "token"
+      const _this = this
+      wx.showModal({
+        title: "确定退出？",
+        content: "退出登录后将无法查看订单，重新登录后即可查看。",
+        confirmColor: '#FF6421',
+        success(res) {
+          if (res.confirm) {
+            _this.$store.commit("UserInfo/REMOVE_USERINFO");
+            wx.removeStorage({
+              key: "token"
+            });
+            _this.Utils.navigateTo("/pages/login/main");
+          }
+        }
       });
-      this.Utils.navigateTo("/pages/login/main");
     }
   }
 };
