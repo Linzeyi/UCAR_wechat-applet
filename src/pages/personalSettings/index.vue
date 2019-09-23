@@ -6,22 +6,27 @@
         <div class="form-item form-avatar" @click="showAvatarSheet = true;focusIndex=''">
           <span>头像</span>
           <div class="avatar-right-box">
-            <img :src="avatarUrl" @click.stop="previewImage" mode="aspectFill" />
+            <img :src="userInfo.avatarUrl" @click.stop="previewImage" mode="aspectFill" />
             <i class="iconfont icon-size">&#xe6ab;</i>
           </div>
         </div>
         <div class="form-item">
           <span>用户ID</span>
-          <p>{{id}}</p>
+          <p>{{userInfo.id}}</p>
         </div>
         <div class="form-item">
           <span>昵称</span>
           <div class="right-box">
-            <input type="text" placeholder="--" v-model="nickname" @focus="focusIndex='nickname'" />
+            <input
+              type="text"
+              placeholder="--"
+              v-model="userInfo.nickname"
+              @focus="focusIndex='nickname'"
+            />
             <i
               class="iconfont icon-cancel icon-size"
-              v-if="nickname !== '' && focusIndex === 'nickname'"
-              @click="nickname = ''"
+              v-if="userInfo.nickname !== '' && focusIndex === 'nickname'"
+              @click="userInfo.nickname = ''"
             >&#xe65c;</i>
             <i class="iconfont icon-size" v-else>&#xe6ab;</i>
           </div>
@@ -29,11 +34,16 @@
         <div class="form-item">
           <span>邮箱</span>
           <div class="right-box">
-            <input type="text" placeholder="--" v-model="email" @focus="focusIndex='email'" />
+            <input
+              type="text"
+              placeholder="--"
+              v-model="userInfo.email"
+              @focus="focusIndex='email'"
+            />
             <i
               class="iconfont icon-cancel icon-size"
-              v-if="email !== '' && focusIndex === 'email'"
-              @click="email = ''"
+              v-if="userInfo.email !== '' && focusIndex === 'email'"
+              @click="userInfo.email = ''"
             >&#xe65c;</i>
             <i class="iconfont icon-size" v-else>&#xe6ab;</i>
           </div>
@@ -41,7 +51,7 @@
         <div class="form-item" @click="showGenderSheet=true;focusIndex=''">
           <span>性别</span>
           <div>
-            <span>{{sex}}</span>
+            <span>{{getSex}}</span>
             <i class="iconfont icon-size">&#xe6ab;</i>
           </div>
         </div>
@@ -62,9 +72,9 @@
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
     <base-action-sheet :show.sync="showGenderSheet">
-      <div class="action-sheet-item" @click="sex='男'">男</div>
-      <div class="action-sheet-item" @click="sex='女'">女</div>
-      <div class="action-sheet-item" @click="sex='保密'">保密</div>
+      <div class="action-sheet-item" @click="userInfo.sex=1">男</div>
+      <div class="action-sheet-item" @click="userInfo.sex=2">女</div>
+      <div class="action-sheet-item" @click="userInfo.sex=-1">保密</div>
     </base-action-sheet>
     <base-action-sheet :show.sync="showAvatarSheet">
       <button
@@ -92,11 +102,13 @@ export default {
   },
   data() {
     return {
-      id: "",
-      avatarUrl: "",
-      nickname: "",
-      email: "",
-      sex: "",
+      userInfo: {
+        id: "",
+        avatarUrl: "",
+        nickname: "",
+        email: "",
+        sex: -1
+      },
       showToast: false,
       showAvatarSheet: false,
       showGenderSheet: false,
@@ -104,35 +116,53 @@ export default {
       showLoading: false
     };
   },
-  onShow() {
-    this.avatarUrl = this.$store.getters["UserInfo/avatarUrl"];
-    this.nickname = this.$store.getters["UserInfo/nickname"];
-    this.email = this.$store.getters["UserInfo/email"];
-    this.sex = this.$store.getters["UserInfo/sex"];
+  async onShow() {
+    this.userInfo = this.$store.getters["UserInfo/userInfo"];
+  },
+  computed: {
+    getSex() {
+      return this.userInfo.sex === -1 ? "保密" : this.userInfo.sex === 1 ? "男" : "女";
+    }
   },
   methods: {
     previewImage() {
-      if (this.avatarUrl === "") {
+      if (this.userInfo.avatarUrl === "") {
         this.showAvatarSheet = true;
         return;
       }
       const _this = this;
       wx.previewImage({
-        current: _this.avatarUrl,
-        urls: [_this.avatarUrl]
+        current: _this.userInfo.avatarUrl,
+        urls: [_this.userInfo.avatarUrl]
       });
     },
     chooseImage(type) {
       const _this = this;
+      const allowExt = ["jpg", "png", "gif", "ico"];
       wx.chooseImage({
         count: 1,
         sizeType: ["original", "compressed"],
         sourceType: [type],
         success(res) {
-          const tempFilePaths = res.tempFilePaths;
-          const tempUrl = tempFilePaths[0];
-          _this.handleTempAvatar(tempUrl);
-          _this.avatarUrl = tempUrl;
+          const tempFile = res.tempFiles[0];
+          if (tempFile.size > 1260000) {
+            _this.$store.commit("BaseStore/SHOW_TOAST", {
+              type: "error",
+              content: "图片需小于1.2MB"
+            });
+            return;
+          }
+          const tempPath = tempFile.path;
+          const splits = tempPath.split(".");
+          const ext = splits[splits.length - 1].toLowerCase();
+          if (!allowExt.includes(ext)) {
+            _this.$store.commit("BaseStore/SHOW_TOAST", {
+              type: "error",
+              content: "请上传jpg/png/ico/gif格式的图片"
+            });
+            return;
+          }
+          _this.handleTempAvatar(tempPath);
         }
       });
     },
@@ -140,47 +170,49 @@ export default {
       const detail = e.mp.detail;
       if (detail.userInfo) {
         const url = detail.userInfo.avatarUrl;
-        await this.handleRemoteAvatar(url);
-        this.avatarUrl = url;
+        await this.handleWechhatAvatar(url);
       }
     },
-    handleTempAvatar(tempUrl) {
-      let base64 = wx.getFileSystemManager().readFileSync(tempUrl, "base64");
-      console.log(base64.length)
-      // if (base64.length > 2796000) {
-      //   this.$store.commit('BaseStore/SHOW_TOAST', {
-      //     type: 'error',
-      //     content: '图片大小超出限制'
-      //   })
-      //   return
-      // }
-      this.uploadAvatar(base64);
+    async handleTempAvatar(tempPath) {
+      let base64 = wx.getFileSystemManager().readFileSync(tempPath, "base64");
+      await this.uploadAvatar(base64);
     },
-    handleRemoteAvatar(url) {
+    handleWechhatAvatar(tempPath) {
       const _this = this;
       wx.request({
-        url: url,
+        url: tempPath,
         responseType: "arraybuffer",
-        success(res) {
-          console.log(res)
+        async success(res) {
           let base64 = wx.arrayBufferToBase64(res.data);
-          _this.uploadAvatar(base64);
+          await _this.uploadAvatar(base64);
         }
       });
     },
     async uploadAvatar(base64) {
       base64 = "data:image/png;base64," + base64;
       const encodeBase64 = base64.replace(/\+/g, ".");
-      await this.$http.post("/action/user/uploadAvatar", {
-        fileName: "image",
-        file: encodeBase64
-      });
+      this.showLoading = true;
+      try {
+        const result = await this.$http.post("/action/user/uploadAvatar", {
+          fileName: "image",
+          file: encodeBase64
+        });
+        this.userInfo.avatarUrl = result.data.imgUrl;
+      } catch (error) {
+        this.showLoading = false;
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "上传失败，请检查网络~"
+        });
+      }
+      this.showLoading = false;
     },
     saveUserInfo() {
       this.$http.post("/action/user/modifyInfo", {
-        nickname: this.nickname,
-        email: this.email,
-        sex: this.sex
+        avatarUrl: this.userInfo.avatarUrl,
+        nickname: this.userInfo.nickname,
+        email: this.userInfo.email,
+        sex: this.userInfo.sex
       });
     },
     logout() {
@@ -188,7 +220,7 @@ export default {
       wx.removeStorage({
         key: "token"
       });
-      this.Utils.switchTab("/pages/login/main");
+      this.Utils.navigateTo("/pages/login/main");
     }
   }
 };

@@ -43,8 +43,8 @@ export default {
   data() {
     return {
       form: {
-        phone: "18756574249",
-        password: "123456"
+        phone: "",
+        password: ""
       },
       avatarUrl:
         "http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg",
@@ -74,7 +74,9 @@ export default {
       if (!flag) {
         return;
       }
-      this.login();
+      await this.login();
+      await this.getAddress();
+      mpvue.navigateBack();
     },
     async login() {
       const result = await this.$http.post("/action/user/login", {
@@ -96,9 +98,18 @@ export default {
       }
       let userInfo = result.data.memberInfo;
       if (userInfo) {
-        userInfo = { ...userInfo, phone: this.form.phone };
+        userInfo.phone = this.form.phone;
+        this.$store.commit("UserInfo/SET_USERINFO", userInfo);
       }
-      this.$store.commit("UserInfo/SET_USERINFO", userInfo);
+    },
+    async getAddress() {
+      const result = await this.$http.get("/action/addr/list");
+      if (result.data.addressList) {
+        this.$store.commit(
+          "UserCenter/SET_ADDRESS_LIST",
+          result.data.addressList
+        );
+      }
     }
   }
 };

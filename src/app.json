@@ -57,12 +57,6 @@
         "iconPath": "static/tabs/userCenter.png",
         "selectedIconPath": "static/tabs/userCenter-active.png",
         "text": "个人中心"
-      },
-      {
-        "pagePath": "pages/login/main",
-        "iconPath": "static/tabs/home.png",
-        "selectedIconPath": "static/tabs/home-active.png",
-        "text": "登录"
       }
     ],
     "position": "bottom"

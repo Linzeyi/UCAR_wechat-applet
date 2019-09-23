@@ -77,7 +77,7 @@ fly.interceptors.request.use(request => {
 
 fly.interceptors.response.use(response => {
   if (response.data.code === 5) {
-    mpvue.switchTab({ url: '/pages/login/main' })
+    mpvue.navigateTo({ url: '/pages/login/main' })
   }
   return response.data.content
 }, err => {

@@ -98,22 +98,22 @@ export default {
     // 判断登录
     isLogged () {
       // 加载第一次登录所需数据
-      if (this.$store.getters['UserInfo/id'] !== '') {
+      if (this.$store.state.UserInfo.userInfo.id) {
         this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
       }
-      return this.$store.getters['UserInfo/id'] !== ''
+      return Boolean(this.$store.state.UserInfo.userInfo.id)
     },
     // 用户名
     nickname () {
-      return this.$store.getters['UserInfo/nickname'] || '无名'
+      return this.$store.state.UserInfo.userInfo.nickname || '无名'
     },
     // 头像
     avatarUrl () {
-      return this.$store.getters['UserInfo/avatarUrl'] || '../../../static/images/user.png'
+      return this.$store.state.UserInfo.userInfo.avatarUrl || '../../../static/images/user.png'
     },
     // 电话号码
     phone () {
-      return this.$store.getters['UserInfo/phone'] || '13*********'
+      return this.$store.state.UserInfo.userInfo.phone || '13*********'
     },
     // 余额
     balance () {
