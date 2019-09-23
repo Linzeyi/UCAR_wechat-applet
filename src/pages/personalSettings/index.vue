@@ -220,6 +220,7 @@ export default {
       });
     },
     logout() {
+      const _this = this
       wx.showModal({
         title: "确定退出？",
         content: "退出登录后将无法查看订单，重新登录后即可查看。",
@@ -230,7 +231,7 @@ export default {
             wx.removeStorage({
               key: "token"
             });
-            this.Utils.navigateTo("/pages/login/main");
+            _this.Utils.navigateTo("/pages/login/main");
           }
         }
       });
