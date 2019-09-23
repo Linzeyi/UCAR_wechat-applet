@@ -20,7 +20,7 @@
           <div class="scroll-right-lable">
             <span>{{classList[selectClassIndex]}}</span>
           </div>
-          <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
+          <goods-grid-list :goodsList="goodsList" :col="2" :isClassification="true"></goods-grid-list>
         </scroll-view>
       </div>
     </base-custom-box>
