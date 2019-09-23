@@ -11,18 +11,18 @@
       <div class="logged-in" v-else>
         <div class="user-info" @click="routeTo('personalSettings')">
           <div>
-            <img src="../../../static/images/user.png" alt="" class="user-icon">
+            <img :src="avatarUrl" alt="" class="user-icon">
           </div>
           <div class="info">
             <div class="user-name">
-              <p class="name">{{ accountName }}</p><span>{{ accountLevel }}</span>
+              <p class="name">{{ nickname }}</p><span>{{ grade }}</span>
             </div>
             <p>积分：{{ integral }}</p>
           </div>
           <i class="iconfont setting">&#xe61f;</i>
         </div>
         <div class="phone">
-          <p>{{ encodePhone }}</p>
+          <p>{{ phone }}</p>
         </div>
       </div>
       <div class="weui-cells">
@@ -72,8 +72,6 @@
           </span>
         </div>
       </div>
-      <button class="weui-btn" @click="routeTo('selectAddress')" style="margin-top: 20px;">选择地址</button>
-      <button class="weui-btn" @click="testApi" style="margin-top: 20px;">接口调试</button>
     </BaseCustomBox>
   </div>
 </template>
@@ -88,32 +86,50 @@ export default {
     BaseCustomBox
   },
   data () {
-    return {
-      accountName: 'ThO', // 用户名
-      accountLevel: '钻石', // 账户星级
-      integral: 135, // 积分
-      phone: '13015768195', // 手机号码
-      balance: '100.00', // 余额
-      orderNum: 20, // 订单数
-      isLogged: false // 登录状态
-    }
-  },
-  onLoad () {
-    if (wx.getStorageSync('token')) {
-      this.isLogged = true
-    }
+    return {}
   },
   onShow () {
-    // 判断登录状态
-    if (wx.getStorageSync('token')) {
-      this.isLogged = true
+    if (this.isLogged) {
+      // 获取个人实时数据
+      this.$store.commit('UserCenter/GET_REAL_TIME_DATA')
     }
   },
   computed: {
-    // 电话号码加密
-    encodePhone () {
-      var str = this.phone.slice(0, 3) + '****' + this.phone.slice(7)
-      return str
+    // 判断登录
+    isLogged () {
+      // 加载第一次登录所需数据
+      if (this.$store.getters['UserInfo/id'] !== '') {
+        this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
+      }
+      return this.$store.getters['UserInfo/id'] !== ''
+    },
+    // 用户名
+    nickname () {
+      return this.$store.getters['UserInfo/nickname'] || '无名'
+    },
+    // 头像
+    avatarUrl () {
+      return this.$store.getters['UserInfo/avatarUrl'] || '../../../static/images/user.png'
+    },
+    // 电话号码
+    phone () {
+      return this.$store.getters['UserInfo/phone'] || '13*********'
+    },
+    // 余额
+    balance () {
+      return this.$store.getters['UserCenter/balance'] || '0.00'
+    },
+    // 积分
+    integral () {
+      return this.$store.getters['UserCenter/integral'] || '0'
+    },
+    // 等级
+    grade () {
+      return this.$store.getters['UserCenter/grade'] || '青铜'
+    },
+    // 订单条数
+    orderNum () {
+      return this.$store.getters['UserCenter/orderNum'] || '0'
     },
     // 新消息条数
     newMessageNum () {
@@ -122,28 +138,12 @@ export default {
     // 总消息条数
     messageNum () {
       return this.$store.getters['Message/messageNum']
-    },
-    // 获取个人中心页面的所有实时信息
-    getRealTimeData () {
-      if (this.isLogged) {
-        // 获取个人信息
-        this.$http.get('/action/user/getInfo').then(res => {
-          if (res !== '') {
-            console.log(res.data, 'user info')
-          }
-        })
-        // 获取所有消息
-        this.$http.get('/action/message/getAllMessage').then(res => {
-          console.log(res.data, 'all message')
-          this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
-        })
-      }
     }
   },
   methods: {
     // 登录
     login () {
-      this.isLogged = true
+      mpvue.navigateTo({ url: '/pages/login/main' })
     },
 
     // 跳转页面
@@ -161,19 +161,10 @@ export default {
         case 'order':
           mpvue.navigateTo({ url: '/pages/myOrders/main' })
           break
-        case 'selectAddress':
-          mpvue.navigateTo({ url: '/pages/selectAddress/main' })
-          break
         case 'personalSettings':
           mpvue.navigateTo({ url: '/pages/personalSettings/main' })
           break
       }
-    },
-    testApi () {
-      // this.$http.post('/action/message/setMessageReaded', { msgId: 1 }).then(res => {
-      //   console.log(res, 'set message readed')
-      // })
-      // this.$store.commit('Message/INIT_WEBSOCKET')
     }
   }
 }
@@ -198,6 +189,7 @@ export default {
         height: 80px;
         width: 80px;
         border-radius: 50%;
+        margin: 0 15px;
       }
       .btn-login {
         font-size: 12px;
@@ -215,11 +207,11 @@ export default {
       align-items: center;
       justify-content: space-around;
       .user-icon {
-        height: 80px;
-        width: 80px;
+        height: 60px;
+        width: 60px;
         flex: 5;
-        padding: 0 5px;
         border-radius: 50%;
+        margin: 0 15px;
       }
       .info {
         flex: 3;

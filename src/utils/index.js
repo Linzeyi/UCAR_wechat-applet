@@ -28,9 +28,24 @@ export function getHMSTime (date) {
 
 export const regularRule = {
   phone: /^(13[0-9]|14[5|7]|15[0-9]|17[0-9]|18[0-9])\d{8}$/,
-  money: /^(([1-9]{0,7})?|0)(\.[0-9]{1,2})*$/,
+  money: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
   mail: /^\w+@[a-zA-Z0-9]{2,10}\.(com|cn)$/,
   postCode: /^([0-9]{6})|0$/
+}
+
+export function limitMoney (val) {
+  let sNum = val.toString() // 先转换成字符串类型
+  if (sNum.indexOf('.') === 0) { // 第一位就是 .
+    console.log('first str is .')
+    sNum = '0' + sNum
+  }
+  sNum = sNum.replace(/[^\d.]/g, ''); // 清除“数字”和“.”以外的字符
+  sNum = sNum.replace(/\.{2,}/g, '.'); // 只保留第一个. 清除多余的
+  sNum = sNum.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
+  sNum = sNum.replace(/^(-)*(\d+)\.(\d\d).*$/, '$1$2.$3'); // 只能输入两个小数
+  if (sNum.indexOf('.') < 0 && sNum !== '') {
+    sNum = parseFloat(sNum);
+  }
 }
 
 export function navigateTo(url) {

@@ -43,9 +43,6 @@ export default {
     addressList () {
       let addrList = this.$store.getters['UserCenter/addressList']
       return addrList
-    },
-    test () {
-      console.log(this.selected)
     }
   },
   methods: {
@@ -54,7 +51,6 @@ export default {
     },
     confirm () {
       this.$store.commit('UserCenter/SET_SELECTED_ADDRESS', this.selected)
-      console.log(this.$store.getters['UserCenter/selectedAddress'], 'selected address')
       mpvue.navigateBack()
     }
   }

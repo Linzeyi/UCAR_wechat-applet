@@ -179,8 +179,8 @@ export default {
               if (res.status === 20000) {
                 mpvue.navigateBack()
                 this.showToast('添加成功', 'success')
-              } else {
-                this.showToast('添加失败')
+              } else if (res.msg) {
+                this.showToast(res.msg, 'none')
               }
             }
           })

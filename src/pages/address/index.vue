@@ -227,6 +227,8 @@ export default {
       box-shadow: 0 0.01px 3px rgb(221, 221, 221);
       font-size: 13px;
       padding: 12px 15px;
+      box-sizing: border-box;
+      -webkit-box-sizing: border-box;
       .receiver-name {
         margin-right: 8px;
       }
@@ -256,6 +258,7 @@ export default {
     position: fixed;
     right: 18px;
     bottom: 40px;
+    z-index: 9;
     i {
       font-size: 1rem;
       color: @orange;

@@ -25,7 +25,7 @@
             :placeholder="'搜索'" 
             v-model="searchContent"
             :focus="isShowSearchPage"
-            @input="submitSearch">
+            @blur="submitSearch">
           <div class="weui-icon-clear clear-icon" v-if="searchContent.length > 0" @click="clearInput">
             <icon type="clear" size="14"></icon>
           </div>
@@ -51,7 +51,6 @@
 
 <script>
 import goodsGridList from '@/components/goodsGridList/goodsGridList'
-import { goodsList } from '@/fake.js'
 
 export default {
   components: {
@@ -60,12 +59,11 @@ export default {
   data () {
     return {
       popularSearch: undefined, // 热门搜索列表
-      // popularSearch: popularSearch,
       recommendSearch: ['汽车打火机', '德利汽车润滑油', '汽车转向盘'], // 推荐搜索列表
       isShowSearchPage: false, // 控制搜索副页展示
       isShowSearchResult: false, // 控制搜索结果显示，与显示推荐搜索互斥
       searchContent: '', // 搜索栏内容
-      goodsList: goodsList
+      goodsList: []
     }
   },
   onLoad () {
@@ -74,7 +72,6 @@ export default {
       if (res !== '' && res.status === 20000) {
         let para = JSON.parse(res.data)
         this.popularSearch = para
-        console.log(this.popularSearch, 'popular search')
       }
     })
   },
@@ -96,7 +93,9 @@ export default {
             size: 10
           }
         }).then(res => {
-          console.log(res, 'searchGoods')
+          if (res.data) {
+            this.goodsList = res.data
+          }
         })
       } else {
         this.searchContent = ''
@@ -110,8 +109,21 @@ export default {
     clearInput() {
       this.searchContent = ''
     },
+    // 实时查询商品
     submitSearch () {
-      // 实时查询商品
+      console.log(this.searchContent, '查询！')
+      this.$http.post('/action/goods/searchGoods', {
+        tagNo: 0,
+        tagName: this.searchContent,
+        elasticPageParam: {
+          start: 0,
+          size: 10
+        }
+      }).then(res => {
+        if (res.data) {
+          this.goodsList = res.data
+        }
+      })
     }
   }
 }

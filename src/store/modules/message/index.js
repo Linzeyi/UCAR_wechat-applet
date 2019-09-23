@@ -46,9 +46,9 @@ export default {
       try {
         state.socket = wx.connectSocket({
           // todo 123 = uid
-          // url: 'ws://10.112.12.45:8080/trainljsys/websocket/' + 123,
+          url: 'ws://10.104.118.231:8080/trainljsys/websocket/uId' + this.getters['UserInfo/id'],
           // url: 'ws://10.112.11.18:8090',
-          url: 'ws://localhost:8181',
+          // url: 'ws://localhost:8181',
           success () {
             console.log('[Socket] 创建连接…')
           }
@@ -88,7 +88,7 @@ export default {
       console.log('[Socket] 关闭socket')
     },
     ADD_NEW_MESSAGE (state, message) {
-      state.messageList.unshift(JSON.parse(message))
+      state.messageList.unshift(message)
     },
     SET_MESSAGE_READ (state, idList) {
       for (const id of idList) {
@@ -102,41 +102,8 @@ export default {
     }
   },
   actions: {
-    initWebSocket (state) {
-      let that = this
-      try {
-        state.socket = wx.connectSocket({
-          // url: 'ws://10.112.12.45:8080/trainljsys/websocket/' + 123,
-          // url: 'ws://10.112.11.18:8090',
-          url: 'ws://localhost:8181',
-          success () {
-            console.log('[Socket] 创建连接…')
-          }
-        })
-        wx.onSocketOpen(() => {
-          console.log('[Socket] 连接成功！')
-          state.connection = 10
-          wx.sendSocketMessage({
-            data: '前端连接成功！'
-          })
-        })
-        wx.onSocketClose(() => {
-          if (state.connection > 0) {
-            console.log(`[Socket] 重新连接…${11 - state.connection}`)
-            state.connection--
-            setTimeout(that.commit('Message/INIT_WEBSOCKET'), 5000)
-          } else {
-            console.log('[Socket] 连接超时')
-          }
-        })
-        wx.onSocketMessage(res => {
-          console.log('[Socket] 收到一条消息：', res.data)
-          // todo 处理data，去除‘/’
-          that.commit('Message/ADD_NEW_MESSAGE', res.data)
-        })
-      } catch (e) {
-        console.log('[Socket Error]', e)
-      }
+    init_webSocket ({ commit }, state) {
+      this.commit('Message/CONNECT_WEBSOCKET')
     }
   }
 }

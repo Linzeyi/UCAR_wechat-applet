@@ -1,10 +1,12 @@
 import Vue from 'vue'
+import $http from '@/api/http.js'
 export default {
   namespaced: true,
   state: {
-    balance: undefined, // 余额
-    integral: undefined, // 积分
-    accountLevel: undefined, // 账户星级
+    balance: '0.00', // 余额
+    integral: '0', // 积分
+    grade: '塑料', // 账户星级
+    growth: '0', // 成长值
     phone: undefined, // 手机号
     orderNum: undefined, // 订单条数
     message: undefined, // 消息条数
@@ -14,6 +16,8 @@ export default {
     isEdited: false
   },
   getters: {
+    balance: state => state.balance,
+    orderNum: state => state.orderNum,
     defaultAddress: state => {
       if (state.addressList.length) {
         return state.addressList.find(item => {
@@ -30,14 +34,15 @@ export default {
         let addr = state.addressList.find(item => {
           return item.id === state.selectedAddress
         })
-        addr.address = addr.region.toString().replace(/,/g, '') + addr.address
-        return addr
+        let para = JSON.parse(JSON.stringify(addr))
+        para.address = para.region.toString().replace(/,/g, '') + para.address
+        return para
       } else {
-        let addr = getters.addressList[0]
-        if (addr) {
-          addr.address = addr.region.toString().replace(/,/g, '') + addr.address
+        let para = JSON.parse(JSON.stringify(getters.addressList[0]))
+        if (para) {
+          para.address = para.region.toString().replace(/,/g, '') + para.address
         }
-        return addr
+        return para
       }
     },
     // 排序，默认地址在最前
@@ -82,7 +87,6 @@ export default {
       }
     },
     SET_ADDRESS_LIST (state, addrList) {
-      console.log(state.selectedAddress, '[selected]set addressList')
       if (addrList && addrList.length !== 0) {
         state.addressList.length = 0
         for (const addr of addrList) {
@@ -114,6 +118,59 @@ export default {
           state.addressList.push(data)
         }
       }
+    },
+    FIRST_LOGIN_GET_DATA (state) {
+      // 获取所有消息
+      $http.get('/action/message/getAllMessage').then(res => {
+        console.log(res.data, 'all message')
+        this.commit('Message/SET_MESSAGE_LIST', res.data)
+      })
+      // 获取所有地址
+      $http.get('/action/addr/list').then(res => {
+        if (res) {
+          this.commit('UserCenter/SET_ADDRESS_LIST', res.data.addressList)
+        } else {
+          wx.showToast({
+            title: '获取地址失败',
+            icon: 'none'
+          })
+        }
+      })
+      // 获取个人信息
+      $http.get('/action/user/detail').then(res => {
+        if (res.data) {
+          console.log(res.data, 'user info')
+          state.balance = res.data.balance + ''
+          if (state.balance.search('.') === -1) {
+            state.balance += '.00'
+          }
+          state.integral = res.data.integral + ''
+          state.grade = res.data.grade
+          state.growth = res.data.growth + ''
+        }
+      })
+    },
+    GET_REAL_TIME_DATA (state) {
+      // 获取账户余额
+      // $http.get('/action/wallet/getBalance').then(res => {
+      //   if (res) {
+      //     let para = res.data.balance + ''
+      //     if (para.search('.') === -1) {
+      //       para += '.00'
+      //     }
+      //     state.balance = para
+      //   }
+      // })
+      // 获取订单数量
+      $http.get('/action/order/getOrderList', {
+        status: -1,
+        start: 0,
+        size: 100
+      }).then(res => {
+        if (res) {
+          state.orderNum = res.data.length
+        }
+      })
     }
   },
   actions: {}

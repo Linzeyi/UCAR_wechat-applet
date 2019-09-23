@@ -39,12 +39,18 @@
 </template>
 
 <script>
-import { messageList } from '@/fake.js'
 export default {
   data () {
     return {
-      messageList: messageList
+      messageList: []
     }
+  },
+  onShow () {
+    // 发送请求获取所有消息
+    this.$http.get('/action/message/getAllMessage').then(res => {
+      console.log(res.data, 'all message')
+      this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
+    })
   },
   onUnload () {
     // 退出页面时把已读消息更新到store中
@@ -79,12 +85,15 @@ export default {
     // 获取新消息
     getMessageList () {
       wx.showNavigationBarLoading()
-      this.$store.commit('Message/SET_MESSAGE_READ', this.setMessageRead)
-      setTimeout(() => {
-        this.$store.commit('Message/SET_MESSAGE_LIST', messageList)
+      if (this.setMessageRead.length) {
+        this.$store.commit('Message/SET_MESSAGE_READ', this.setMessageRead)
+      }
+      this.$http.get('/action/message/getAllMessage').then(res => {
+        console.log(res.data, 'all message')
+        this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
         wx.stopPullDownRefresh()
         wx.hideNavigationBarLoading()
-      }, 2000)
+      })
     }
   },
   // 下拉刷新
