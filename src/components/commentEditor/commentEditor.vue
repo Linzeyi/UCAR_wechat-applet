@@ -45,20 +45,17 @@ export default {
   },
   data () {
     return {
-      goodsNo: undefined,
       content: '',
       score: 0
     }
   },
   onLoad () {
-    this.goodsNo = this.$root.$mp.query.id
   },
   onUnload () {
     this.init()
   },
   methods: {
     init () {
-      this.goodsNo = undefined
       this.content = ''
       this.score = 0
     },
@@ -94,8 +91,9 @@ export default {
               icon: 'success',
               duration: 2000
             })
+            this.goods.commentStatus = 1
+            this.init()
             this.$emit('commentSucceed')
-            mpvue.navigateBack({ delta: 1 })
           } else {
             wx.showToast({
               title: '发表失败',

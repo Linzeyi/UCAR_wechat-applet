@@ -129,8 +129,9 @@ export default {
 
 <style lang="less" scoped>
 .goods-grids-wrap {
+  height: 100%;
   padding: 5px;
-  background-color: #f3f3f3;
+  background-color: #f1f1f1;
   .no-goods-panel {
     padding: 30px 0;
     p {
@@ -149,6 +150,7 @@ export default {
   .goods-grids {
     border: none;
     column-gap: 0;
+    height: calc(100% - 75px);
     .grid-box {
       padding: 5px;
       break-inside: avoid;
@@ -204,6 +206,7 @@ export default {
             display: -webkit-box;
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 1;
+            overflow: hidden;
             .logo {
               font-size: 11px;
             }

@@ -64,7 +64,7 @@
       <div class="panel num-panel">
         <p v-if="checkProperty">
           <span class="panel-title">数量</span>
-          <num-picker :max="property.stock" :num.sync="num"></num-picker>
+          <num-picker :min="1" :max="goods.categoryName === '积分' ? 1 : property.stock" :num.sync="num"></num-picker>
         </p>
         <p v-else>
           <span class="panel-title">数量</span>

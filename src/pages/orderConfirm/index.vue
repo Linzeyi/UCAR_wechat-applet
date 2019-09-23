@@ -45,17 +45,27 @@
                 </p>
               </div>
               <div class="right-box">
-                <p class="price"><span class="logo">¥</span>{{goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice}}</p>
+                <p class="price" v-if="checkIntegral">{{goodsItem.property.discountPrice}} 分</p>
+                <p class="price" v-else>
+                  <span class="logo">¥</span>{{goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice}}
+                </p>
                 <p class="num">x{{goodsItem.num}}</p>
               </div>
             </div>
             <div class="footer">
               <p>
-                <span class="num">共{{goodsItem.num}}件</span>
-                  小记：<span class="price"><span class="logo">¥</span>
+                <span class="num" v-if="checkIntegral">共1件</span>
+                <span class="num" v-else>共{{goodsItem.num}}件</span>
+                小记：
+                <span class="price" v-if="checkIntegral">
+                  {{goodsItem.property.discountPrice}} 点积分
+                </span>
+                <span class="price" v-else>
+                  <span class="logo">¥</span>
                   <com-price-counter :price="goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice" :num="goodsItem.num"></com-price-counter>
                 </span>
               </p>
+              <p class="integral-font" v-if="checkIntegral">该商品是积分商品，仅能通过积分兑换，且仅能兑换一件！</p>
             </div>
           </div>
         </div>
@@ -70,7 +80,13 @@
         <div class="order-footer lzy-footer">
           <div class="right-box">
             <span class="num">共{{getTotalNum}}件，</span>
-            合计:<span class="total-price"><span class="logo">¥</span>{{getTotalPrice}}</span>
+            合计:
+            <span class="total-price" v-if="checkIntegral">
+              {{getCurrentIntegral}} 点积分
+            </span>
+            <span class="total-price" v-else>
+              <span class="logo">¥</span>{{getTotalPrice}}
+            </span>
             <button class="confirmOrder-btn" @click="toOrderDetail">提交订单</button>
           </div>
         </div>
@@ -94,7 +110,8 @@ export default {
       order: {
         remark: '',
         receiptInfo: {},
-        goodsList: []
+        goodsList: [],
+        orderSource: 0
       },
       address: {}
     }
@@ -102,6 +119,11 @@ export default {
   onLoad (option) {
     this.getGoodsList()
     this.getDefaultAddress()
+    this.setAddress()
+    this.order.orderSource = option.orderSource
+  },
+  onShow () {
+    this.setAddress()
   },
   onUnload () {
     this.init()
@@ -110,14 +132,22 @@ export default {
     this.getDefaultAddress()
   },
   computed: {
+    checkIntegral () {
+      if (this.order.goodsList.length) {
+        return this.order.goodsList[0].categoryName === '积分'
+      } else {
+        return false
+      }
+    },
+    getCurrentIntegral () {
+      let price = 0
+      this.order.goodsList.map(item => {
+        price += item.num * item.property.discountPrice
+      })
+      return price.toFixed(0)
+    },
     getDefaultImg () {
       return this.Utils.getSquareDefaultImg()
-    },
-    getAddress () {
-      return this.$store.getters['UserCenter/selectedAddress']
-    },
-    toEditAddress () {
-      mpvue.navigateTo({ url: '/pages/selectAddress/main' })
     },
     getTotalNum () {
       let num = 0
@@ -141,6 +171,18 @@ export default {
       console.log('orderConfirm页面销毁')
       this.$store.commit('Order/INIT_ORDER')
     },
+    setAddress () {
+      let address = this.$store.getters['UserCenter/selectedAddress']
+      console.log(address)
+      if (address) {
+        this.address = {
+          'receiptName': address.receiverName,
+          'receiptAddress': address.address,
+          'receiptTel': address.receiverPhone,
+          'isDefault': address.isDefault
+        }
+      }
+    },
     getDefaultAddress () {
       this.$http.get('/action/addr/getDefault').then(res => {
         if (res.data) {
@@ -148,7 +190,6 @@ export default {
           this.$set(this.address, 'receiptAddress', res.data.address.province + res.data.address.city + res.data.address.district + res.data.address.addressDetail)
           this.$set(this.address, 'receiptTel', res.data.address.phone)
           this.$set(this.address, 'isDefault', res.data.address.isDefault)
-          console.log(this.address)
         } else {
           wx.showToast({
             title: '获取地址失败',
@@ -200,6 +241,8 @@ export default {
     },
     toOrderDetail () {
       let that = this
+      console.log('订单提交')
+      console.log(this.checkIntegral)
       wx.showModal({
         title: '提交订单',
         content: '是否提交该订单',
@@ -207,26 +250,49 @@ export default {
         confirmText: '是',
         success (res) {
           if (res.confirm) {
+            wx.showLoading({
+              title: '正在提交',
+              mask: true
+            })
             that.order.createTime = that.Utils.formatTime(new Date())
-            that.order.orderType = 0
             that.order.receiptInfo = that.address
-            console.log(that.order)
+            if (that.checkIntegral) {
+              that.order.orderType = 1
+            } else {
+              that.order.orderType = 0
+            }
             that.$http.post('/action/order/setOrder', that.order).then(res => {
               console.log(res)
               if (res.data) {
-                mpvue.redirectTo({ url: '/pages/orderDetail/main?orderNo=' + res.data.orderNo })
-                wx.showToast({
-                  title: '成功获取订单',
-                  icon: 'success',
-                  duration: 2000
+                wx.showModal({
+                  title: '下单成功',
+                  content: '是否前往订单详情页',
+                  cancelText: '返回',
+                  confirmText: '订单详情',
+                  success (modalRes) {
+                    if (modalRes.confirm) {
+                      mpvue.redirectTo({ url: '/pages/orderDetail/main?orderNo=' + res.data.orderNo })
+                    } else {
+                      mpvue.navigateBack({ delta: 1 })
+                    }
+                  }
                 })
               } else {
                 wx.showToast({
-                  title: '查询失败',
+                  title: '下单失败',
                   icon: 'none',
                   duration: 2000
                 })
               }
+              wx.hideLoading()
+            }).catch(err => {
+              console.log(err)
+              wx.showToast({
+                title: '下单失败',
+                icon: 'none',
+                duration: 2000
+              })
+              wx.hideLoading()
             })
           }
         }
@@ -318,6 +384,11 @@ export default {
       .footer {
         padding-top: 10px;
         font-size: 13px;
+        .integral-font {
+          font-size: 12px;
+          margin-top: 7px;
+          color: #ec4e09;
+        }
         p {
           font-size: 11px;
           text-align: right;

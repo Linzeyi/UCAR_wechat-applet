@@ -21,7 +21,7 @@
               </span>
             </span>
           </p>
-          <p class="stock">库存{{selectedProperty.stock}}件</p>
+          <p class="stock">库存{{selectedProperty ? selectedProperty.stock : 0}}件</p>
           <p class="info">已选：{{selectedProperty.propertyName}}</p>
         </div>
       </div>
@@ -43,8 +43,9 @@
       <div class="content-panel numPicker-panel">
         <div class="header">
           <span>购买数量</span>
-          <span class="right-box"><num-picker :min="1" :max="selectedProperty.stock" :num.sync="num"></num-picker></span>
+          <span class="right-box"><num-picker :min="selectedProperty.stock? 1 : 0" :max="goods.categoryName === '积分' ? 1 : (selectedProperty.stock ? selectedProperty.stock : 0)" :num.sync="num"></num-picker></span>
         </div>
+        <p class="integral-font" v-if="goods.categoryName === '积分'">积分商品仅能兑换一件！</p>
       </div>
       <div class="content-panel dialog-footer">
         <div class="goods-detail-btn btn-panel" v-if="parentType === 'goodsDetail'">
@@ -97,6 +98,9 @@ export default {
       num: 1,
       selectedProperty: {}
     }
+  },
+  onShow () {
+
   },
   onUnload () {
     this.init()
@@ -182,13 +186,20 @@ export default {
         goodsNo: this.goods.goodsNo
       }).then(res => {
         if (res.data) {
-          console.log('规格数组：', res.data.propertyReList)
           this.propertyList = res.data.propertyReList
           this.num = this.pNum ? this.pNum : 1
-          if (JSON.stringify(this.property) === '{}') {
+          if (JSON.stringify(this.property) === '{}' || JSON.stringify(this.property.stock) === 'undefiend') {
             this.selectedProperty = this.propertyList[0]
           } else {
             this.selectedProperty = this.property
+            this.propertyList.map(item => {
+              if (item.id === this.property.id) {
+                this.selectedProperty.stock = item.stock
+              }
+            })
+          }
+          if (!this.selectedProperty.stock) {
+            this.num = 0
           }
         }
       })
@@ -200,18 +211,43 @@ export default {
       })
     },
     handlerSelectedType () {
-      this.$emit('changeProperty', this.selectedProperty, this.num, this.property, this.pNum, this.goods)
-      this.showTypeDialog(false)
+      if (this.selectedProperty.stock) {
+        this.$emit('changeProperty', this.selectedProperty, this.num, this.property, this.pNum, this.goods)
+        this.showTypeDialog(false)
+      } else {
+        wx.showToast({
+          title: '库存为0',
+          icon: 'none',
+          duration: 2000
+        })
+      }
     },
     selectType (property) {
       this.selectedProperty = property
+      if (this.selectedProperty.stock < this.num) {
+        wx.showToast({
+          title: '库存不足',
+          icon: 'none',
+          duration: 2000
+        })
+        this.num = this.selectedProperty.stock
+      }
     },
     toOrderConfirm () {
-      let goods = JSON.parse(JSON.stringify(this.goods))
-      goods.property = this.selectedProperty
-      goods.num = this.num
-      this.showTypeDialog(false)
-      mpvue.navigateTo({ url: '/pages/orderConfirm/main' })
+      if (this.selectedProperty.stock) {
+        let goods = JSON.parse(JSON.stringify(this.goods))
+        goods.property = this.selectedProperty
+        goods.num = this.num
+        this.showTypeDialog(false)
+        this.$store.commit('Order/SET_GOODSLIST', [goods])
+        mpvue.navigateTo({ url: '/pages/orderConfirm/main?orderSource=1' })
+      } else {
+        wx.showToast({
+          title: '库存为0',
+          icon: 'none',
+          duration: 2000
+        })
+      }
     }
   }
 }
@@ -337,6 +373,12 @@ export default {
             flex-grow: 1;
             text-align: right;
           }
+        }
+        .integral-font {
+          font-size: 12px;
+          color: #ec4e09;
+          margin-top: 10px;
+          text-align: right;
         }
       }
       &.dialog-footer {
