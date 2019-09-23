@@ -152,15 +152,15 @@ export default {
     },
     GET_REAL_TIME_DATA (state) {
       // 获取账户余额
-      // $http.get('/action/wallet/getBalance').then(res => {
-      //   if (res) {
-      //     let para = res.data.balance + ''
-      //     if (para.search('.') === -1) {
-      //       para += '.00'
-      //     }
-      //     state.balance = para
-      //   }
-      // })
+      $http.get('/action/wallet/getBalance').then(res => {
+        if (res) {
+          let para = res.data.balance + ''
+          if (para.search('.') === -1) {
+            para += '.00'
+          }
+          state.balance = para
+        }
+      })
       // 获取订单数量
       $http.get('/action/order/getOrderList', {
         status: -1,

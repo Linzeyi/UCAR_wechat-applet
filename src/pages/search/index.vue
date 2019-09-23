@@ -140,9 +140,9 @@ export default {
   height: 100%;
   background-color: #f3f3f3;
   .search-bar {
-    border: 0.1px solid @orange;
+    border: 0.1px solid #ff5810;
     border-radius: 20px;
-    box-shadow: 0 0.08px 3px @orange;
+    box-shadow: 0 0.08px 3px #ff550c;
     background: #ffffff;
     display: flex;
     justify-content: center;
@@ -168,7 +168,7 @@ export default {
     font-size: 16px;
     background-color: #ffffff;
     border-radius: 5px;
-    box-shadow: -0.05px 0.5px 1px @orange;
+    box-shadow: -1.5px 1.5px 1px @orange;
   }
   .search-page {
     height:100%;

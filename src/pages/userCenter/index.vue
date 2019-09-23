@@ -179,7 +179,10 @@ export default {
   font-family: @baoWoFont;
   height: 100%;
   .not-logged {
-    height: 111px;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     .log-in {
       display: flex;
       flex-direction: column;
@@ -202,6 +205,7 @@ export default {
     }
   }
   .logged-in {
+    height: 130px;
     .user-info {
       display: flex;
       align-items: center;
@@ -249,25 +253,28 @@ export default {
     }
   }
   .weui-cells {
-    box-shadow: 0 3px 3px rgb(223, 223, 223), 0 -0.8px 4px rgb(223, 223, 223);
+    box-shadow: 0 3px 3px rgb(223, 223, 223), 0 -0.3px 4px rgb(223, 223, 223);
     p {
       padding: 5px 0;
     }
-    .weui-cell__hd .iconfont {
-      font-size: 0.5rem;
-      margin-right: 9px;
-      color: @orange;
-    }
-    .weui-cell__bd {
-      p {
-        display: inline-block;
+    .weui-cell {
+      height: 45px;
+      .weui-cell__hd .iconfont {
+        font-size: 0.5rem;
+        margin-right: 9px;
+        color: @orange;
       }
-      .weui-badge {
-        margin-left: 5px;
+      .weui-cell__bd {
+        p {
+          display: inline-block;
+        }
+        .weui-badge {
+          margin-left: 5px;
+        }
       }
-    }
-    .weui-cell__ft .iconfont {
-      font-size: 0.3rem;
+      .weui-cell__ft .iconfont {
+        font-size: 0.3rem;
+      }
     }
   }
 }
