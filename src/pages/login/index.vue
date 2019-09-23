@@ -75,7 +75,8 @@ export default {
         return;
       }
       await this.login();
-      this.getAddress();
+      await this.getAddress();
+      mpvue.navigateBack();
     },
     async login() {
       const result = await this.$http.post("/action/user/login", {

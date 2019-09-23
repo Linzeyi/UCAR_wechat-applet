@@ -77,18 +77,21 @@
     </base-action-sheet>
     <mp-loading :showLoading="showLoading" loadingText="上传图片中" :mask="true"></mp-loading>
     <base-toast></base-toast>
+    <base-load :loadStatus="loadStatus" @reLoad="loadUserInfo"></base-load>
   </div>
 </template>
 
 <script>
 import BaseToast from "@/components/base/BaseToast";
 import BaseActionSheet from "@/components/base/BaseActionSheet";
+import BaseLoad from "@/components/base/BaseLoad";
 import mpLoading from "mpvue-weui/src/loading";
 export default {
   components: {
     BaseToast,
     BaseActionSheet,
-    mpLoading
+    mpLoading,
+    BaseLoad
   },
   data() {
     return {
@@ -101,7 +104,8 @@ export default {
       showAvatarSheet: false,
       showGenderSheet: false,
       focusIndex: "",
-      showLoading: false
+      showLoading: false,
+      loadStatus: ""
     };
   },
   async onShow() {
@@ -114,12 +118,18 @@ export default {
   },
   methods: {
     async loadUserInfo() {
-      const result = await this.$http.get("/action/user/getInfo");
-      this.id = result.data.memberInfo.id;
-      this.avatarUrl = result.data.memberInfo.avatarUrl;
-      this.nickname = result.data.memberInfo.nickname;
-      this.email = result.data.memberInfo.email;
-      this.sex = result.data.memberInfo.sex;
+      try {
+        this.loadStatus = "loading";
+        const result = await this.$http.get("/action/user/getInfo");
+        this.id = result.data.memberInfo.id;
+        this.avatarUrl = result.data.memberInfo.avatarUrl;
+        this.nickname = result.data.memberInfo.nickname;
+        this.email = result.data.memberInfo.email;
+        this.sex = result.data.memberInfo.sex;
+        this.loadStatus = "online";
+      } catch (error) {
+        this.loadStatus = "offline";
+      }
     },
     previewImage() {
       if (this.avatarUrl === "") {

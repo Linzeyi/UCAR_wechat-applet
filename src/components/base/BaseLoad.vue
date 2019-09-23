@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%">
+  <div style="height: 100%" v-if="loadStatus !== 'online'">
     <div class="loading-box" v-if="loadStatus === 'loading'">
       <img src="/static/images/loading.gif" alt="加载中..." />
     </div>

@@ -49,7 +49,7 @@ export default {
       selectClassIndex: 0,
       goodsList: [],
       classList: [],
-      loadStatus: ''
+      loadStatus: ""
     };
   },
   async onLoad() {
@@ -85,8 +85,8 @@ export default {
       try {
         this.loadStatus = "loading";
         const result = await this.$http.post("/action/goods/getAllCategory");
-        this.loadStatus = "online";
         this.classList = result.data;
+        this.loadStatus = "online";
       } catch (error) {
         this.loadStatus = "offline";
       }
