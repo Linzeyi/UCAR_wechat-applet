@@ -138,6 +138,7 @@ export default {
 }
 
 .scroll-right {
+  background-color: rgb(243, 243, 243);
   .scroll-right-lable {
     display: inline-block;
     height: 100rpx;
