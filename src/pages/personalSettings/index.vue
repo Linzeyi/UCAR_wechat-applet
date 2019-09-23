@@ -227,7 +227,7 @@ export default {
         confirmColor: '#FF6421',
         success(res) {
           if (res.confirm) {
-            this.$store.commit("UserInfo/REMOVE_USERINFO");
+            _this.$store.commit("UserInfo/REMOVE_USERINFO");
             wx.removeStorage({
               key: "token"
             });
