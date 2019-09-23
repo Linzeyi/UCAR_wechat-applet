@@ -6,22 +6,27 @@
         <div class="form-item form-avatar" @click="showAvatarSheet = true;focusIndex=''">
           <span>头像</span>
           <div class="avatar-right-box">
-            <img :src="avatarUrl" @click.stop="previewImage" mode="aspectFill" />
+            <img :src="userInfo.avatarUrl" @click.stop="previewImage" mode="aspectFill" />
             <i class="iconfont icon-size">&#xe6ab;</i>
           </div>
         </div>
         <div class="form-item">
           <span>用户ID</span>
-          <p>{{id}}</p>
+          <p>{{userInfo.id}}</p>
         </div>
         <div class="form-item">
           <span>昵称</span>
           <div class="right-box">
-            <input type="text" placeholder="--" v-model="nickname" @focus="focusIndex='nickname'" />
+            <input
+              type="text"
+              placeholder="--"
+              v-model="userInfo.nickname"
+              @focus="focusIndex='nickname'"
+            />
             <i
               class="iconfont icon-cancel icon-size"
-              v-if="nickname !== '' && focusIndex === 'nickname'"
-              @click="nickname = ''"
+              v-if="userInfo.nickname !== '' && focusIndex === 'nickname'"
+              @click="userInfo.nickname = ''"
             >&#xe65c;</i>
             <i class="iconfont icon-size" v-else>&#xe6ab;</i>
           </div>
@@ -29,11 +34,16 @@
         <div class="form-item">
           <span>邮箱</span>
           <div class="right-box">
-            <input type="text" placeholder="--" v-model="email" @focus="focusIndex='email'" />
+            <input
+              type="text"
+              placeholder="--"
+              v-model="userInfo.email"
+              @focus="focusIndex='email'"
+            />
             <i
               class="iconfont icon-cancel icon-size"
-              v-if="email !== '' && focusIndex === 'email'"
-              @click="email = ''"
+              v-if="userInfo.email !== '' && focusIndex === 'email'"
+              @click="userInfo.email = ''"
             >&#xe65c;</i>
             <i class="iconfont icon-size" v-else>&#xe6ab;</i>
           </div>
@@ -62,9 +72,9 @@
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
     <base-action-sheet :show.sync="showGenderSheet">
-      <div class="action-sheet-item" @click="sex=1">男</div>
-      <div class="action-sheet-item" @click="sex=2">女</div>
-      <div class="action-sheet-item" @click="sex=-1">保密</div>
+      <div class="action-sheet-item" @click="userInfo.sex=1">男</div>
+      <div class="action-sheet-item" @click="userInfo.sex=2">女</div>
+      <div class="action-sheet-item" @click="userInfo.sex=-1">保密</div>
     </base-action-sheet>
     <base-action-sheet :show.sync="showAvatarSheet">
       <button
@@ -77,69 +87,53 @@
     </base-action-sheet>
     <mp-loading :showLoading="showLoading" loadingText="上传图片中" :mask="true"></mp-loading>
     <base-toast></base-toast>
-    <base-load :loadStatus="loadStatus" @reLoad="loadUserInfo"></base-load>
   </div>
 </template>
 
 <script>
 import BaseToast from "@/components/base/BaseToast";
 import BaseActionSheet from "@/components/base/BaseActionSheet";
-import BaseLoad from "@/components/base/BaseLoad";
 import mpLoading from "mpvue-weui/src/loading";
 export default {
   components: {
     BaseToast,
     BaseActionSheet,
-    mpLoading,
-    BaseLoad
+    mpLoading
   },
   data() {
     return {
-      id: "",
-      avatarUrl: "",
-      nickname: "",
-      email: "",
-      sex: 0,
+      userInfo: {
+        id: "",
+        avatarUrl: "",
+        nickname: "",
+        email: "",
+        sex: -1
+      },
       showToast: false,
       showAvatarSheet: false,
       showGenderSheet: false,
       focusIndex: "",
-      showLoading: false,
-      loadStatus: ""
+      showLoading: false
     };
   },
   async onShow() {
-    this.loadUserInfo();
+    this.userInfo = this.$store.getters["UserInfo/userInfo"];
   },
   computed: {
     getSex() {
-      return this.sex === -1 ? "保密" : this.sex === 1 ? "男" : "女";
+      return this.userInfo.sex === -1 ? "保密" : this.userInfo.sex === 1 ? "男" : "女";
     }
   },
   methods: {
-    async loadUserInfo() {
-      try {
-        this.loadStatus = "loading";
-        const result = await this.$http.get("/action/user/getInfo");
-        this.id = result.data.memberInfo.id;
-        this.avatarUrl = result.data.memberInfo.avatarUrl;
-        this.nickname = result.data.memberInfo.nickname;
-        this.email = result.data.memberInfo.email;
-        this.sex = result.data.memberInfo.sex;
-        this.loadStatus = "online";
-      } catch (error) {
-        this.loadStatus = "offline";
-      }
-    },
     previewImage() {
-      if (this.avatarUrl === "") {
+      if (this.userInfo.avatarUrl === "") {
         this.showAvatarSheet = true;
         return;
       }
       const _this = this;
       wx.previewImage({
-        current: _this.avatarUrl,
-        urls: [_this.avatarUrl]
+        current: _this.userInfo.avatarUrl,
+        urls: [_this.userInfo.avatarUrl]
       });
     },
     chooseImage(type) {
@@ -203,7 +197,7 @@ export default {
           fileName: "image",
           file: encodeBase64
         });
-        this.avatarUrl = result.data.imgUrl;
+        this.userInfo.avatarUrl = result.data.imgUrl;
       } catch (error) {
         this.showLoading = false;
         this.$store.commit("BaseStore/SHOW_TOAST", {
@@ -215,10 +209,10 @@ export default {
     },
     saveUserInfo() {
       this.$http.post("/action/user/modifyInfo", {
-        avatarUrl: this.avatarUrl,
-        nickname: this.nickname,
-        email: this.email,
-        sex: this.sex
+        avatarUrl: this.userInfo.avatarUrl,
+        nickname: this.userInfo.nickname,
+        email: this.userInfo.email,
+        sex: this.userInfo.sex
       });
     },
     logout() {

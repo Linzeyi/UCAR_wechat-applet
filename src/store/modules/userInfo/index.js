@@ -1,39 +1,24 @@
 export default {
   namespaced: true,
   state: {
-    id: '',
-    avatarUrl: '',
-    email: '',
-    nickname: '',
-    sex: '',
-    phone: ''
+    userInfo: {
+      id: "",
+      avatarUrl: "",
+      nickname: "",
+      email: "",
+      sex: -1,
+      phone: ''
+    }
   },
   getters: {
-    id: state => state.id,
-    avatarUrl: state => state.avatarUrl,
-    email: state => state.email,
-    nickname: state => state.nickname,
-    sex: state => state.sex,
-    phone: state => state.phone
+    userInfo: state => state.userInfo
   },
   mutations: {
     SET_USERINFO(state, userInfo) {
-      state.id = userInfo.id
-      state.avatarUrl = userInfo.avatarUrl
-      state.email = userInfo.email
-      state.nickname = userInfo.nickname
-      state.sex = userInfo.sex
-      state.phone = userInfo.phone
+      state.userInfo = userInfo
     },
     REMOVE_USERINFO(state) {
-      state.id = ''
-      state.avatarUrl = ''
-      state.email = ''
-      state.nickname = ''
-      state.sex = ''
-      state.phone = ''
+      state.userInfo = {}
     }
-  },
-  actions: {
   }
 }

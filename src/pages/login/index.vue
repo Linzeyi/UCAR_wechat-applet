@@ -98,9 +98,9 @@ export default {
       }
       let userInfo = result.data.memberInfo;
       if (userInfo) {
-        userInfo = { ...userInfo, phone: this.form.phone };
+        userInfo.phone = this.form.phone;
+        this.$store.commit("UserInfo/SET_USERINFO", userInfo);
       }
-      this.$store.commit("UserInfo/SET_USERINFO", userInfo);
     },
     async getAddress() {
       const result = await this.$http.get("/action/addr/list");
