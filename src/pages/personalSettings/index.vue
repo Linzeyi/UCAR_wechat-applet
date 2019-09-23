@@ -216,7 +216,7 @@ export default {
       wx.removeStorage({
         key: "token"
       });
-      this.Utils.switchTab("/pages/login/main");
+      this.Utils.navigateTo("/pages/login/main");
     }
   }
 };

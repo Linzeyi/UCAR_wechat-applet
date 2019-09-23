@@ -3,7 +3,7 @@
     <base-navigation-bar name="分类">
       <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
     </base-navigation-bar>
-    <base-custom-box v-if="isOnline === 'online'">
+    <base-custom-box v-if="loadStatus === 'online'">
       <div class="wrap">
         <scroll-view class="scroll-left" scroll-y scroll-with-animation :scroll-top="scrollTop">
           <div
@@ -24,16 +24,7 @@
         </scroll-view>
       </div>
     </base-custom-box>
-    <div class="loading-box" v-if="isOnline === 'loading'">
-      <img src="/static/images/loading.gif" alt="加载中..." />
-    </div>
-    <div class="offline-box" v-if="isOnline === 'offline'">
-      <img src="/static/images/offline.svg" alt="您的信号飞到外星球了哦~" />
-      <p>您的信号飞到外星球了哦~</p>
-      <div class="refresh" @click="getAllCategory()">
-        <span>重新加载</span>
-      </div>
-    </div>
+    <base-load :loadStatus="loadStatus" @reLoad="getAllCategory"></base-load>
   </div>
 </template>
 
@@ -41,11 +32,13 @@
 import GoodsGridList from "@/components/goodsGridList/goodsGridList";
 import BaseCustomBox from "@/components/base/BaseCustomBox";
 import BaseNavigationBar from "@/components/base/BaseNavigationBar";
+import BaseLoad from "@/components/base/BaseLoad";
 export default {
   components: {
     GoodsGridList,
     BaseCustomBox,
-    BaseNavigationBar
+    BaseNavigationBar,
+    BaseLoad
   },
   data() {
     return {
@@ -56,7 +49,7 @@ export default {
       selectClassIndex: 0,
       goodsList: [],
       classList: [],
-      isOnline: true
+      loadStatus: ''
     };
   },
   async onLoad() {
@@ -90,12 +83,12 @@ export default {
     },
     async getAllCategory() {
       try {
-        this.isOnline = "loading";
+        this.loadStatus = "loading";
         const result = await this.$http.post("/action/goods/getAllCategory");
-        this.isOnline = "online";
+        this.loadStatus = "online";
         this.classList = result.data;
       } catch (error) {
-        this.isOnline = "offline";
+        this.loadStatus = "offline";
       }
     },
     async getGoodsByCategory() {
@@ -190,7 +183,7 @@ export default {
     line-height: 70rpx;
     text-align: center;
     width: 200rpx;
-    background-color: #FFD161;
+    background-color: #ffd161;
   }
 }
 </style>
