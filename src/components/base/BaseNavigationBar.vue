@@ -64,6 +64,7 @@ export default {
   left: 0;
   right: 0;
   top: 0;
+  z-index: 10;
   .nav-icon {
     position: fixed;
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-content" :style="{height: getUsableHeight+'px', top: getCustomNavHeight+'px'}">
+  <div class="custom-content" :style="{top: getCustomNavHeight+'px'}">
     <slot></slot>
   </div>
 </template>
@@ -7,12 +7,6 @@
 <script>
 export default {
   computed: {
-    getUsableHeight() {
-      const systemInfo = wx.getSystemInfoSync();
-      const customNavHeight = this.$store.getters["SystemInfo/customNavHeight"]
-      const usableHeight = systemInfo.windowHeight - customNavHeight
-      return usableHeight;
-    },
     getCustomNavHeight() {
       return this.$store.getters["SystemInfo/customNavHeight"]
     }
