@@ -3,6 +3,9 @@ import $http from '@/api/http.js'
 export default {
   namespaced: true,
   state: {
+    id: '', // 用户id
+    sex: -1, // 性别
+    email: '', // 邮箱
     nickname: undefined, // 用户名
     unionId: undefined, // 用户标示
     balance: '0.00', // 余额
@@ -20,6 +23,9 @@ export default {
     isEdited: false
   },
   getters: {
+    id: state => state.id,
+    sex: state => state.sex,
+    email: state => state.email,
     nickname: state => state.nickname,
     unionId: state => state.unionId,
     balance: state => state.balance,
@@ -187,6 +193,26 @@ export default {
           state.orderNum = res.data.length
         }
       })
+    },
+    RESET_USER_CENTER_STORE (state) {
+      state.id = ''
+      state.sex = -1
+      state.email = ''
+      state.nickname = undefined
+      state.unionId = undefined
+      state.balance = '0.00'
+      state.integral = '0'
+      state.grade = '塑料'
+      state.growth = '0'
+      state.discount = '0'
+      state.phone = undefined
+      state.avatarUrl = undefined
+      state.orderNum = undefined
+      state.message = undefined
+      state.selectedAddress = undefined
+      state.addressList = []
+      state.editAddress = undefined
+      state.isEdited = false
     }
   },
   actions: {}

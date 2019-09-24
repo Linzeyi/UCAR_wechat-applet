@@ -90,22 +90,28 @@ export default {
     BaseCustomBox
   },
   data () {
-    return {}
+    return {
+      isLogged: false // 登录标示
+    }
   },
   onShow () {
+    // 判断是否登录
+    if (wx.getStorageSync('token')) {
+      this.isLogged = true
+    } else {
+      this.isLogged = false
+    }
+    // 获取个人实时数据
     if (this.isLogged) {
-      // 获取个人实时数据
       this.$store.commit('UserCenter/GET_REAL_TIME_DATA')
     }
   },
   computed: {
-    // 判断登录
-    isLogged () {
-      // 加载第一次登录所需数据
-      if (this.$store.state.UserInfo.userInfo.id || wx.getStorageSync('token')) {
+    // 加载第一次登录所需数据
+    firstLogin () {
+      if (this.isLogged) {
         this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
       }
-      return Boolean(wx.getStorageSync('token'))
     },
     // 用户名
     nickname () {
