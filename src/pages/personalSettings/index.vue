@@ -233,16 +233,18 @@ export default {
       this.saveUserInfo();
     },
     async saveUserInfo() {
-      await this.$http.post("/action/user/modifyInfo", {
+      const result = await this.$http.post("/action/user/modifyInfo", {
         avatarUrl: this.userInfo.avatarUrl,
         nickname: this.userInfo.nickname,
         email: this.userInfo.email,
         sex: this.userInfo.sex
       });
-      this.$store.commit("BaseStore/SHOW_TOAST", {
-        type: "success",
-        content: "保存成功"
-      });
+      if (result.status === 20000) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "success",
+          content: "已保存用户信息"
+        });
+      }
     },
     logout() {
       const _this = this;
