@@ -81,10 +81,11 @@ fly.interceptors.response.use(response => {
       title: "跳转登录",
       content: "您还未登陆，登录后即可查看。",
       confirmColor: '#FF6421',
-      showCancel: false,
       success(res) {
         if (res.confirm) {
           mpvue.navigateTo({ url: '/pages/login/main' })
+        } else if (res.cancel) {
+          mpvue.switchTab({ url: '/pages/index/main' })
         }
       }
     });

@@ -28,7 +28,9 @@
         <input type="text" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
       </div>
     </div>
-    <base-button @click="handleCheck">确定</base-button>
+    <base-button @click="handleCheck">
+      <span>确定</span>
+    </base-button>
     <base-toast></base-toast>
   </div>
 </template>

@@ -151,6 +151,7 @@ export default {
   },
   watch: {
     selectTypeKey () {
+      this.size = this.pageSize
       this.getOrderList()
     }
   },

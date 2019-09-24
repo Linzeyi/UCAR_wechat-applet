@@ -20,7 +20,7 @@
           <div class="scroll-right-lable">
             <span>{{classList[selectClassIndex]}}</span>
           </div>
-          <goods-grid-list :goodsList="goodsList" :col="2"></goods-grid-list>
+          <goods-grid-list :goodsList="goodsList" :col="2" :isScroll="false"></goods-grid-list>
         </scroll-view>
       </div>
     </base-custom-box>
@@ -52,12 +52,15 @@ export default {
       loadStatus: ""
     };
   },
-  async onLoad() {
+  onLoad() {
     this.systemInfo = wx.getSystemInfoSync();
     this.customNavHeight = this.$store.getters["SystemInfo/customNavHeight"];
     this.goodsList = this.$store.getters["Goods/goodsList"];
     const scale = this.$store.getters["SystemInfo/scale"];
     this.itemHeight = 100 * scale;
+  },
+  async onShow() {
+    this.selectClassIndex = this.$store.getters["Classification/selectClassIndex"]
     await this.getAllCategory();
     this.getGoodsByCategory();
   },

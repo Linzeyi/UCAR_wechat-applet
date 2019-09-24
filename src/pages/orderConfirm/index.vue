@@ -173,7 +173,6 @@ export default {
     },
     setAddress () {
       let address = this.$store.getters['UserCenter/selectedAddress']
-      console.log(address)
       if (address) {
         this.address = {
           'receiptName': address.receiverName,
@@ -242,7 +241,6 @@ export default {
     toOrderDetail () {
       let that = this
       console.log('订单提交')
-      console.log(this.checkIntegral)
       wx.showModal({
         title: '提交订单',
         content: '是否提交该订单',

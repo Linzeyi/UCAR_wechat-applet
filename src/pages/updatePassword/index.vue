@@ -12,7 +12,9 @@
       </div>
     </div>
     <div class="submit">
-      <base-button @click="handleCheck">保存</base-button>
+      <base-button @click="handleCheck">
+        <span>保存</span>
+      </base-button>
     </div>
     <base-toast></base-toast>
   </div>

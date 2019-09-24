@@ -1,15 +1,25 @@
 <template>
   <div class="main-page">
-    <base-navigation-bar name="首页" :bgColor="'rgb(236, 65, 59)'">
+    <base-navigation-bar name="首页">
       <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
     </base-navigation-bar>
     <base-custom-box>
       <div class="home-wrap">
         <div class="swiper-box">
           <com-swiper :imgList="imgList" :isLink="true"></com-swiper>
-          <p class="panel-title">精选</p>
-          <p class="panel-title-tips">为您推荐</p>
-          <p class="icon-panel"><i class="iconfont">&#xe6a4;</i></p>
+          <div class="category-box">
+            <div class="category-item" v-for="(item, index) in computedCategoryList" :key="index" @click="toClassification(index)">
+              <div class="img-box">
+                <image :src="iconList[index]" mode="aspectFit"></image>
+              </div>
+              <p class="name">{{item}}</p>
+            </div>
+          </div>
+          <div class="recommend-font" @click="scrollTo('.panel-title')">
+            <p class="panel-title">精选</p>
+            <p class="panel-title-tips">为您推荐</p>
+            <p class="icon-panel"><i class="iconfont">&#xe6a4;</i></p>
+          </div>
         </div>
         <div class="goodsList-panel">
           <div class="list-content">
@@ -45,7 +55,20 @@ export default {
       goodsList: [],
       start: 0,
       size: 6,
-      pageSize: 6
+      pageSize: 6,
+      categoryList: ['aaa', 'bbb', 'ccc', 'ddd', 'eee', 'fff', 'ggg', 'hhh', 'iii', 'jjj'],
+      iconList: [
+        '/static/images/category-icon/aircraft.png',
+        '/static/images/category-icon/anchor.png',
+        '/static/images/category-icon/cruise-ship.png',
+        '/static/images/category-icon/house-on-wheels.png',
+        '/static/images/category-icon/rocket.png',
+        '/static/images/category-icon/train.png',
+        '/static/images/category-icon/travel-suitcase.png',
+        '/static/images/category-icon/tent.png',
+        '/static/images/category-icon/towel.png',
+        '/static/images/category-icon/sandals.png'
+      ]
     }
   },
   components: {
@@ -56,6 +79,7 @@ export default {
   },
   onLoad () {
     this.getRecommendGoodsList()
+    this.getCategory()
   },
   watch: {
     size: {
@@ -67,12 +91,36 @@ export default {
       deep: true
     }
   },
+  computed: {
+    computedCategoryList () {
+      return this.categoryList.splice(0, 10)
+    }
+  },
   async onPullDownRefresh() {
     console.log('下拉刷新')
     this.getRecommendGoodsList()
     // 停止下拉刷新
   },
   methods: {
+    scrollTo (name) {
+      wx.pageScrollTo({
+        selector: name,
+        duration: 600
+      })
+    },
+    toClassification (index) {
+      this.$store.commit('Classification/SET_SELECTCLASSINDEX', index)
+      console.log(this.$store.getters['Classification/selectClassIndex'])
+      mpvue.switchTab({ url: '/pages/classification/main' })
+    },
+    getCategory () {
+      this.$http.post("/action/goods/getAllCategory").then(res => {
+        if (res.data) {
+          console.log(res.data)
+          this.categoryList = res.data
+        }
+      })
+    },
     getRandomImgList () {
       this.imgList = []
       let goodsList = JSON.parse(JSON.stringify(this.goodsList))
@@ -138,72 +186,106 @@ export default {
           duration: 2000
         })
       })
-    },
-    switchTab (url) {
-      mpvue.switchTab({ url })
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+@bgColor: #fff;
+@textColor: #ff5521;
 .main-page {
   height: 100%;
-  background-color: rgb(236, 65, 59);
+  background-color: @bgColor;
   /deep/ .navigation-bar {
-    color: #fff;
+    // background-color: @textColor !important;
+    // color: @bgColor !important;
     .nav-icon, .nav-title {
-      color: #fff;
+      // color: @bgColor;
     }
   }
   .home-wrap {
-    // height: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    
     .swiper-box {
-      background-color: rgb(236, 65, 59);
-      padding: 10px 0;
+      background-color: @bgColor;
+      padding-bottom: 10px;
       z-index: 1;
       /deep/ .com-swiper {
-        margin-bottom: 15px;
-        border-radius: 6px;
-        height: 200px;
+        margin-bottom: 8px;
+        // border-radius: 6px;
+        height: 140px;
       }
-      p {
-        text-align: center;
-        &.panel-title {
-          color: #fff;
-          font-size: 24px;
-          font-weight: 600;
-          position: relative;
-          &::before, &::after {
-            content: '';
-            position: absolute;
-            top: 51%;
-            background-color: #fff;
-            // opacity: 0.7;
-            width: 37%;
-            height: 1px;;
+      .category-box {
+        padding: 14px 10px 10px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        .category-item {
+          width: calc(100% / 5);
+          text-align: center;
+          margin-bottom: 5px;
+          .img-box {
+            margin: 0 auto;
+            background-color: #e7e7e7;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            image {
+              width: 70%;
+              height: 70%;
+            }
           }
-          &::before {
-            left: 0;
+          .name {
+            color: rgb(31, 31, 31);
+            padding: 5px 0;
+            font-size: 12px;
+            font-weight: 300;
           }
-          &::after {
-            right: 0;
-          } 
         }
-        &.panel-title-tips {
-          color: #fff;
-          opacity: 0.9;
-          font-size: 12px;
-          font-weight: 300;
-        }
-        &.icon-panel {
-          line-height: 15px;
-          .iconfont {
-            font-size: 16px;
-            color: #fff;
+      }
+      .recommend-font {
+          p {
+          text-align: center;
+          &.panel-title {
+            color: @textColor;
+            font-size: 24px;
+            font-weight: 600;
+            position: relative;
+            &::before, &::after {
+              content: '';
+              position: absolute;
+              top: 51%;
+              background-color: @textColor;
+              // opacity: 0.7;
+              width: 37%;
+              height: 1px;;
+            }
+            &::before {
+              left: 0;
+            }
+            &::after {
+              right: 0;
+            } 
+          }
+          &.panel-title-tips {
+            color: @textColor;
+            opacity: 0.9;
+            font-size: 12px;
+            font-weight: 300;
+          }
+          &.icon-panel {
+            line-height: 15px;
+            .iconfont {
+              font-size: 16px;
+              color: @textColor;
+            }
           }
         }
       }
