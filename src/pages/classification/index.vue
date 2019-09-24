@@ -80,9 +80,6 @@ export default {
       this.getGoodsByCategory();
     },
     clickItem(index) {
-      if (index === 0) {
-        this.isIntegral = true;
-      }
       this.$store.commit("Classification/SET_SELECTCLASSINDEX", index);
     },
     selectMiddle(index) {
@@ -125,6 +122,9 @@ export default {
   },
   watch: {
     selectClassIndex(value) {
+      if (value === 0) {
+        this.isIntegral = true;
+      }
       this.pageNum = 1;
       this.goodsList = [];
       this.selectMiddle(value);
