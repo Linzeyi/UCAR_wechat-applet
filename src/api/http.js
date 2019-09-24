@@ -85,7 +85,7 @@ fly.interceptors.response.use(response => {
         if (res.confirm) {
           mpvue.navigateTo({ url: '/pages/login/main' })
         } else if (res.cancel) {
-          mpvue.switchTab({ url: '/pages/index/main' })
+          mpvue.navigateBack()
         }
       }
     });

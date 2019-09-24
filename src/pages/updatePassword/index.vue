@@ -25,8 +25,8 @@ import Captcha from "@/components/captcha/Captcha";
 import BaseButton from "@/components/base/BaseButton";
 import BaseToast from "@/components/base/BaseToast";
 export default {
-  onLoad() {
-    this.form.phone = this.$store.getters["UserInfo/phone"];
+  onShow() {
+    this.form.phone = this.$store.getters["UserCenter/phone"];
   },
   data() {
     return {
@@ -64,11 +64,19 @@ export default {
       this.updatePassword();
     },
     async updatePassword() {
-      await this.$http.post("/action/user/forgetPassword", {
+      const result = await this.$http.post("/action/user/forgetPassword", {
         phone: this.form.phone,
         password: this.form.password,
         captcha: this.form.captcha
       });
+      if (result.status !== 20000) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "验证码错误"
+        });
+        return
+      }
+      mpvue.navigateBack()
     }
   }
 };
@@ -115,7 +123,7 @@ export default {
 
   .submit {
     margin: 120rpx auto 0;
-    width: 500rpx;
+    width: 570rpx;
   }
 }
 </style>

@@ -90,12 +90,19 @@ export default {
       this.findPassword();
     },
     async findPassword() {
-      await this.$http.post("/action/user/forgetPassword", {
+      const result = await this.$http.post("/action/user/forgetPassword", {
         phone: this.form.phone,
         captcha: this.form.captcha,
         password: this.form.password
       });
-      this.Utils.navigateTo('/pages/login/main')
+      if (result.status !== 20000) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "号码未注册或验证码错误"
+        });
+        return
+      }
+      mpvue.navigateBack()
     }
   }
 };

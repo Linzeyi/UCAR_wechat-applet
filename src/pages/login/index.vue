@@ -95,11 +95,6 @@ export default {
       if (token) {
         wx.setStorageSync("token", token);
       }
-      let userInfo = result.data.memberInfo;
-      if (userInfo) {
-        userInfo.phone = this.form.phone;
-        this.$store.commit("UserInfo/SET_USERINFO", userInfo);
-      }
     },
     async getAddress() {
       const result = await this.$http.get("/action/addr/list");

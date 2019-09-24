@@ -117,7 +117,8 @@ export default {
     };
   },
   async onShow() {
-    this.userInfo = this.$store.getters["UserInfo/userInfo"];
+    const result = await this.$http.get("/action/user/getInfo");
+    this.userInfo = result.data.memberInfo;
   },
   computed: {
     getSex() {
@@ -231,12 +232,16 @@ export default {
       }
       this.saveUserInfo();
     },
-    saveUserInfo() {
-      this.$http.post("/action/user/modifyInfo", {
+    async saveUserInfo() {
+      await this.$http.post("/action/user/modifyInfo", {
         avatarUrl: this.userInfo.avatarUrl,
         nickname: this.userInfo.nickname,
         email: this.userInfo.email,
         sex: this.userInfo.sex
+      });
+      this.$store.commit("BaseStore/SHOW_TOAST", {
+        type: "success",
+        content: "保存成功"
       });
     },
     logout() {
