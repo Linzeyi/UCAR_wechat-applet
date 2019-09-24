@@ -111,11 +111,20 @@ export default {
       this.register();
     },
     async register() {
-      await this.$http.post("/action/user/register", {
+      const result = await this.$http.post("/action/user/register", {
         phone: this.form.phone,
         captcha: this.form.captcha,
         password: this.form.password
       });
+      console.log(result)
+      if (result.data.status !== 20000) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "该手机号已注册"
+        });
+        return
+      }
+      this.Utils.navigateTo("/pages/login/main");
     }
   }
 };

@@ -198,10 +198,12 @@ export default {
       this.showLoading = true;
       try {
         const result = await this.$http.post("/action/user/uploadAvatar", {
-          fileName: "image",
+          fileName: "avatar.jpg",
           file: encodeBase64
         });
-        this.userInfo.avatarUrl = result.data.imgUrl;
+        if (result.data.imgUrl) {
+          this.userInfo.avatarUrl = result.data.imgUrl;
+        }
       } catch (error) {
         this.showLoading = false;
         this.$store.commit("BaseStore/SHOW_TOAST", {

@@ -93,10 +93,7 @@ export default {
       }
       const token = result.data.token;
       if (token) {
-        wx.setStorage({
-          key: "token",
-          data: token
-        });
+        wx.setStorageSync("token", token);
       }
       let userInfo = result.data.memberInfo;
       if (userInfo) {
