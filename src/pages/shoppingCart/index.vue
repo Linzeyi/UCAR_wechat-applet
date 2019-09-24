@@ -58,13 +58,13 @@
                     <div class="tips-box">
                       <span class="invalid-tips">失效</span>
                     </div>
-                    <div class="img-box" :key="typeIndex">
+                    <div class="img-box" :key="typeIndex" @click="toGoodsDetail(unGoodsItem)">
                       <image :src="unGoodsItem.property.picList[0] ? unGoodsItem.property.picList[0] : getDefaultImg" alt="商品图片" mode="aspectFit"></image>
                     </div>
                   </div>
-                  <div class="content-box">
+                  <div class="content-box" @click="toGoodsDetail(unGoodsItem)">
                     <div class="info-box">
-                      <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.goodsName}}</p>
+                      <p class="title">{{unGoodsItem.goodsName}}</p>
                       <p class="property-font">规格: {{unGoodsItem.property.propertyName}}</p>
                       <p class="invalid-msg">失效原因：{{unGoodsItem.remark}}</p>
                     </div>
