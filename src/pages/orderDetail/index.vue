@@ -54,11 +54,15 @@
           <div class="goods-footer">
             <p class="small-font" v-if="!checkIntegral">
               <span class="left">商品总价</span>
-              <span class="right">¥ {{order.payPrice}}</span>
+              <span class="right">¥ {{order.orderPrice}}</span>
             </p>
-            <p class="small-font">
-              <span class="left">其他开销</span>
+            <p class="small-font dicount-font" v-if="discountInfo.discount === 1 && !checkIntegral">
+              <span class="left">会员优惠</span>
               <span class="right">无</span>
+            </p>
+            <p class="small-font dicount-font" v-if="discountInfo.discount !== 1 && !checkIntegral">
+              <span class="left">会员优惠</span>
+              <span class="right">{{discountInfo.discount}}折</span>
             </p>
             <p class="order-price-font" v-if="checkIntegral">
               <span class="left">商品积分</span>
@@ -182,7 +186,10 @@ export default {
           balance: 0
         }
       ],
-      selectPayType: {}
+      selectPayType: {},
+      discountInfo: {
+        discount: 1
+      }
     }
   },
   onLoad (option) {
@@ -198,6 +205,15 @@ export default {
     this.getOrder()
   },
   computed: {
+    checkValid () {
+      let flag = true
+      this.order.shopGoodsList.map(item => {
+        if (!item.status) {
+          flag = false
+        }
+      })
+      return flag
+    },
     checkIntegral () {
       return this.order.orderType
     },
@@ -249,6 +265,14 @@ export default {
         }
       })
     },
+    getDiscount () {
+      this.$http.get('/action/user/getDiscount').then(res => {
+        console.log(res)
+        if (res.data) {
+          this.discountInfo = res.data
+        }
+      })
+    },
     getOrder () {
       wx.showLoading({
         title: '获取订单信息',
@@ -260,7 +284,8 @@ export default {
         console.log(res)
         if (res.data) {
           this.order = res.data
-          this.order.createTime = this.Utils.formatTime(this.order.createTime)
+          this.getDiscount()
+          // this.order.createTime = this.Utils.formatTime(this.order.createTime)
           if (this.order.status === 0 || this.order.status === '0') {
             console.log('支付订单')
             wx.setNavigationBarTitle({
@@ -317,6 +342,10 @@ export default {
         confirmText: '是',
         success (res) {
           if (res.confirm) {
+            wx.showLoading({
+              title: '取消中',
+              mask: true
+            })
             that.$http.get('/action/order/cancelOrder', {
               orderNo: that.order.orderNo
             }).then(res => {
@@ -334,8 +363,10 @@ export default {
                   duration: 2000
                 })
               }
+              wx.hideLoading()
             }).catch(err => {
               console.log(err)
+              wx.hideLoading()
               wx.showToast({
                 title: '取消失败！',
                 icon: 'none',
@@ -349,107 +380,142 @@ export default {
     },
     confirmReceipt () {
       let that = this
-      wx.showModal({
-        title: '确认收货',
-        content: '是否确认收货',
-        cancelText: '否',
-        confirmText: '是',
-        success (res) {
-          if (res.confirm) {
-            that.$http.get('/action/order/confirmOrder', {
-              orderNo: that.order.orderNo
-            }).then(res => {
-              if (res.data) {
-                wx.showToast({
-                  title: '确认成功',
-                  icon: 'success',
-                  duration: 2000
-                })
-                that.getOrderList()
-              } else {
+      if (this.checkValid) {
+        wx.showModal({
+          title: '确认收货',
+          content: '是否确认收货',
+          cancelText: '否',
+          confirmText: '是',
+          success (res) {
+            if (res.confirm) {
+              wx.showLoading({
+                title: '确认中',
+                mask: true
+              })
+              that.$http.get('/action/order/confirmOrder', {
+                orderNo: that.order.orderNo
+              }).then(res => {
+                if (res.data) {
+                  wx.showToast({
+                    title: '确认成功',
+                    icon: 'success',
+                    duration: 2000
+                  })
+                  that.getOrder()
+                } else {
+                  wx.showToast({
+                    title: '确认失败！',
+                    icon: 'none',
+                    duration: 2000
+                  })
+                }
+                wx.hideLoading()
+              }).catch(err => {
+                console.log(err)
+                wx.hideLoading()
                 wx.showToast({
                   title: '确认失败！',
                   icon: 'none',
                   duration: 2000
                 })
-              }
-            }).catch(err => {
-              console.log(err)
-              wx.showToast({
-                title: '确认失败！',
-                icon: 'none',
-                duration: 2000
               })
-            })
+            }
           }
-        }
-      })
-    },
-    payOrder () {
-      let that = this
-      if (JSON.stringify(this.selectPayType) === '{}') {
+        })
+      } else {
         wx.showToast({
-          title: '请选择支付方式',
+          title: '有无效商品',
           icon: 'none',
           duration: 2000
         })
-      } else {
-        if (this.order.payPrice > this.selectPayType.balance) {
-          wx.showModal({
-            title: '您的余额已不足',
-            content: '请充值或选用其他支付方式',
-            cancelText: '选用其他',
-            confirmText: '前往充值',
-            success (res) {
-              if (res.confirm) {
-
-              }
-            }
+      }
+    },
+    payOrder () {
+      let that = this
+      if (this.checkValid) {
+        if (JSON.stringify(this.selectPayType) === '{}') {
+          wx.showToast({
+            title: '请选择支付方式',
+            icon: 'none',
+            duration: 2000
           })
         } else {
-          wx.showModal({
-            title: this.checkIntegral ? '确认兑换' : '确认付款',
-            content: this.checkIntegral ? '本次应支付的积分共计' + this.order.payPrice + '点' : '本次应付的金额共计' + this.order.payPrice + '元',
-            confirmText: this.checkIntegral ? '兑换' : '支付',
-            success (res) {
-              if (res.confirm) {
-                that.$http.get('/action/order/payOrder', {
-                  orderNo: that.order.orderNo
-                }).then(res => {
-                  console.log(res)
-                  if (res.data) {
-                    wx.showModal({
-                      title: '支付成功',
-                      content: '将为您跳转至我的订单界面',
-                      confirmText: '跳转',
-                      cancelText: '不跳转',
-                      success (res) {
-                        if (res.confirm) {
-                          mpvue.navigateTo({ url: '/pages/myOrders/main' })
-                        } else {
-                          console.log('付款成功，支付订单：', that.order)
-                          that.getOrder()
+          if (this.order.payPrice > this.selectPayType.balance) {
+            wx.showModal({
+              title: '您的余额已不足',
+              content: '请充值或选用其他支付方式',
+              cancelText: '选用其他',
+              confirmText: '前往充值',
+              success (res) {
+                if (res.confirm) {
+
+                }
+              }
+            })
+          } else {
+            wx.showModal({
+              title: this.checkIntegral ? '确认兑换' : '确认付款',
+              content: this.checkIntegral ? '本次应支付的积分共计' + this.order.payPrice + '点' : '本次应付的金额共计' + this.order.payPrice + '元',
+              confirmText: this.checkIntegral ? '兑换' : '支付',
+              success (res) {
+                if (res.confirm) {
+                  wx.showLoading({
+                    title: '支付中',
+                    mask: true
+                  })
+                  that.$http.get('/action/order/payOrder', {
+                    orderNo: that.order.orderNo
+                  }).then(res => {
+                    console.log(res)
+                    if (res.data) {
+                      wx.showModal({
+                        title: '支付成功',
+                        content: '将为您跳转至我的订单界面',
+                        confirmText: '跳转',
+                        cancelText: '不跳转',
+                        success (res) {
+                          if (res.confirm) {
+                            mpvue.navigateTo({ url: '/pages/myOrders/main' })
+                          } else {
+                            console.log('付款成功，支付订单：', that.order)
+                            that.getOrder()
+                          }
                         }
-                      }
-                    })
-                  } else {
+                      })
+                    } else {
+                      wx.showToast({
+                        title: '支付失败',
+                        icon: 'none',
+                        duration: 2000
+                      })
+                    }
+                    wx.hideLoading()
+                  }).catch(err => {
+                    console.log(err)
+                    wx.hideLoading()
                     wx.showToast({
                       title: '支付失败',
                       icon: 'none',
                       duration: 2000
                     })
-                  }
-                })
-              } else {
-                wx.showToast({
-                  title: '取消支付',
-                  icon: 'none',
-                  duration: 2000
-                })
+                  })
+                } else {
+                  wx.showToast({
+                    title: '取消支付',
+                    icon: 'none',
+                    duration: 2000
+                  })
+                }
               }
-            }
-          })
+            })
+          }
         }
+      } else {
+        wx.showToast({
+          title: '有无效商品',
+          icon: 'none',
+          duration: 2000
+        })
       }
     },
     toGoodsComments () {
@@ -554,7 +620,7 @@ export default {
                 margin-right: 6px;
                 padding: 1px 4px;
                 border-radius: 2px;
-                background-color: rgb(211, 25, 25);
+                background-color: rgb(218, 91, 91);
                 color: #fff;
                 vertical-align: top;
                 text-decoration: none;
@@ -581,6 +647,10 @@ export default {
             color: #999;
             font-size: 11px;
           }
+          // &.dicount-font {
+          //   font-size: 13px;
+          //   color: #ff6421;
+          // }
           &.order-price-font {
             color: #444;
             font-size: 14px;

@@ -1,9 +1,14 @@
 export default {
   namespaced: true,
   state: {
+    selectClassIndex: 0
+  },
+  getters: {
+    selectClassIndex: state => state.selectClassIndex
   },
   mutations: {
-  },
-  actions: {
+    SET_SELECTCLASSINDEX(state, index) {
+      state.selectClassIndex = index
+    }
   }
 }

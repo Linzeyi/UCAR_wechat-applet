@@ -10,18 +10,21 @@ export default {};
 
 <style lang="less" scoped>
 .wrap {
-  width: 500rpx;
-  height: 70rpx;
-  line-height: 70rpx;
-  border-radius: 35rpx;
+  width: 570rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 40rpx;
   background-color: rgb(26, 188, 156);
   text-align: center;
   color: white;
-  font-size: 30rpx;
+  font-size: 36rpx;
   font-weight: bold;
 
   &:active {
-    transform: scale(0.9)
+    & /deep/ span {
+      display: inline-block;
+      transform: scale(0.9)
+    }
   }
 }
 </style>

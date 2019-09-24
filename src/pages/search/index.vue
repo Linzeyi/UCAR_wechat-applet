@@ -1,21 +1,23 @@
 <template>
   <div class="search-wrap">
-    <div class="weui-cell search-bar" @click="showSearchPage()">
-      <i class="iconfont search-icon">&#xe60b;</i>
-      <p>{{ recommendSearch[0] }}</p>
+    <div class="popular-page" v-if="!isShowSearchPage">
+      <div class="weui-cell search-bar" @click="showSearchPage()">
+        <i class="iconfont search-icon">&#xe60b;</i>
+        <p>{{ recommendSearch[0] }}</p>
+      </div>
+      <b class="popular-title">
+        <img src="../../../static/images/heat.svg" class="icon-heat">
+        热门搜索
+      </b>
+      <div 
+        class="popular-list" 
+        v-for="(item, index) in popularSearch" 
+        :key="index"
+        @click="showSearchPage(item)">
+        <p>{{ item.tagName }}</p>
+      </div>
     </div>
-    <b class="popular-title">
-      <img src="../../../static/images/heat.svg" class="icon-heat">
-      热门搜索
-    </b>
-    <div 
-      class="popular-list" 
-      v-for="(item, index) in popularSearch" 
-      :key="index"
-      @click="showSearchPage(item)">
-      <p>{{ item.tagName }}</p>
-    </div>
-    <div class="page search-page" v-if="isShowSearchPage">
+    <div class="page search-page" v-else>
       <div class="page-search-bar">
         <div class="weui-cell search-bar__bd">
           <i class="iconfont weui-cell__hd search-icon">&#xe60b;</i>
@@ -25,6 +27,7 @@
             :placeholder="'搜索'" 
             v-model="searchContent"
             :focus="isShowSearchPage"
+            @input="clearSize"
             @blur="submitSearch">
           <div class="weui-icon-clear clear-icon" v-if="searchContent.length > 0" @click="clearInput">
             <icon type="clear" size="14"></icon>
@@ -32,7 +35,7 @@
         </div>
         <span class="cancel search-bar__ft" @click="showSearchPage()">取消</span>
       </div>
-      <div class="search-list" v-if="!isShowSearchResult && !(searchContent.length > 0)">
+      <div class="search-list" v-if="goodsList.length <= 0">
         <div 
           class="recommend-search-list" 
           v-for="(item, index) in recommendSearch" 
@@ -42,8 +45,15 @@
           <p>{{ item }}</p>
         </div>
       </div>
-      <div class="goods-gird" v-if="searchContent.length > 0">
-        <goodsGridList :goodsList="goodsList" :col="2"></goodsGridList>
+      <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
+        <goodsGridList 
+          :goodsList="goodsList" 
+          :col="2" 
+          :start.sync="start" 
+          :size.sync="size" 
+          :pageSize="pageSize"
+          :isScroll="false">
+        </goodsGridList>
       </div>
     </div>
   </div>
@@ -63,7 +73,11 @@ export default {
       isShowSearchPage: false, // 控制搜索副页展示
       isShowSearchResult: false, // 控制搜索结果显示，与显示推荐搜索互斥
       searchContent: '', // 搜索栏内容
-      goodsList: []
+      start: 0,
+      size: 5,
+      pageSize: 3,
+      goodsList: [],
+      accum: 1 // 查询触底累加
     }
   },
   onLoad () {
@@ -83,18 +97,22 @@ export default {
     // 搜索副页显示
     showSearchPage (arg) {
       this.isShowSearchPage = !this.isShowSearchPage
+      this.clearSize()
       if (arg) {
         this.searchContent = arg.tagName
         this.$http.post('/action/goods/searchGoods', {
           tagNo: arg.tagNo,
           tagName: arg.tagName,
           elasticPageParam: {
-            start: 0,
-            size: 10
+            start: this.start,
+            size: this.size
           }
         }).then(res => {
           if (res.data) {
+            console.log(res.data, 'data')
             this.goodsList = res.data
+          } else {
+            this.goodsList = []
           }
         })
       } else {
@@ -116,15 +134,37 @@ export default {
         tagNo: 0,
         tagName: this.searchContent,
         elasticPageParam: {
-          start: 0,
-          size: 10
+          start: this.start,
+          size: this.size
         }
       }).then(res => {
         if (res.data) {
           this.goodsList = res.data
+        } else {
+          this.goodsList = []
         }
       })
+    },
+    // 还原查询页数累加
+    clearSize () {
+      this.accum = 1
     }
+  },
+  async onReachBottom () {
+    console.log('触底！')
+    this.$http.post('/action/goods/searchGoods', {
+      tagNo: 0,
+      tagName: this.searchContent,
+      elasticPageParam: {
+        start: this.start,
+        size: this.size * ++this.accum
+      }
+    }).then(res => {
+      if (res.data) {
+        this.goodsList = res.data
+        console.log(this.goodsList, 'goods list')
+      }
+    })
   }
 }
 </script>
@@ -139,10 +179,11 @@ export default {
   padding: 10px 13px 0 13px;
   height: 100%;
   background-color: #f3f3f3;
+  box-sizing: border-box;
   .search-bar {
-    border: 0.1px solid @orange;
+    border: 0.1px solid #ff5810;
     border-radius: 20px;
-    box-shadow: 0 0.08px 3px @orange;
+    box-shadow: 0 0.08px 3px #ff550c;
     background: #ffffff;
     display: flex;
     justify-content: center;
@@ -168,17 +209,11 @@ export default {
     font-size: 16px;
     background-color: #ffffff;
     border-radius: 5px;
-    box-shadow: -0.05px 0.5px 1px @orange;
+    box-shadow: -1.5px 1.5px 1px @orange;
   }
   .search-page {
     height:100%;
-    position:fixed;
     background-color: #f3f3f3;
-    z-index:9999;
-    top:0;
-    left:0;
-    right: 0;
-    padding: 10px 13px 0 13px;
     .page-search-bar {
       display: flex;
       align-content: center;

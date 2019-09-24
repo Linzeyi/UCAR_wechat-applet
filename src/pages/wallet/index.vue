@@ -1,5 +1,5 @@
 <template>
-  <div class="wallet-wrap">
+  <div class="wallet-wrap" v-if="true">
     <div class="recharge-content">
       <p>充值金额</p>
       <div class="amount">
@@ -13,10 +13,16 @@
       @click="confirm"
       :style="canConfirm ? 'opacity: 1' : 'opacity: 0.5'">确定</button>
   </div>
+  <baseLoading v-else></baseLoading>
 </template>
 
 <script>
+import baseLoading from '@/components/base/BaseLoad'
+
 export default {
+  components: {
+    baseLoading
+  },
   data () {
     return {
       amount: null
@@ -38,7 +44,8 @@ export default {
     confirm () {
       if (this.Utils.regularRule.money.test(this.amount) && this.amount !== 0 && this.amount < 9999999) {
         console.log(this.amount, '充值！')
-        this.$http.post('/action/wallet/recharge', {balance: this.amount}).then(res => {
+        console.log(typeof Number(this.amount))
+        this.$http.post('/action/wallet/recharge', {balance: Number(this.amount)}).then(res => {
           if (res !== '' && res.status === 20000) {
             mpvue.navigateBack()
             this.showToast('充值成功', 'success', 2000)

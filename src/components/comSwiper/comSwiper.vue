@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     changeImg (e) {
-      console.log('图片切换', e)
+      // console.log('图片切换', e)
     },
     showImg (item) {
       if (this.isLink) {
@@ -56,12 +56,12 @@ export default {
 .com-swiper {
   height: 160px;
   /deep/ swiper-item {
-    padding: 0 10px;
+    // padding: 0 10px;
     box-sizing: border-box;
   }
   image {
     background-color: #fff;
-    border-radius: 4px;
+    // border-radius: 4px;
     overflow: hidden;
     width: 100%;
     height: 100%;

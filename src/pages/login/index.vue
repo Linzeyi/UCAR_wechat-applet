@@ -27,7 +27,9 @@
       </div>
     </div>
     <div class="footer">
-      <base-button @click="handleCheck">登录</base-button>
+      <base-button @click="handleCheck">
+        <span>登录</span>
+      </base-button>
       <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
     </div>
     <base-toast></base-toast>
@@ -91,10 +93,7 @@ export default {
       }
       const token = result.data.token;
       if (token) {
-        wx.setStorage({
-          key: "token",
-          data: token
-        });
+        wx.setStorageSync("token", token);
       }
       let userInfo = result.data.memberInfo;
       if (userInfo) {

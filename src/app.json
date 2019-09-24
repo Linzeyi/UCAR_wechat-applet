@@ -20,7 +20,8 @@
     "pages/orderDetail/main",
     "pages/goodsComments/main",
     "pages/selectAddress/main",
-    "pages/updatePassword/main"
+    "pages/updatePassword/main",
+    "pages/loginS/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

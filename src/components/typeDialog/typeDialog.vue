@@ -231,6 +231,8 @@ export default {
           duration: 2000
         })
         this.num = this.selectedProperty.stock
+      } else {
+        this.num = 1
       }
     },
     toOrderConfirm () {

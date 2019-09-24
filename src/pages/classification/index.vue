@@ -16,11 +16,18 @@
             <span>{{item}}</span>
           </div>
         </scroll-view>
-        <scroll-view class="scroll-right" scroll-y scroll-with-animation @scroll="scrollHandle">
+        <scroll-view
+          class="scroll-right"
+          scroll-y
+          scroll-with-animation
+          @scrolltolower="scrollHandle"
+        >
           <div class="scroll-right-lable">
             <span>{{classList[selectClassIndex]}}</span>
           </div>
-          <goods-grid-list :goodsList="goodsList" :col="2" :isClassification="true"></goods-grid-list>
+          <div>
+            <goods-grid-list :goodsList="goodsList" :col="2" :isScroll="false" :size="10"></goods-grid-list>
+          </div>
         </scroll-view>
       </div>
     </base-custom-box>
@@ -46,16 +53,16 @@ export default {
       customNavHeight: 0,
       itemHeight: 0,
       scrollTop: 0,
-      selectClassIndex: 0,
       goodsList: [],
       classList: [],
-      loadStatus: ""
+      loadStatus: "",
+      pageNum: 1,
+      pageSize: 6
     };
   },
   async onLoad() {
     this.systemInfo = wx.getSystemInfoSync();
     this.customNavHeight = this.$store.getters["SystemInfo/customNavHeight"];
-    this.goodsList = this.$store.getters["Goods/goodsList"];
     const scale = this.$store.getters["SystemInfo/scale"];
     this.itemHeight = 100 * scale;
     await this.getAllCategory();
@@ -63,12 +70,10 @@ export default {
   },
   methods: {
     scrollHandle(e) {
-      console.log(e.mp.detail);
+      this.getGoodsByCategory()
     },
     clickItem(index) {
-      this.selectClassIndex = index;
-      this.selectMiddle(index);
-      this.getGoodsByCategory();
+      this.$store.commit("Classification/SET_SELECTCLASSINDEX", index);
     },
     selectMiddle(index) {
       index += 1;
@@ -93,9 +98,27 @@ export default {
     },
     async getGoodsByCategory() {
       const result = await this.$http.post("/action/goods/getGoodsByCategory", {
-        categoryName: this.classList[this.selectClassIndex]
+        categoryName: this.classList[this.selectClassIndex],
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
       });
-      this.goodsList = result.data;
+      if (result.data.length !== 0) {
+        this.goodsList = [...this.goodsList, ...result.data];
+        this.pageNum += 1;
+      }
+    }
+  },
+  computed: {
+    selectClassIndex() {
+      return this.$store.getters["Classification/selectClassIndex"];
+    }
+  },
+  watch: {
+    selectClassIndex(value) {
+      this.pageNum = 1
+      this.goodsList = []
+      this.selectMiddle(value);
+      this.getGoodsByCategory();
     }
   }
 };
@@ -148,7 +171,6 @@ export default {
     font-weight: bold;
     padding-left: 10rpx;
   }
-
   .scroll-right-bottom {
     opacity: 0.6;
     text-align: center;

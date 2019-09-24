@@ -34,6 +34,17 @@ export default {
     }
   },
   onShow () {
+    // 获取所有地址
+    this.$http.get('/action/addr/list').then(res => {
+      if (res) {
+        this.commit('UserCenter/SET_ADDRESS_LIST', res.data.addressList)
+      } else {
+        wx.showToast({
+          title: '获取地址失败',
+          icon: 'none'
+        })
+      }
+    })
     let addr = this.addressList.find(item => {
       return item.isDefault
     })

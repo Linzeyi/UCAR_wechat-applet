@@ -61,7 +61,7 @@
                 <span class="option-btn" v-if="orderItem.status < 1" @click="cancelOrder(orderItem.orderNo)">取消订单</span>
                 <span class="option-btn" @click="toOrderDetail(orderItem.orderNo)">查看订单</span>
                 <span class="option-btn change-status-btn" v-if="orderItem.status === 0" @click="toPayOrder(orderItem.orderNo)">去支付</span>
-                <span class="option-btn change-status-btn" v-if="orderItem.status === 2" @click="confirmReceipt(orderItem.orderNo)">确认收货</span>
+                <span class="option-btn change-status-btn" v-if="orderItem.status === 2" @click="confirmReceipt(orderItem)">确认收货</span>
                 <span class="option-btn change-status-btn" @click="toGoodsComments(orderItem)" v-if="orderItem.commentStatus === 0 && orderItem.status === 3">评价</span>
                 <span class="option-btn has-comment" v-if="orderItem.commentStatus">已评价</span>
               </div>
@@ -151,6 +151,7 @@ export default {
   },
   watch: {
     selectTypeKey () {
+      this.size = this.pageSize
       this.getOrderList()
     }
   },
@@ -214,43 +215,57 @@ export default {
         })
       })
     },
-    confirmReceipt (orderNo) {
+    confirmReceipt (order) {
       let that = this
-      wx.showModal({
-        title: '确认收货',
-        content: '是否确认收货',
-        cancelText: '否',
-        confirmText: '是',
-        success (res) {
-          if (res.confirm) {
-            that.$http.get('/action/order/confirmOrder', {
-              orderNo: orderNo
-            }).then(res => {
-              if (res.data) {
-                wx.showToast({
-                  title: '确认成功',
-                  icon: 'success',
-                  duration: 2000
-                })
-                that.getOrderList()
-              } else {
+      let isValid = true
+      order.shopGoodsList.map(item => {
+        if (!item.status) {
+          isValid = false
+        }
+      })
+      if (isValid) {
+        wx.showModal({
+          title: '确认收货',
+          content: '是否确认收货',
+          cancelText: '否',
+          confirmText: '是',
+          success (res) {
+            if (res.confirm) {
+              that.$http.get('/action/order/confirmOrder', {
+                orderNo: order.orderNo
+              }).then(res => {
+                if (res.data) {
+                  wx.showToast({
+                    title: '确认成功',
+                    icon: 'success',
+                    duration: 2000
+                  })
+                  that.getOrderList()
+                } else {
+                  wx.showToast({
+                    title: '确认失败！',
+                    icon: 'none',
+                    duration: 2000
+                  })
+                }
+              }).catch(err => {
+                console.log(err)
                 wx.showToast({
                   title: '确认失败！',
                   icon: 'none',
                   duration: 2000
                 })
-              }
-            }).catch(err => {
-              console.log(err)
-              wx.showToast({
-                title: '确认失败！',
-                icon: 'none',
-                duration: 2000
               })
-            })
+            }
           }
-        }
-      })
+        })
+      } else {
+        wx.showToast({
+          title: '有无效商品',
+          icon: 'none',
+          duration: 2000
+        })
+      }
     },
     cancelOrder (orderNo) {
       let that = this
@@ -432,7 +447,7 @@ export default {
                   margin-right: 6px;
                   padding: 2px 4px;
                   border-radius: 2px;
-                  background-color: rgb(211, 25, 25);
+                  background-color: rgb(218, 91, 91);
                   color: #fff;
                   vertical-align: top;
                   text-decoration: none;
