@@ -154,6 +154,10 @@ export default {
         this.showToast('请输入正确的邮政编码', 'none')
         return false
       }
+      if (this.formData.address.length < 5 || this.formData.address.length > 120) {
+        this.showToast('详细地址限制在5～120个字符', 'none')
+        return false
+      }
       return true
     },
 
