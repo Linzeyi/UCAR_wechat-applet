@@ -40,7 +40,9 @@
         </p>
       </div>
     </div>
-    <base-button @click="handleCheck">注册</base-button>
+    <base-button @click="handleCheck">
+      <span>注册</span>
+    </base-button>
     <base-toast></base-toast>
   </div>
 </template>

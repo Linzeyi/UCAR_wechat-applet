@@ -47,8 +47,8 @@ export default {
         commit('SHOW_TOAST', { type: 'error', content: '密码不能为空' })
         return
       }
-      if (!/^[a-zA-Z0-9]{6,20}$/.test(password)) {
-        commit('SHOW_TOAST', { type: 'error', content: '密码为6-20位字母或数字' })
+      if (!/^(?=.*\d)(?=.*[a-z])[a-zA-Z\d]{6,20}$/.test(password)) {
+        commit('SHOW_TOAST', { type: 'error', content: '密码为6-20位字母数字组合' })
         return
       }
       return true
