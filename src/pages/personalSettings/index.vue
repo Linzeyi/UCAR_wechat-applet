@@ -67,7 +67,7 @@
         <i class="iconfont icon-size">&#xe6ab;</i>
       </div>
     </div>
-    <div class="save-bottom" @click="saveUserInfo">
+    <div class="save-bottom" @click="handleCheck">
       <span>保存用户信息</span>
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
@@ -211,6 +211,24 @@ export default {
       }
       this.showLoading = false;
     },
+    async handleCheck() {
+      let flag = false;
+      flag = await this.$store.dispatch(
+        "BaseStore/checkNickname",
+        this.userInfo.nickname
+      );
+      if (!flag) {
+        return;
+      }
+      flag = await this.$store.dispatch(
+        "BaseStore/checkEmail",
+        this.userInfo.email
+      );
+      if (!flag) {
+        return;
+      }
+      this.saveUserInfo();
+    },
     saveUserInfo() {
       this.$http.post("/action/user/modifyInfo", {
         avatarUrl: this.userInfo.avatarUrl,
@@ -220,11 +238,11 @@ export default {
       });
     },
     logout() {
-      const _this = this
+      const _this = this;
       wx.showModal({
         title: "确定退出？",
         content: "退出登录后将无法查看订单，重新登录后即可查看。",
-        confirmColor: '#FF6421',
+        confirmColor: "#FF6421",
         success(res) {
           if (res.confirm) {
             _this.$store.commit("UserInfo/REMOVE_USERINFO");
