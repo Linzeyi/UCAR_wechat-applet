@@ -69,7 +69,7 @@ export default {
           icon: 'none',
           duration: 2000
         })
-      } else if (this.score < 0) {
+      } else if (this.score <= 0) {
         wx.showToast({
           title: '未选择评分',
           icon: 'none',
