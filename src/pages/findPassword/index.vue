@@ -95,6 +95,7 @@ export default {
         captcha: this.form.captcha,
         password: this.form.password
       });
+      this.Utils.navigateTo('/pages/login/main')
     }
   }
 };
