@@ -24,7 +24,7 @@
     <div class="no-goods-panel" v-else>
       <p><i class="iconfont icon-no-goods">&#xe65d;</i>暂无商品...</p>
     </div>
-    <div class="loading-footer">
+    <div class="loading-footer" v-if="isScroll">
       <p v-if="checkMoreShow">
         下拉显示更多
       </p>
@@ -41,6 +41,12 @@
 <script>
 export default {
   props: {
+    isScroll: {
+      type: Boolean,
+      default () {
+        return true
+      }
+    },
     goodsList: {
       type: Array,
       default () {
@@ -95,7 +101,7 @@ export default {
     }
   },
   async onReachBottom () {
-    if (this.checkMoreShow && !this.isLoading) {
+    if (this.checkMoreShow && !this.isLoading && this.isScroll) {
       console.log('触底')
       this.setLoading(true)
       let that = this

@@ -1,6 +1,6 @@
 <template>
   <div class="main-page">
-    <base-navigation-bar name="首页" :bgColor="'rgb(236, 65, 59)'">
+    <base-navigation-bar name="首页" :bgColor="'#fff'">
       <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
     </base-navigation-bar>
     <base-custom-box>
@@ -149,11 +149,11 @@ export default {
 <style lang="less" scoped>
 .main-page {
   height: 100%;
-  background-color: rgb(236, 65, 59);
+  background-color: #fff;
   /deep/ .navigation-bar {
-    color: #fff;
+    // color: rgb(236, 65, 59);
     .nav-icon, .nav-title {
-      color: #fff;
+      // color: rgb(236, 65, 59);
     }
   }
   .home-wrap {
@@ -162,7 +162,7 @@ export default {
     flex-direction: column;
     
     .swiper-box {
-      background-color: rgb(236, 65, 59);
+      background-color: #fff;
       padding: 10px 0;
       z-index: 1;
       /deep/ .com-swiper {
@@ -173,7 +173,7 @@ export default {
       p {
         text-align: center;
         &.panel-title {
-          color: #fff;
+          color: rgb(236, 65, 59);
           font-size: 24px;
           font-weight: 600;
           position: relative;
@@ -181,7 +181,7 @@ export default {
             content: '';
             position: absolute;
             top: 51%;
-            background-color: #fff;
+            background-color: rgb(236, 65, 59);
             // opacity: 0.7;
             width: 37%;
             height: 1px;;
@@ -194,7 +194,7 @@ export default {
           } 
         }
         &.panel-title-tips {
-          color: #fff;
+          color: rgb(236, 65, 59);
           opacity: 0.9;
           font-size: 12px;
           font-weight: 300;
@@ -203,7 +203,7 @@ export default {
           line-height: 15px;
           .iconfont {
             font-size: 16px;
-            color: #fff;
+            color: rgb(236, 65, 59);
           }
         }
       }
