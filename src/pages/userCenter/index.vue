@@ -75,7 +75,6 @@
             <p>{{ messageNum }}条<i class="iconfont">&#xe601;</i></p>
           </span>
         </div>
-        <button class="weui-input" @click="test">TEST</button>
       </div>
     </BaseCustomBox>
   </div>
@@ -110,11 +109,11 @@ export default {
     },
     // 用户名
     nickname () {
-      return this.$store.state.UserInfo.userInfo.nickname || '无名'
+      return this.$store.state.UserInfo.userInfo.nickname || this.$store.getters['UserCenter/nickname'] || '无名'
     },
     // 头像
     avatarUrl () {
-      return this.$store.state.UserInfo.userInfo.avatarUrl || '/../../static/images/user.png'
+      return this.$store.state.UserInfo.userInfo.avatarUrl || this.$store.getters['UserCenter/avatarUrl'] || '/../../static/images/user.png'
     },
     // 电话号码
     phone () {

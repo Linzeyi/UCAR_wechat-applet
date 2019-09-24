@@ -66,19 +66,21 @@ export default {
           if (state.connection > 0) {
             console.log(`[Socket] 重新连接…${11 - state.connection}`)
             state.connection--
-            setTimeout(() => that.commit('Message/INIT_WEBSOCKET'), 5000)
+            setTimeout(() => that.commit('Message/INIT_WEBSOCKET'), 10000)
           } else {
             console.log('[Socket] 连接超时')
           }
         })
         wx.onSocketMessage(res => {
-          console.log('[Socket] 收到一条消息：', res.data)
-          console.log('[Socket] 收到一条消息JSON：', JSON.parse(res.data))
-          // todo 处理data，去除‘/’
-          // 把已读消息更新到store中
-          that.commit('Message/SET_MESSAGE_READ', that.state.Message.setMessageRead)
-          that.state.Message.setMessageRead.length = 0
-          that.commit('Message/ADD_NEW_MESSAGE', res.data)
+          if (res.data !== '连接成功') {
+            console.log('[Socket] 收到一条消息JSON：', JSON.parse(res.data))
+            // 把已读消息更新到store中
+            that.commit('Message/SET_MESSAGE_READ', that.state.Message.setMessageRead)
+            that.state.Message.setMessageRead.length = 0
+            that.commit('Message/ADD_NEW_MESSAGE', JSON.parse(res.data))
+          } else {
+            console.log('[Socket] 收到一条消息JSON：', res.data)
+          }
         })
       } catch (e) {
         console.log('[Socket Error]', e)
