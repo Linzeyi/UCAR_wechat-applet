@@ -64,7 +64,7 @@ export default {
       loadStatus: "",
       pageNum: 1,
       pageSize: 6,
-      isIntegral: false
+      isIntegral: true
     };
   },
   async onLoad() {
@@ -122,7 +122,9 @@ export default {
   },
   watch: {
     selectClassIndex(value) {
-      if (value === 0) {
+      if (value !== 0) {
+        this.isIntegral = false;
+      } else {
         this.isIntegral = true;
       }
       this.pageNum = 1;
