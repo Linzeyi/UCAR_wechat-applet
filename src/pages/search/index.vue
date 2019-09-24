@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="goods-gird" v-if="searchContent.length > 0">
-        <goodsGridList :goodsList="goodsList" :col="2"></goodsGridList>
+        <goodsGridList :goodsList="goodsList" :col="2" :start.sync="start" :size.sync="size" :pageSize="pageSize"></goodsGridList>
       </div>
     </div>
   </div>
@@ -63,7 +63,65 @@ export default {
       isShowSearchPage: false, // 控制搜索副页展示
       isShowSearchResult: false, // 控制搜索结果显示，与显示推荐搜索互斥
       searchContent: '', // 搜索栏内容
-      goodsList: []
+      goodsList: [{
+        goodsName: "大力丸，超大力奥里给hhh",
+        goodsNo: "GD00001",
+        maxPrice: 299.22,
+        minPrice: 1,
+        pic: "http://udfsintratest.10101111.com/ucarudfs/udfs/visit/trainljco/i/V3/58564d46eb604a8684e4154c17cf8605"
+      },
+      {
+        goodsName: "大力丸，超大力奥里给hhh",
+        goodsNo: "GD00001",
+        maxPrice: 299.22,
+        minPrice: 1,
+        pic: "http://udfsintratest.10101111.com/ucarudfs/udfs/visit/trainljco/i/V3/58564d46eb604a8684e4154c17cf8605"
+      },
+      {
+        goodsName: "大力丸，超大力奥里给hhh",
+        goodsNo: "GD00001",
+        maxPrice: 299.22,
+        minPrice: 1,
+        pic: "http://udfsintratest.10101111.com/ucarudfs/udfs/visit/trainljco/i/V3/58564d46eb604a8684e4154c17cf8605"
+      },
+      {
+        goodsName: "大力丸，超大力奥里给hhh",
+        goodsNo: "GD00001",
+        maxPrice: 299.22,
+        minPrice: 1,
+        pic: "http://udfsintratest.10101111.com/ucarudfs/udfs/visit/trainljco/i/V3/58564d46eb604a8684e4154c17cf8605"
+      },
+      {
+        goodsName: "大力丸，超大力奥里给hhh",
+        goodsNo: "GD00001",
+        maxPrice: 299.22,
+        minPrice: 1,
+        pic: "http://udfsintratest.10101111.com/ucarudfs/udfs/visit/trainljco/i/V3/58564d46eb604a8684e4154c17cf8605"
+      },
+      {
+        goodsName: "大力丸，超大力奥里给hhh",
+        goodsNo: "GD00001",
+        maxPrice: 299.22,
+        minPrice: 1,
+        pic: "http://udfsintratest.10101111.com/ucarudfs/udfs/visit/trainljco/i/V3/58564d46eb604a8684e4154c17cf8605"
+      },
+      {
+        goodsName: "大力丸，超大力奥里给hhh",
+        goodsNo: "GD00001",
+        maxPrice: 299.22,
+        minPrice: 1,
+        pic: "http://udfsintratest.10101111.com/ucarudfs/udfs/visit/trainljco/i/V3/58564d46eb604a8684e4154c17cf8605"
+      },
+      {
+        goodsName: "大力丸，超大力奥里给hhh",
+        goodsNo: "GD00001",
+        maxPrice: 299.22,
+        minPrice: 1,
+        pic: "http://udfsintratest.10101111.com/ucarudfs/udfs/visit/trainljco/i/V3/58564d46eb604a8684e4154c17cf8605"
+      }],
+      start: 0,
+      size: 3,
+      pageSize: 3
     }
   },
   onLoad () {
@@ -89,12 +147,15 @@ export default {
           tagNo: arg.tagNo,
           tagName: arg.tagName,
           elasticPageParam: {
-            start: 0,
-            size: 10
+            start: this.start,
+            size: this.size
           }
         }).then(res => {
           if (res.data) {
-            this.goodsList = res.data
+            console.log(res.data, 'data')
+            // this.goodsList = res.data
+          } else {
+            // this.goodsList = []
           }
         })
       } else {
@@ -116,12 +177,12 @@ export default {
         tagNo: 0,
         tagName: this.searchContent,
         elasticPageParam: {
-          start: 0,
-          size: 10
+          start: this.start,
+          size: this.size
         }
       }).then(res => {
         if (res.data) {
-          this.goodsList = res.data
+          // this.goodsList = res.data
         }
       })
     }
@@ -139,6 +200,7 @@ export default {
   padding: 10px 13px 0 13px;
   height: 100%;
   background-color: #f3f3f3;
+  box-sizing: border-box;
   .search-bar {
     border: 0.1px solid #ff5810;
     border-radius: 20px;
@@ -178,6 +240,7 @@ export default {
     top:0;
     left:0;
     right: 0;
+    overflow: scroll;
     padding: 10px 13px 0 13px;
     .page-search-bar {
       display: flex;

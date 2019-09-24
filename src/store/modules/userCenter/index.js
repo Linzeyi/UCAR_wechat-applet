@@ -3,11 +3,15 @@ import $http from '@/api/http.js'
 export default {
   namespaced: true,
   state: {
+    nickname: undefined, // 用户名
+    unionId: undefined, // 用户标示
     balance: '0.00', // 余额
     integral: '0', // 积分
     grade: '塑料', // 账户星级
     growth: '0', // 成长值
+    discount: '0', // 等级优惠
     phone: undefined, // 手机号
+    avatarUrl: undefined, // 头像地址
     orderNum: undefined, // 订单条数
     message: undefined, // 消息条数
     selectedAddress: undefined, // 选择地址id
@@ -16,7 +20,15 @@ export default {
     isEdited: false
   },
   getters: {
+    nickname: state => state.nickname,
+    unionId: state => state.unionId,
     balance: state => state.balance,
+    integral: state => state.integral,
+    grade: state => state.grade,
+    growth: state => state.growth,
+    discount: state => state.discount,
+    phone: state => state.phone,
+    avatarUrl: state => state.avatarUrl,
     orderNum: state => state.orderNum,
     defaultAddress: state => {
       if (state.addressList.length) {
@@ -122,7 +134,6 @@ export default {
     FIRST_LOGIN_GET_DATA (state) {
       // 获取所有消息
       $http.get('/action/message/getAllMessage').then(res => {
-        console.log(res.data, 'all message')
         this.commit('Message/SET_MESSAGE_LIST', res.data)
       })
       // 获取所有地址
@@ -139,7 +150,6 @@ export default {
       // 获取个人信息
       $http.get('/action/user/detail').then(res => {
         if (res.data) {
-          console.log(res.data, 'user info')
           state.balance = res.data.balance + ''
           if (state.balance.search('.') === -1) {
             state.balance += '.00'
@@ -147,6 +157,12 @@ export default {
           state.integral = res.data.integral + ''
           state.grade = res.data.grade
           state.growth = res.data.growth + ''
+          state.discount = res.data.discount + ''
+          state.avatarUrl = res.data.imgUrl
+          state.nickname = res.data.nickname
+          state.orderNum = res.data.orderNum
+          state.phone = res.data.phone
+          state.unionId = res.data.unionId
         }
       })
     },

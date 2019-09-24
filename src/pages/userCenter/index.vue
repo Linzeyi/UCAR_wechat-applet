@@ -28,7 +28,8 @@
       <div class="weui-cells">
         <div class="weui-cell" @click="routeTo('wallet')">
           <div class="weui-cell__hd">
-            <i class="iconfont">&#xe62b;</i>
+            <!-- <i class="iconfont">&#xe62b;</i> -->
+            <img src="../../../static/images/wallet.svg" class="action-icon">
           </div>
           <div class="weui-cell__bd">
             <p>我的钱包</p>
@@ -39,7 +40,8 @@
         </div>
         <div class="weui-cell" @click="routeTo('order')">
           <div class="weui-cell__hd">
-            <i class="iconfont">&#xe602;</i>
+            <!-- <i class="iconfont">&#xe602;</i> -->
+            <img src="../../../static/images/order.svg" class="action-icon">
           </div>
           <div class="weui-cell__bd">
             <p>我的订单</p>
@@ -50,7 +52,8 @@
         </div>
         <div class="weui-cell" @click="routeTo('address')">
           <div class="weui-cell__hd">
-            <i class="iconfont">&#xe686;</i>
+            <!-- <i class="iconfont">&#xe686;</i> -->
+            <img src="../../../static/images/address.svg" class="action-icon">
           </div>
           <div class="weui-cell__bd">
             <p>地址管理</p>
@@ -61,7 +64,8 @@
         </div>
         <div class="weui-cell" @click="routeTo('message')">
           <div class="weui-cell__hd">
-            <i class="iconfont">&#xe7a2;</i>
+            <!-- <i class="iconfont">&#xe7a2;</i> -->
+            <img src="../../../static/images/message.svg" class="action-icon">
           </div>
           <div class="weui-cell__bd">
             <p>我的消息</p>
@@ -71,6 +75,7 @@
             <p>{{ messageNum }}条<i class="iconfont">&#xe601;</i></p>
           </span>
         </div>
+        <button class="weui-input" @click="test">TEST</button>
       </div>
     </BaseCustomBox>
   </div>
@@ -98,10 +103,10 @@ export default {
     // 判断登录
     isLogged () {
       // 加载第一次登录所需数据
-      if (this.$store.state.UserInfo.userInfo.id) {
+      if (this.$store.state.UserInfo.userInfo.id || wx.getStorageSync('token')) {
         this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
       }
-      return Boolean(this.$store.state.UserInfo.userInfo.id)
+      return Boolean(wx.getStorageSync('token'))
     },
     // 用户名
     nickname () {
@@ -109,11 +114,11 @@ export default {
     },
     // 头像
     avatarUrl () {
-      return this.$store.state.UserInfo.userInfo.avatarUrl || '../../../static/images/user.png'
+      return this.$store.state.UserInfo.userInfo.avatarUrl || '/../../static/images/user.png'
     },
     // 电话号码
     phone () {
-      return this.$store.state.UserInfo.userInfo.phone || '13*********'
+      return this.$store.getters['UserCenter/phone'] || '13*********'
     },
     // 余额
     balance () {
@@ -165,6 +170,10 @@ export default {
           mpvue.navigateTo({ url: '/pages/personalSettings/main' })
           break
       }
+    },
+    test () {
+      this.$store.commit('Message/INIT_WEBSOCKET')
+      // this.$store.dispatch('Message/initWebSocket')
     }
   }
 }
@@ -206,6 +215,9 @@ export default {
   }
   .logged-in {
     height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     .user-info {
       display: flex;
       align-items: center;
@@ -215,27 +227,28 @@ export default {
         width: 60px;
         flex: 5;
         border-radius: 50%;
-        margin: 0 15px;
+        margin: 0 15px 0 18px;
       }
       .info {
         flex: 3;
         & > p {
-          font-size: 0.3rem;
+          font-size: 13px;
         }
         .user-name {
           display: flex;
           .name {
             font-family: 'PingFangSC';
+            font-size: 18px;
           }
           span {
-            border: 0.5px solid rgb(247, 97, 97);
+            border: 0.5px solid @orange;
             border-radius:5px;
             background-color: rgb(255, 171, 171);
-            padding: 0 8px;
-            margin-left: 18px;
-            font-size: 0.25rem;
+            padding: 0 5px;
+            margin-left: 10px;
+            font-size: 10px;
             align-self: center;
-            color: rgb(253, 77, 77);
+            color: @orange;
             line-height: inherit;
           }
         }
@@ -246,23 +259,29 @@ export default {
       }
     }
     .phone {
-      margin-left: 15px;
+      margin-left: 10px;
       p {
-        font-size: 0.3rem;
+        font-size: 13px;
       }
     }
   }
   .weui-cells {
     box-shadow: 0 3px 3px rgb(223, 223, 223), 0 -0.3px 4px rgb(223, 223, 223);
+    margin-top: 0;
     p {
       padding: 5px 0;
     }
     .weui-cell {
       height: 45px;
-      .weui-cell__hd .iconfont {
-        font-size: 0.5rem;
+      // .weui-cell__hd .iconfont {
+        // font-size: 0.5rem;
+        // margin-right: 9px;
+        // color: @orange;
+      // }
+      .action-icon {
+        height: 23px;
+        width: 23px;
         margin-right: 9px;
-        color: @orange;
       }
       .weui-cell__bd {
         p {

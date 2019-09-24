@@ -1,5 +1,6 @@
 import Utils from '@/utils/index.js'
 import Vue from 'vue'
+import { clearInterval } from 'timers'
 
 export default {
   namespaced: true,
@@ -7,7 +8,9 @@ export default {
     socket: undefined,
     messageList: undefined, // status: 0未读 1已读
     connection: 10, // 断开重新连接次数
-    setMessageRead: []
+    setMessageRead: [],
+    FIRST_CONNECTION: 10, // 初次连接失败可允许的重连次数
+    DURATION: 10000 // 重连间隔时间 ms
   },
   getters: {
     socket: state => state.socket,
@@ -45,8 +48,7 @@ export default {
       let that = this
       try {
         state.socket = wx.connectSocket({
-          // todo 123 = uid
-          url: 'ws://10.104.118.231:8080/trainljsys/websocket/uId' + this.getters['UserInfo/id'],
+          url: 'ws://10.104.118.231:8080/trainljsys/websocket/' + this.state.UserInfo.userInfo.id,
           // url: 'ws://10.112.11.18:8090',
           // url: 'ws://localhost:8181',
           success () {
@@ -71,6 +73,7 @@ export default {
         })
         wx.onSocketMessage(res => {
           console.log('[Socket] 收到一条消息：', res.data)
+          console.log('[Socket] 收到一条消息JSON：', JSON.parse(res.data))
           // todo 处理data，去除‘/’
           // 把已读消息更新到store中
           that.commit('Message/SET_MESSAGE_READ', that.state.Message.setMessageRead)
@@ -102,8 +105,18 @@ export default {
     }
   },
   actions: {
-    init_webSocket ({ commit }, state) {
-      this.commit('Message/CONNECT_WEBSOCKET')
+    initWebSocket ({ commit }, state) {
+      // commit('Message/CONNECT_WEBSOCKET')
+      console.log('connect webSocket!')
+      let connectSocket = setInterval(() => {
+        if (state.socket || state.FIRST_CONNECTION < 1) {
+          clearInterval(connectSocket)
+        } else {
+          state.FIRST_CONNECTION--
+          // commit('Message/CONNECT_WEBSOCKET')
+          console.log('connect webSocket!')
+        }
+      }, 10000)
     }
   }
 }

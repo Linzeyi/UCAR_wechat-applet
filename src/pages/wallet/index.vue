@@ -1,5 +1,5 @@
 <template>
-  <div class="wallet-wrap">
+  <div class="wallet-wrap" v-if="true">
     <div class="recharge-content">
       <p>充值金额</p>
       <div class="amount">
@@ -13,10 +13,16 @@
       @click="confirm"
       :style="canConfirm ? 'opacity: 1' : 'opacity: 0.5'">确定</button>
   </div>
+  <baseLoading v-else></baseLoading>
 </template>
 
 <script>
+import baseLoading from '@/components/base/BaseLoading'
+
 export default {
+  components: {
+    baseLoading
+  },
   data () {
     return {
       amount: null
