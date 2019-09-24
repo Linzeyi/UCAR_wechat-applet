@@ -79,6 +79,8 @@ export default {
   },
   onLoad () {
     this.getRecommendGoodsList()
+  },
+  onShow () {
     this.getCategory()
   },
   watch: {

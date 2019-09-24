@@ -72,6 +72,9 @@ export default {
     checkNum (e) {
       let val = e.target.value
       let reg = new RegExp(/^[1-9]\d*$/)
+      console.log('val: ' + val)
+      console.log(val === '')
+      console.log(Number(val))
       if (val === '' || Number(val) === this.min || reg.test(val)) {
         if (Number(val) > this.max) {
           this.value = this.min
@@ -81,7 +84,7 @@ export default {
             icon: 'none',
             duration: 2000
           })
-        } else if (Number(val) < this.min) {
+        } else if (val !== '' && Number(val) < this.min) {
           this.value = this.min
           this.$emit('update:num', this.min)
           wx.showToast({

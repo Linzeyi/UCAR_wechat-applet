@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import baseLoading from '@/components/base/BaseLoading'
+import baseLoading from '@/components/base/BaseLoad'
 
 export default {
   components: {

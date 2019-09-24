@@ -23,7 +23,7 @@
                     <div class="info-box">
                       <p class="title" @click="toGoodsDetail(goodsItem)">{{goodsItem.goodsName}}</p>
                       <p class="type" @click="handlerShowTypeDialog(goodsItem)">
-                        规格:{{goodsItem.property.propertyName}}
+                        规格: {{goodsItem.property.propertyName}}
                       </p>
                       <p class="bottom-p">
                         <span class="price">
@@ -65,6 +65,7 @@
                   <div class="content-box">
                     <div class="info-box">
                       <p class="title" @click="toGoodsDetail(unGoodsItem)">{{unGoodsItem.goodsName}}</p>
+                      <p class="property-font">规格: {{unGoodsItem.property.propertyName}}</p>
                       <p class="invalid-msg">失效原因：{{unGoodsItem.remark}}</p>
                     </div>
                   </div>
@@ -589,15 +590,20 @@ export default {
           }
         }
         .title {
-          margin-bottom: 10px;
+          margin-bottom: 4px;
           color: #333;
         }
-        .invalid-msg {
+        .property-font {
           font-size: 10px;
+          margin-bottom: 10px;
           padding: 2px 4px;
           background-color: #f6f6f6;
           border-radius: 4px;
           color: #999;
+        }
+        .invalid-msg {
+          font-size: 10px;
+          color: #ec4e09;
         }
       }
     }

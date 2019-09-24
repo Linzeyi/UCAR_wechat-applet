@@ -69,6 +69,17 @@
             </div>
           </div>
         </div>
+        <div class="order-panel discount-panel">
+          <p class="discount-font">
+            <span class="font-title">会员等级</span>
+            <span class="font-content">{{discountInfo.grade}}</span>
+          </p>
+          <p class="discount-font">
+            <span class="font-title">享受折扣</span>
+            <span class="font-content" v-if="discountInfo.discount !== 1">{{discountInfo.discount}} 折</span>
+            <span class="font-content" v-else>暂无折扣</span>
+          </p>
+        </div>
         <div class="order-panel">
           <div class="header">
             <span class="header-title">备注<span class="tips">（非必填）</span></span>
@@ -113,14 +124,19 @@ export default {
         goodsList: [],
         orderSource: 0
       },
-      address: {}
+      address: {},
+      discountInfo: {
+        discount: 1
+      }
     }
   },
   onLoad (option) {
+    console.log('orderSource:' + option.orderSource)
+    this.order.orderSource = option.orderSource
     this.getGoodsList()
+    this.getDiscount()
     this.getDefaultAddress()
     this.setAddress()
-    this.order.orderSource = option.orderSource
   },
   onShow () {
     this.setAddress()
@@ -161,6 +177,9 @@ export default {
       this.order.goodsList.map(item => {
         price += item.num * (item.property.discountPrice ? item.property.discountPrice : item.property.salePrice)
       })
+      if (this.discountInfo.discount !== 1) {
+        price = price * this.discountInfo.discount
+      }
       return price.toFixed(2)
     }
   },
@@ -170,6 +189,14 @@ export default {
       this.order.goodsList = []
       console.log('orderConfirm页面销毁')
       this.$store.commit('Order/INIT_ORDER')
+    },
+    getDiscount () {
+      this.$http.get('/action/user/getDiscount').then(res => {
+        console.log(res)
+        if (res.data) {
+          this.discountInfo = res.data
+        }
+      })
     },
     setAddress () {
       let address = this.$store.getters['UserCenter/selectedAddress']
@@ -401,6 +428,28 @@ export default {
               margin-right: 2px;
             }
           }
+        }
+      }
+    }
+    &.discount-panel {
+      padding: 4px 20px;
+      .discount-font {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        &:last-child {
+          border: none;
+        }
+        .font-title {
+          width: 70px;
+          font-size: 12px;
+          color: #999;
+        }
+        .font-content {
+          padding-left: 10px;
+          flex-grow: 1;
+          font-size: 12px;
+          color: #444;
         }
       }
     }
