@@ -54,10 +54,6 @@ export default {
       return true
     },
     checkEmail({ commit }, email) {
-      if (email === '') {
-        commit('SHOW_TOAST', { type: 'error', content: '邮箱不能为空' })
-        return
-      }
       if (!/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/.test(email)) {
         commit('SHOW_TOAST', { type: 'error', content: '邮箱格式错误' })
         return
@@ -65,10 +61,6 @@ export default {
       return true
     },
     checkNickname({ commit }, nickname) {
-      if (nickname === '') {
-        commit('SHOW_TOAST', { type: 'error', content: '昵称不能为空' })
-        return
-      }
       if (!/^[A-Za-z0-9\u4e00-\u9fa5]{2,10}$/.test(nickname)) {
         commit('SHOW_TOAST', { type: 'error', content: '昵称为字母数字或中文字符' })
         return
