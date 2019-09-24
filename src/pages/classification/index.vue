@@ -52,12 +52,15 @@ export default {
       loadStatus: ""
     };
   },
-  async onLoad() {
+  onLoad() {
     this.systemInfo = wx.getSystemInfoSync();
     this.customNavHeight = this.$store.getters["SystemInfo/customNavHeight"];
     this.goodsList = this.$store.getters["Goods/goodsList"];
     const scale = this.$store.getters["SystemInfo/scale"];
     this.itemHeight = 100 * scale;
+  },
+  async onShow() {
+    this.selectClassIndex = this.$store.getters["Classification/selectClassIndex"]
     await this.getAllCategory();
     this.getGoodsByCategory();
   },
