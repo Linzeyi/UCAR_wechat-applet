@@ -47,6 +47,9 @@
             <p class="date">{{item.createTime}}</p>
           </div>
         </div>
+        <div class="no-comment-panel" v-if="commentList.length === 0">
+          <p>商品暂无评论</p>
+        </div>
       </div>
     </div>
   </div>
@@ -320,6 +323,14 @@ export default {
               text-align: right;
             }
           }
+        }
+      }
+      .no-comment-panel {
+        padding: 10px 0 20px;
+        p {
+          font-size: 14px;
+          color: #aaa;
+          text-align: center;
         }
       }
     }

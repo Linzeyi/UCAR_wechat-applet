@@ -34,6 +34,7 @@
         </div>
       </div>
     </base-custom-box>
+    <base-load :loadStatus="loadStatus" @reLoad="getRecommendGoodsList"></base-load>
   </div>
 </template>
 
@@ -43,10 +44,12 @@ import BaseCustomBox from "@/components/base/BaseCustomBox"
 import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 import comSwiper from '@/components/comSwiper/comSwiper'
 import goodsGridList from '@/components/goodsGridList/goodsGridList'
+import BaseLoad from "@/components/base/BaseLoad";
 
 export default {
   data () {
     return {
+      loadStatus: '',
       userInfo: {
         nickName: 'mpvue',
         avatarUrl: 'http://mpvue.com/assets/logo.png'
@@ -54,9 +57,9 @@ export default {
       imgList: [],
       goodsList: [],
       start: 0,
-      size: 6,
-      pageSize: 6,
-      categoryList: ['aaa', 'bbb', 'ccc', 'ddd', 'eee', 'fff', 'ggg', 'hhh', 'iii', 'jjj'],
+      size: 12,
+      pageSize: 12,
+      categoryList: [],
       iconList: [
         '/static/images/category-icon/aircraft.png',
         '/static/images/category-icon/anchor.png',
@@ -75,12 +78,15 @@ export default {
     comSwiper,
     goodsGridList,
     BaseCustomBox,
-    BaseNavigationBar
+    BaseNavigationBar,
+    BaseLoad
   },
   onLoad () {
-    this.getRecommendGoodsList()
+    this.loadStatus = "loading";
   },
   onShow () {
+    this.size = this.pageSize
+    this.getRecommendGoodsList()
     this.getCategory()
   },
   watch: {
@@ -99,7 +105,6 @@ export default {
     }
   },
   async onPullDownRefresh() {
-    console.log('下拉刷新')
     this.getRecommendGoodsList()
     // 停止下拉刷新
   },
@@ -145,10 +150,9 @@ export default {
       this.imgList = arr
     },
     getRecommendGoodsList () {
-      wx.showLoading({
-        title: '正在加载',
-        mask: true
-      })
+      if (this.loadStatus === 'offline') {
+        this.loadStatus = "loading"
+      }
       let that = this
       this.$http.get('/action/goods/getRecommendGoodsList', {
         start: this.start,
@@ -158,35 +162,21 @@ export default {
         if (res.data) {
           this.goodsList = res.data
           this.getRandomImgList()
-          wx.showToast({
-            title: '加载成功',
-            icon: 'success',
-            duration: 2000
-          })
+          this.loadStatus = "online"
         } else {
           this.$nextTick(function () {
             that.$refs['goods_grid_list_el'].loadErr()
           })
-          wx.showToast({
-            title: '加载失败',
-            icon: 'none',
-            duration: 2000
-          })
+          this.loadStatus = "offline"
         }
-        wx.hideLoading()
         wx.stopPullDownRefresh()
       }).catch(err => {
         console.log('err:' + err)
-        wx.hideLoading()
         wx.stopPullDownRefresh()
+        this.loadStatus = "offline"
         setTimeout(function () {
           that.$refs['goods_grid_list_el'].loadErr()
         }, 200)
-        wx.showToast({
-          title: '加载失败',
-          icon: 'none',
-          duration: 2000
-        })
       })
     }
   }
