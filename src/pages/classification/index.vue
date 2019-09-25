@@ -63,7 +63,7 @@ export default {
       classList: [],
       loadStatus: "",
       pageNum: 1,
-      pageSize: 6,
+      pageSize: 8,
       isIntegral: true
     };
   },
@@ -147,7 +147,7 @@ export default {
 <style lang="less" scoped>
 .active {
   background-color: white;
-  color: #FC9156;
+  color: #fc9156;
   font-size: 30rpx;
 }
 
@@ -170,12 +170,12 @@ export default {
     line-height: 100rpx;
 
     .high-light {
-      border-radius: 6rpx;
-      width: 6rpx;
+      border-radius: 8rpx;
+      width: 8rpx;
       height: 60rpx;
       float: left;
       transform: translateY(20rpx);
-      background-color: #FC9156;
+      background-color: #fc9156;
     }
   }
 }
@@ -183,13 +183,31 @@ export default {
 .scroll-right {
   background-color: rgb(243, 243, 243);
   .scroll-right-lable {
-    display: inline-block;
     height: 100rpx;
     color: #555;
     line-height: 100rpx;
     font-size: 30rpx;
     font-weight: bold;
-    padding-left: 10rpx;
+    text-align: center;
+    transform: scale(1);
+
+    span {
+      &::before,
+      &::after {
+        content: "";
+        position: fixed;
+        top: 50%;
+        background-color: #555;
+        width: 8%;
+        height: 2rpx;
+      }
+      &::before {
+        left: 30%;
+      }
+      &::after {
+        right: 30%;
+      }
+    }
   }
 }
 
