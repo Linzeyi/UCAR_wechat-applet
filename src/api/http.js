@@ -79,6 +79,7 @@ let status = false
 let timer
 fly.interceptors.response.use(response => {
   if (response.data.code === 5) {
+    wx.removeStorageSync('token')
     if (status) {
       clearTimeout(timer)
       timer = setTimeout(() => (status = false), 300)
@@ -88,7 +89,7 @@ fly.interceptors.response.use(response => {
     timer = setTimeout(() => (status = false), 300)
     wx.showModal({
       title: "跳转登录",
-      content: "您还未登陆，登录后即可查看。",
+      content: "您还未登陆，请前往登录页面。",
       confirmColor: '#FF6421',
       success(res) {
         if (res.confirm) {
