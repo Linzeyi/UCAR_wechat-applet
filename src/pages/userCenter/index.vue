@@ -216,6 +216,7 @@ export default {
   color: @baoWoBlack;
   font-family: @baoWoFont;
   height: 100%;
+  overflow: hidden;
   .not-logged {
     position: relative;
     height: 130px;
