@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap" v-if="loadStatus !== 'online'">
+  <div class="wrap" :style="{'height': getHeight+'px'}" v-if="loadStatus !== 'online'">
     <div class="loading-box" v-if="loadStatus === 'loading'">
       <img src="/static/images/loading.gif" alt="加载中..." />
     </div>
@@ -17,13 +17,20 @@
 export default {
   props: {
     loadStatus: String
+  },
+  computed: {
+    getHeight() {
+      const systemInfo = wx.getSystemInfoSync()
+      console.log(systemInfo)
+      const height = systemInfo.windowHeight - 64
+      return height;
+    }
   }
 };
 </script>
 
 <style lang="less" scoped>
 .wrap {
-  height: 555px;
   position: absolute;
   top: 64px;
   left: 0;
