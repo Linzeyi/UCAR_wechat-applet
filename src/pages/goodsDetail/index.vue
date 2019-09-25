@@ -139,6 +139,9 @@ export default {
     this.goods.goodsNo = option.goodsNo
     this.getGoodsByNo()
   },
+  onShow () {
+    this.num = 1
+  },
   onUnload () {
     this.currentTabKey = 0
     this.init()
