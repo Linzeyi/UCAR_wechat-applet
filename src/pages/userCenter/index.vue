@@ -102,23 +102,24 @@ export default {
       this.isLogged = false
     }
     if (this.isLogged) {
-      if (!this.$store.getters['UserCenter/id']) {
-        // 加载第一次登录所需数据
-        this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
-      } else {
-        // 获取个人实时数据
-        this.$store.commit('UserCenter/GET_REAL_TIME_DATA')
+      // 第一次登录加载地址
+      if (this.$store.getters['UserCenter/addressList'].length === 0) {
+        console.log('address!!')
+        this.$store.commit('UserCenter/GET_ADDRESS_LIST')
       }
+      console.log(this.$store.getters['UserCenter/addressList'], 'address')
+      // 加载个人中心所需数据
+      this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
     }
   },
   computed: {
     // 用户名
     nickname () {
-      return this.$store.state.UserInfo.userInfo.nickname || this.$store.getters['UserCenter/nickname'] || '无名'
+      return this.$store.getters['UserCenter/nickname'] || '你好'
     },
     // 头像
     avatarUrl () {
-      return this.$store.state.UserInfo.userInfo.avatarUrl || this.$store.getters['UserCenter/avatarUrl'] || '/../../static/images/user.png'
+      return this.$store.getters['UserCenter/avatarUrl'] || '/../../static/images/user.png'
     },
     // 电话号码
     phone () {
@@ -198,7 +199,7 @@ export default {
     justify-content: center;
     // --animation begin--
     position:relative;
-    background: linear-gradient(60deg, #ff6421 0%, rgb(255, 198, 123) 100%);
+    background: linear-gradient(60deg, #fc7439 0%, rgb(253, 207, 148) 100%);
     .inner-header {
       height:65vh;
       width:100%;

@@ -138,21 +138,6 @@ export default {
       }
     },
     FIRST_LOGIN_GET_DATA (state) {
-      // 获取所有消息
-      $http.get('/action/message/getAllMessage').then(res => {
-        this.commit('Message/SET_MESSAGE_LIST', res.data)
-      })
-      // 获取所有地址
-      $http.get('/action/addr/list').then(res => {
-        if (res) {
-          this.commit('UserCenter/SET_ADDRESS_LIST', res.data.addressList)
-        } else {
-          wx.showToast({
-            title: '获取地址失败',
-            icon: 'none'
-          })
-        }
-      })
       // 获取个人信息
       $http.get('/action/user/detail').then(res => {
         if (res.data) {
@@ -170,6 +155,17 @@ export default {
           state.orderNum = res.data.orderNum
           state.phone = res.data.phone
           state.unionId = res.data.unionId
+          // 获取所有消息
+          $http.get('/action/message/getAllMessage').then(res => {
+            if (res.data) {
+              this.commit('Message/SET_MESSAGE_LIST', res.data)
+            } else {
+              wx.showToast({
+                title: '获取消息失败',
+                icon: 'none'
+              })
+            }
+          })
         }
       })
     },
@@ -192,6 +188,19 @@ export default {
       }).then(res => {
         if (res) {
           state.orderNum = res.data.length
+        }
+      })
+    },
+    GET_ADDRESS_LIST (state) {
+      // 获取所有地址
+      $http.get('/action/addr/list').then(res => {
+        if (res) {
+          this.commit('UserCenter/SET_ADDRESS_LIST', res.data.addressList)
+        } else {
+          wx.showToast({
+            title: '获取地址失败',
+            icon: 'none'
+          })
         }
       })
     },

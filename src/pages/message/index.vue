@@ -48,7 +48,14 @@ export default {
   onShow () {
     // 发送请求获取所有消息
     this.$http.get('/action/message/getAllMessage').then(res => {
-      this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
+      if (res.data) {
+        this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
+      } else {
+        wx.showToast({
+          title: '获取消息失败',
+          icon: 'none'
+        })
+      }
     })
   },
   onUnload () {
@@ -88,7 +95,14 @@ export default {
         this.$store.commit('Message/SET_MESSAGE_READ', this.setMessageRead)
       }
       this.$http.get('/action/message/getAllMessage').then(res => {
-        this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
+        if (res.data) {
+          this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
+        } else {
+          wx.showToast({
+            title: '获取消息失败',
+            icon: 'none'
+          })
+        }
         wx.stopPullDownRefresh()
         wx.hideNavigationBarLoading()
       })

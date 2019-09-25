@@ -45,15 +45,17 @@
           <p>{{ item }}</p>
         </div>
       </div>
-      <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
-        <goodsGridList 
-          :goodsList="goodsList" 
-          :col="2" 
-          :start.sync="start" 
-          :size.sync="size" 
-          :pageSize="pageSize"
-          :isScroll="false">
-        </goodsGridList>
+      <div class="goods-warp">
+        <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
+          <goodsGridList 
+            :goodsList="goodsList" 
+            :col="2" 
+            :start.sync="start" 
+            :size.sync="size" 
+            :pageSize="pageSize"
+            :isScroll="false">
+          </goodsGridList>
+        </div>
       </div>
     </div>
   </div>
@@ -176,40 +178,43 @@ export default {
 .search-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
-  padding: 10px 13px 0 13px;
+  padding: 10px 0;
   height: 100%;
   background-color: #f3f3f3;
   box-sizing: border-box;
-  .search-bar {
-    border: 0.1px solid #ff5810;
-    border-radius: 20px;
-    box-shadow: 0 0.08px 3px #ff550c;
-    background: #ffffff;
-    display: flex;
-    justify-content: center;
-    .search-icon {
-      margin-right: 15px;
-      vertical-align: middle;
+  .popular-page {
+    padding: 0 10px;
+    .search-bar {
+      border: 0.1px solid #ff5810;
+      border-radius: 20px;
+      box-shadow: 0 0.08px 3px #ff550c;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      .search-icon {
+        margin-right: 15px;
+        vertical-align: middle;
+      }
     }
-  }
-  .popular-title {
-    margin: 16px 0 12px 0;
-    font-family: 'PingFangSC';
-    display: flex;
-    align-items: center;
-    .icon-heat {
-      height: 18px;
-      width: 18px;
-      margin-right: 5px;
+    .popular-title {
+      margin: 16px 0 12px 0;
+      font-family: 'PingFangSC';
+      display: flex;
+      align-items: center;
+      .icon-heat {
+        height: 18px;
+        width: 18px;
+        margin-right: 5px;
+      }
     }
-  }
-  .popular-list {
-    margin: 10px 0;
-    padding: 5px 20px;
-    font-size: 16px;
-    background-color: #ffffff;
-    border-radius: 5px;
-    box-shadow: -1.5px 1.5px 1px @orange;
+    .popular-list {
+      margin: 10px 0;
+      padding: 5px 20px;
+      font-size: 16px;
+      background-color: #ffffff;
+      border-radius: 5px;
+      box-shadow: -1.5px 1.5px 1px @orange;
+    }
   }
   .search-page {
     height:100%;
@@ -219,8 +224,10 @@ export default {
       align-content: center;
       position: fixed;
       width: 100%;
-      top: 10px;
+      top: 0;
       z-index: 9;
+      background-color: #f3f3f3;
+      padding: 10px 10px 0 10px;
       .search-bar__bd {
         border: 0.1px solid @orange;
         border-radius: 20px;
@@ -256,8 +263,12 @@ export default {
       }
     }
   }
-  .goods-gird {
-    margin-top: 50px;
+  .goods-warp {
+    padding: 0 5px;
+    background: #f3f3f3;
+    .goods-gird {
+      margin-top: 50px;
+    }
   }
 }
 </style>
