@@ -1,5 +1,6 @@
 <template>
-  <div class="wrap" :style="{'height': getHeight+'px'}" v-if="loadStatus !== 'online'">
+
+  <div class="wrap" :style="{'height': getHeight+'px', top: getNavHeight}" v-if="loadStatus !== 'online'">
     <div class="loading-box" v-if="loadStatus === 'loading'">
       <img src="/static/images/loading.gif" alt="加载中..." />
     </div>
@@ -20,10 +21,13 @@ export default {
   },
   computed: {
     getHeight() {
-      const systemInfo = wx.getSystemInfoSync()
-      console.log(systemInfo)
-      const height = systemInfo.windowHeight - 64
+      const systemInfo = this.$store.getters['SystemInfo/systemInfo']
+      const customNavHeight = this.$store.getters['SystemInfo/customNavHeight']
+      const height = systemInfo.windowHeight - customNavHeight
       return height;
+    },
+    getNavHeight() {
+      return this.$store.getters['SystemInfo/customNavHeight']
     }
   }
 };
@@ -32,9 +36,8 @@ export default {
 <style lang="less" scoped>
 .wrap {
   position: absolute;
-  top: 64px;
   left: 0;
-  bottom: 48px;
+  bottom: 0;
   right: 0;
   z-index: 200;
   display: flex;
