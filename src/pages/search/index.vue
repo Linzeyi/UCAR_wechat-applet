@@ -45,6 +45,7 @@
           <p>{{ item }}</p>
         </div>
       </div>
+      <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 160px;font-size: 18px;">暂无商品…</p>
       <div class="goods-warp">
         <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
           <goodsGridList 
@@ -79,7 +80,8 @@ export default {
       size: 13,
       pageSize: 3,
       goodsList: [],
-      accum: 1 // 查询触底累加
+      accum: 1, // 查询触底累加
+      noResult: false // 是否有查询结果
     }
   },
   onLoad () {
@@ -94,6 +96,7 @@ export default {
   onUnload () {
     this.isShowSearchPage = false
     this.isShowSearchResult = false
+    this.noResult = false
   },
   methods: {
     // 搜索副页显示
@@ -144,14 +147,17 @@ export default {
           this.goodsList = res.data
         } else {
           this.goodsList = []
+          this.noResult = true
         }
       })
     },
     // 还原查询页数累加
     clearSize () {
       this.accum = 1
+      this.noResult = false
     }
   },
+  // 商品列表触底事件
   async onReachBottom () {
     console.log('触底！')
     this.$http.post('/action/goods/searchGoods', {
@@ -208,7 +214,7 @@ export default {
       }
     }
     .popular-list {
-      margin: 10px 0;
+      margin: 10px 8px;
       padding: 5px 20px;
       font-size: 16px;
       background-color: #ffffff;
@@ -227,7 +233,7 @@ export default {
       top: 0;
       z-index: 9;
       background-color: #f3f3f3;
-      padding: 10px 10px 0 10px;
+      padding: 10px 10px 10px 10px;
       .search-bar__bd {
         border: 0.1px solid @orange;
         border-radius: 20px;
