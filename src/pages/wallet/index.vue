@@ -13,11 +13,11 @@
       @click="confirm"
       :style="canConfirm ? 'opacity: 1' : 'opacity: 0.5'">确定</button>
   </div>
-  <baseLoading v-else></baseLoading>
+  <base-loading v-else></base-loading>
 </template>
 
 <script>
-import baseLoading from '@/components/base/BaseLoad'
+import baseLoading from '@/components/base/BaseLoading'
 
 export default {
   components: {

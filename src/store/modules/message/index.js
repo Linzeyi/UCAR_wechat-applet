@@ -1,6 +1,5 @@
 import Utils from '@/utils/index.js'
 import Vue from 'vue'
-import { clearInterval } from 'timers'
 
 export default {
   namespaced: true,
@@ -9,7 +8,7 @@ export default {
     messageList: undefined, // status: 0未读 1已读
     connection: 10, // 断开重新连接次数
     setMessageRead: [],
-    FIRST_CONNECTION: 10, // 初次连接失败可允许的重连次数
+    FIRST_CONNECTION: 3, // 初次连接失败可允许的重连次数
     DURATION: 10000 // 重连间隔时间 ms
   },
   getters: {
@@ -46,7 +45,7 @@ export default {
         state.messageList = list
       }
     },
-    INIT_WEBSOCKET (state) {
+    CONNECT_WEBSOCKET (state) {
       let that = this
       try {
         state.socket = wx.connectSocket({
@@ -68,7 +67,7 @@ export default {
           if (state.connection > 0) {
             console.log(`[Socket] 重新连接…${11 - state.connection}`)
             state.connection--
-            setTimeout(() => that.commit('Message/INIT_WEBSOCKET'), 10000)
+            setTimeout(() => that.commit('Message/CONNECT_WEBSOCKET'), 10000)
           } else {
             console.log('[Socket] 连接超时')
           }
@@ -112,16 +111,19 @@ export default {
     }
   },
   actions: {
-    initWebSocket ({ commit }, state) {
-      // commit('Message/CONNECT_WEBSOCKET')
+    initWebSocket ({ commit, state }) {
+      commit('CONNECT_WEBSOCKET')
       console.log('connect webSocket!')
       let connectSocket = setInterval(() => {
         if (state.socket || state.FIRST_CONNECTION < 1) {
+          if (state.FIRST_CONNECTION < 1) {
+            console.log('[socket] 连接失败')
+          }
           clearInterval(connectSocket)
         } else {
           state.FIRST_CONNECTION--
-          // commit('Message/CONNECT_WEBSOCKET')
-          console.log('try to connect webSocket !')
+          console.log('[socket] 初次登录连接')
+          commit('CONNECT_WEBSOCKET')
         }
       }, 5000)
     }

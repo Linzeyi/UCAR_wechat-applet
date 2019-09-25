@@ -45,7 +45,7 @@
           <p>{{ item }}</p>
         </div>
       </div>
-      <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 160px;font-size: 18px;">暂无商品…</p>
+      <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 155px;font-size: 18px;">暂无商品…</p>
       <div class="goods-warp">
         <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
           <goodsGridList 
@@ -118,6 +118,7 @@ export default {
             this.goodsList = res.data
           } else {
             this.goodsList = []
+            this.noResult = true
           }
         })
       } else {

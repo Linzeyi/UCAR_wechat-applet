@@ -7,6 +7,10 @@
           <img src="../../../static/images/user.png" alt="我的头像" class="user-icon">
           <div class="btn-login" @click="login">登录</div>
         </div>
+        <div class="ani-flow"></div>
+        <div class="ani-flow" style="left: -150%;"></div>
+        <div class="ani-flow" style="left: -120%; opacity: 0.5;"></div>
+        <div class="ani-flow" style="left: -130%; opacity: 0.7;"></div>
       </div>
       <div class="logged-in" v-else>
         <div class="user-info" @click="routeTo('personalSettings')">
@@ -24,6 +28,10 @@
         <div class="phone">
           <p>{{ phone }}</p>
         </div>
+        <div class="ani-flow"></div>
+        <div class="ani-flow" style="left: -150%;"></div>
+        <div class="ani-flow" style="left: -120%; opacity: 0.5;"></div>
+        <div class="ani-flow" style="left: -130%; opacity: 0.7;"></div>
       </div>
       <div class="weui-cells">
         <div class="weui-cell" @click="routeTo('wallet')">
@@ -180,79 +188,48 @@ export default {
 @baoWoBlack: rgb(51, 51, 51);
 @baoWoFont: 'PingFangSC-Light';
 @orange: #ff6421;
+@keyframes right-move {
+  0% {
+    transform: translate(0, 0)
+  }
+  100% {
+    transform: translate(30%, 0)
+  }
+}
+
+.ani-flow {
+  position: absolute;
+  bottom: 0;
+  height: 45px;
+  width: 400%;
+  z-index: 8;
+  opacity: 0.3;
+  left: -175%;
+  background-size: 30% 100%;
+  background-repeat: repeat-x;
+  background-position-y: 25px;
+  animation: right-move 15s cubic-bezier(.55,.5,.45,.5) infinite both;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='waves' viewBox='0 24 150 28' fill='%23ffffff' preserveAspectRatio='none' shape-rendering='auto'%3E %3Cpath id='gentle-wave' d='M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z' /%3E %3C/svg%3E");
+}
+
 .userCenter-wrap {
   color: @baoWoBlack;
   font-family: @baoWoFont;
   height: 100%;
   .not-logged {
+    position: relative;
     height: 130px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    // --animation begin--
-    position:relative;
-    background: linear-gradient(60deg, #fc7439 0%, rgb(253, 207, 148) 100%);
-    .inner-header {
-      height:65vh;
-      width:100%;
-      margin: 0;
-      padding: 0;
-    }
-    .waves {
-      position:relative;
-      width: 100%;
-      height:15vh;
-      margin-bottom:-7px; /*Fix for safari gap*/
-      min-height:100px;
-      max-height:150px;
-    }
-    /* Animation */
-    .parallax > use {
-      animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
-    }
-    .parallax > use:nth-child(1) {
-      animation-delay: -2s;
-      animation-duration: 7s;
-    }
-    .parallax > use:nth-child(2) {
-      animation-delay: -3s;
-      animation-duration: 10s;
-    }
-    .parallax > use:nth-child(3) {
-      animation-delay: -4s;
-      animation-duration: 13s;
-    }
-    .parallax > use:nth-child(4) {
-      animation-delay: -5s;
-      animation-duration: 20s;
-    }
-    @keyframes move-forever {
-      0% {
-      transform: translate3d(-90px,0,0);
-      }
-      100% { 
-        transform: translate3d(85px,0,0);
-      }
-    }
-    /*Shrinking for mobile*/
-    @media (max-width: 768px) {
-      .waves {
-        height:40px;
-        min-height:40px;
-      }
-      .content {
-        height:30vh;
-      }
-      h1 {
-        font-size:24px;
-      }
-    }
-    // --animation end--
+    background: linear-gradient(60deg, #ffbc6e 0%, #ff7e47 100%);
     .log-in {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-around;
+      z-index: 9;
       .user-icon {
         height: 80px;
         width: 80px;
@@ -270,10 +247,12 @@ export default {
     }
   }
   .logged-in {
+    position: relative;
     height: 130px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background: linear-gradient(60deg, #ff7e47 0%, #ffcb90 100%);
     .user-info {
       display: flex;
       align-items: center;
@@ -322,8 +301,11 @@ export default {
     }
   }
   .weui-cells {
-    box-shadow: 0 3px 3px rgb(223, 223, 223), 0 -0.3px 4px rgb(223, 223, 223);
+    box-shadow: 0 3px 3px rgb(223, 223, 223), 0 -0.3px 4px rgb(253, 253, 253);
     margin-top: 0;
+    &::before {
+      border-top: none;
+    }
     p {
       padding: 5px 0;
     }
@@ -338,6 +320,7 @@ export default {
         height: 23px;
         width: 23px;
         margin-right: 9px;
+        padding-top: 5px;
       }
       .weui-cell__bd {
         p {

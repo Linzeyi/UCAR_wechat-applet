@@ -161,7 +161,10 @@ export default {
           this.commit('UserCenter/GET_MESSAGE_LIST')
           // 获取所有地址
           this.commit('UserCenter/GET_ADDRESS_LIST')
+          // 设置登录状态
           state.isLogged = true
+          // 连接webSocket
+          this.commit('Message/CONNECT_WEBSOCKET')
         } else {
           state.isLogged = false
           this.commit('UserCenter/RESET_USER_CENTER_STORE')
