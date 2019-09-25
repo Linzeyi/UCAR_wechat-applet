@@ -6,7 +6,7 @@
     <div class="form">
       <div class="input-item">
         <span>账号</span>
-        <input type="text" placeholder="手机号" v-model="form.phone" />
+        <input type="number" placeholder="手机号" v-model="form.phone" />
       </div>
       <div class="input-item">
         <div class="switch-button">
@@ -58,6 +58,10 @@ export default {
     BaseButton,
     BaseText,
     BaseToast
+  },
+  onUnload() {
+    this.form.phone = "";
+    this.form.password = "";
   },
   methods: {
     async handleCheck() {

@@ -4,7 +4,7 @@
     <div class="form">
       <div class="input-item">
         <span>账号</span>
-        <input type="text" placeholder="手机号" v-model="form.phone" maxlength="11" />
+        <input type="number" placeholder="手机号" v-model="form.phone" maxlength="11" />
       </div>
       <div class="input-item">
         <div class="switch-button">
@@ -25,7 +25,7 @@
           <captcha :phone="form.phone" :type="1"></captcha>
         </div>
         <span>验证码</span>
-        <input type="text" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
+        <input type="number" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
       </div>
       <div class="aggrement">
         <i

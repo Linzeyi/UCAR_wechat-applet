@@ -6,7 +6,7 @@
     </div>
     <div class="input-item captcha">
       <span>短信验证码</span>
-      <input type="text" maxlength="6" placeholder="短信验证码" v-model="form.captcha" />
+      <input type="number" maxlength="6" placeholder="短信验证码" v-model="form.captcha" />
       <div class="captcha">
         <captcha :phone="form.phone" :type="3"></captcha>
       </div>
