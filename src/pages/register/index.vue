@@ -63,9 +63,9 @@ export default {
   data() {
     return {
       form: {
-        phone: "15605026927",
-        password: "hjs123456",
-        captcha: "123456"
+        phone: "",
+        password: "",
+        captcha: ""
       },
       showPassword: false,
       agreementActive: false

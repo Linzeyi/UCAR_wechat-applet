@@ -3,7 +3,7 @@
     <base-navigation-bar name="分类">
       <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
     </base-navigation-bar>
-    <base-custom-box v-if="loadStatus === 'online'">
+    <base-custom-box>
       <div class="wrap">
         <scroll-view class="scroll-left" scroll-y scroll-with-animation :scroll-top="scrollTop">
           <div
@@ -72,6 +72,8 @@ export default {
     this.customNavHeight = this.$store.getters["SystemInfo/customNavHeight"];
     const scale = this.$store.getters["SystemInfo/scale"];
     this.itemHeight = 100 * scale;
+  },
+  async onShow() {
     await this.getAllCategory();
     this.getGoodsByCategory();
   },

@@ -3,12 +3,15 @@ export default {
   state: {
     systemInfo: '',
     menuInfo: '',
-    navHeight: ''
+    customNavHeight: '',
+    scale: 0
+
   },
   getters: {
-    scale: state => state.scale,
+    systemInfo: state => state.systemInfo,
     menuInfo: state => state.menuInfo,
-    customNavHeight: state => state.customNavHeight
+    customNavHeight: state => state.customNavHeight,
+    scale: state => state.scale
   },
   mutations: {
     INIT_SYSTEMINFO(state) {

@@ -1,5 +1,6 @@
 <template>
-  <div style="height: 100%" v-if="loadStatus !== 'online'">
+
+  <div class="wrap" :style="{'height': getHeight+'px', top: getNavHeight}" v-if="loadStatus !== 'online'">
     <div class="loading-box" v-if="loadStatus === 'loading'">
       <img src="/static/images/loading.gif" alt="加载中..." />
     </div>
@@ -17,20 +18,35 @@
 export default {
   props: {
     loadStatus: String
+  },
+  computed: {
+    getHeight() {
+      const systemInfo = this.$store.getters['SystemInfo/systemInfo']
+      const customNavHeight = this.$store.getters['SystemInfo/customNavHeight']
+      const height = systemInfo.windowHeight - customNavHeight
+      return height;
+    },
+    getNavHeight() {
+      return this.$store.getters['SystemInfo/customNavHeight']
+    }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.loading-box {
-  height: 100%;
+.wrap {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 200;
   display: flex;
   justify-content: center;
   align-content: center;
   flex-wrap: wrap;
+  background-color: white;
 }
 .offline-box {
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
