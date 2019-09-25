@@ -20,7 +20,8 @@ export default {
     selectedAddress: undefined, // 选择地址id
     addressList: [],
     editAddress: undefined,
-    isEdited: false
+    isEdited: false,
+    isLogged: false
   },
   getters: {
     id: state => state.id,
@@ -36,6 +37,7 @@ export default {
     phone: state => state.phone,
     avatarUrl: state => state.avatarUrl,
     orderNum: state => state.orderNum,
+    isLogged: state => state.isLogged,
     defaultAddress: state => {
       if (state.addressList.length) {
         return state.addressList.find(item => {
@@ -155,8 +157,14 @@ export default {
           state.orderNum = res.data.orderNum
           state.phone = res.data.phone
           state.unionId = res.data.unionId
-          // 获取所有地址
+          // 获取所有消息
           this.commit('UserCenter/GET_MESSAGE_LIST')
+          // 获取所有地址
+          this.commit('UserCenter/GET_ADDRESS_LIST')
+          state.isLogged = true
+        } else {
+          state.isLogged = false
+          this.commit('UserCenter/RESET_USER_CENTER_STORE')
         }
       })
     },
@@ -227,6 +235,10 @@ export default {
       state.addressList = []
       state.editAddress = undefined
       state.isEdited = false
+      state.isLogged = false
+      state.addressList = []
+      // 清空消息列表
+      this.commit('Message/RESET_MESSAGE_LIST')
     }
   },
   actions: {}

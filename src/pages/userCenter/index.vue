@@ -75,6 +75,7 @@
             <p>{{ messageNum }}条<i class="iconfont">&#xe601;</i></p>
           </span>
         </div>
+        <!-- <button class="weui-input" @click="test">TEST</button> -->
       </div>
     </BaseCustomBox>
   </div>
@@ -90,30 +91,20 @@ export default {
     BaseCustomBox
   },
   data () {
-    return {
-      isLogged: false // 登录标示
-    }
+    return {}
   },
   onShow () {
-    // 判断是否登录
-    if (wx.getStorageSync('token')) {
-      this.isLogged = true
-    } else {
-      this.isLogged = false
-      // 清空个人中心数据
-      this.$store.commit('UserCenter/RESET_USER_CENTER_STORE')
-    }
-    if (this.isLogged) {
-      // 第一次登录加载地址
-      if (this.$store.getters['UserCenter/addressList'].length === 0) {
-        this.$store.commit('UserCenter/GET_ADDRESS_LIST')
-      }
-      console.log(this.$store.getters['UserCenter/addressList'], 'address')
-      // 加载个人中心所需数据
-      this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
-    }
+    // 加载个人中心所需数据
+    this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
   },
   computed: {
+    // 判断是否已登录
+    isLogged () {
+      if (!this.$store.getters['UserCenter/isLogged']) {
+        this.$store.commit('UserCenter/RESET_USER_CENTER_STORE')
+      }
+      return this.$store.getters['UserCenter/isLogged']
+    },
     // 用户名
     nickname () {
       return this.$store.getters['UserCenter/nickname'] || '你好'
@@ -178,8 +169,8 @@ export default {
       }
     },
     test () {
-      this.$store.commit('Message/INIT_WEBSOCKET')
-      // this.$store.dispatch('Message/initWebSocket')
+      // this.$store.commit('Message/INIT_WEBSOCKET')
+      this.$store.dispatch('Message/initWebSocket')
     }
   }
 }

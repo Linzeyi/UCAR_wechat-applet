@@ -106,6 +106,9 @@ export default {
         }
       }
       state.setMessageRead.length = 0
+    },
+    RESET_MESSAGE_LIST (state) {
+      state.messageList = undefined
     }
   },
   actions: {
@@ -118,9 +121,9 @@ export default {
         } else {
           state.FIRST_CONNECTION--
           // commit('Message/CONNECT_WEBSOCKET')
-          console.log('connect webSocket!')
+          console.log('try to connect webSocket !')
         }
-      }, 10000)
+      }, 5000)
     }
   }
 }
