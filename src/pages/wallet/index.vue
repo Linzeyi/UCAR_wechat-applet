@@ -42,17 +42,27 @@ export default {
   },
   methods: {
     confirm () {
-      if (this.Utils.regularRule.money.test(this.amount) && this.amount !== 0 && this.amount < 9999999) {
-        console.log(this.amount, '充值！')
-        console.log(typeof Number(this.amount))
-        this.$http.post('/action/wallet/recharge', {balance: Number(this.amount)}).then(res => {
-          if (res !== '' && res.status === 20000) {
-            mpvue.navigateBack()
-            this.showToast('充值成功', 'success', 2000)
-          } else {
-            this.showToast('充值失败')
-          }
-        })
+      if (this.Utils.regularRule.money.test(this.amount) && this.amount <= 9999999) {
+        if (Number(this.amount) === 0) {
+          this.showToast('充值金额不能为0', 'none', 2000)
+        } else {
+          wx.showModal({
+            title: '提示',
+            content: '请再次确认充值',
+            success: res => {
+              if (res.confirm) {
+                this.$http.post('/action/wallet/recharge', {balance: Number(this.amount)}).then(res => {
+                  if (res !== '' && res.status === 20000) {
+                    mpvue.navigateBack()
+                    this.showToast('充值成功', 'success', 2000)
+                  } else {
+                    this.showToast('充值失败')
+                  }
+                })
+              }
+            }
+          })
+        }
       } else {
         this.showToast('请输入正确的金额，至多输入7位数字和两位小数', 'none', 2000)
       }

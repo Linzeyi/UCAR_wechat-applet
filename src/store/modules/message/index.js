@@ -42,7 +42,9 @@ export default {
   },
   mutations: {
     SET_MESSAGE_LIST (state, list) {
-      state.messageList = list
+      if (list) {
+        state.messageList = list
+      }
     },
     INIT_WEBSOCKET (state) {
       let that = this

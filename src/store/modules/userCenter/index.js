@@ -140,7 +140,7 @@ export default {
     FIRST_LOGIN_GET_DATA (state) {
       // 获取个人信息
       $http.get('/action/user/detail').then(res => {
-        if (res.data) {
+        if (res && res.data) {
           state.balance = res.data.balance + ''
           if (state.balance.search('.') === -1) {
             state.balance += '.00'
@@ -155,17 +155,8 @@ export default {
           state.orderNum = res.data.orderNum
           state.phone = res.data.phone
           state.unionId = res.data.unionId
-          // 获取所有消息
-          $http.get('/action/message/getAllMessage').then(res => {
-            if (res.data) {
-              this.commit('Message/SET_MESSAGE_LIST', res.data)
-            } else {
-              wx.showToast({
-                title: '获取消息失败',
-                icon: 'none'
-              })
-            }
-          })
+          // 获取所有地址
+          this.commit('UserCenter/GET_MESSAGE_LIST')
         }
       })
     },
@@ -199,6 +190,19 @@ export default {
         } else {
           wx.showToast({
             title: '获取地址失败',
+            icon: 'none'
+          })
+        }
+      })
+    },
+    GET_MESSAGE_LIST (state) {
+      // 获取所有消息
+      $http.get('/action/message/getAllMessage').then(res => {
+        if (res && res.data) {
+          this.commit('Message/SET_MESSAGE_LIST', res.data)
+        } else {
+          wx.showToast({
+            title: '获取消息失败',
             icon: 'none'
           })
         }

@@ -100,11 +100,12 @@ export default {
       this.isLogged = true
     } else {
       this.isLogged = false
+      // 清空个人中心数据
+      this.$store.commit('UserCenter/RESET_USER_CENTER_STORE')
     }
     if (this.isLogged) {
       // 第一次登录加载地址
       if (this.$store.getters['UserCenter/addressList'].length === 0) {
-        console.log('address!!')
         this.$store.commit('UserCenter/GET_ADDRESS_LIST')
       }
       console.log(this.$store.getters['UserCenter/addressList'], 'address')
