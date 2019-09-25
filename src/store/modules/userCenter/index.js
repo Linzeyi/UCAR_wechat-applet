@@ -160,6 +160,7 @@ export default {
           if (state.balance.search('.') === -1) {
             state.balance += '.00'
           }
+          state.id = res.data.id
           state.integral = res.data.integral + ''
           state.grade = res.data.grade
           state.growth = res.data.growth + ''

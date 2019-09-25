@@ -35,7 +35,7 @@
         </div>
         <span class="cancel search-bar__ft" @click="showSearchPage()">取消</span>
       </div>
-      <div class="search-list" v-if="goodsList.length <= 0">
+      <div class="search-list" v-if="goodsList.length <= 0 && false">
         <div 
           class="recommend-search-list" 
           v-for="(item, index) in recommendSearch" 
@@ -74,7 +74,7 @@ export default {
       isShowSearchResult: false, // 控制搜索结果显示，与显示推荐搜索互斥
       searchContent: '', // 搜索栏内容
       start: 0,
-      size: 5,
+      size: 13,
       pageSize: 3,
       goodsList: [],
       accum: 1 // 查询触底累加
@@ -217,6 +217,10 @@ export default {
     .page-search-bar {
       display: flex;
       align-content: center;
+      position: fixed;
+      width: 100%;
+      top: 10px;
+      z-index: 9;
       .search-bar__bd {
         border: 0.1px solid @orange;
         border-radius: 20px;
@@ -236,7 +240,8 @@ export default {
       }
       .search-bar__ft {
         align-self: center;
-        margin-left: 15px;
+        margin-left: 13px;
+        color: @orange;
       }
     }
     .recommend-search-list {
@@ -252,7 +257,7 @@ export default {
     }
   }
   .goods-gird {
-    margin-top: 8px;
+    margin-top: 50px;
   }
 }
 </style>

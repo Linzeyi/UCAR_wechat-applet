@@ -48,7 +48,7 @@ export default {
       let that = this
       try {
         state.socket = wx.connectSocket({
-          url: 'ws://10.104.118.231:8080/trainljsys/websocket/' + this.state.UserInfo.userInfo.id,
+          url: 'ws://10.104.118.231:8080/trainljsys/websocket/' + this.getters['UserCenter/id'],
           // url: 'ws://10.112.11.18:8090',
           // url: 'ws://localhost:8181',
           success () {

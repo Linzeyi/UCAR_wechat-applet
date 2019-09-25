@@ -101,18 +101,17 @@ export default {
     } else {
       this.isLogged = false
     }
-    // 获取个人实时数据
     if (this.isLogged) {
-      this.$store.commit('UserCenter/GET_REAL_TIME_DATA')
+      if (!this.$store.getters['UserCenter/id']) {
+        // 加载第一次登录所需数据
+        this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
+      } else {
+        // 获取个人实时数据
+        this.$store.commit('UserCenter/GET_REAL_TIME_DATA')
+      }
     }
   },
   computed: {
-    // 加载第一次登录所需数据
-    firstLogin () {
-      if (this.isLogged) {
-        this.$store.commit('UserCenter/FIRST_LOGIN_GET_DATA')
-      }
-    },
     // 用户名
     nickname () {
       return this.$store.state.UserInfo.userInfo.nickname || this.$store.getters['UserCenter/nickname'] || '无名'
@@ -197,6 +196,65 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    // --animation begin--
+    position:relative;
+    background: linear-gradient(60deg, #ff6421 0%, rgb(255, 198, 123) 100%);
+    .inner-header {
+      height:65vh;
+      width:100%;
+      margin: 0;
+      padding: 0;
+    }
+    .waves {
+      position:relative;
+      width: 100%;
+      height:15vh;
+      margin-bottom:-7px; /*Fix for safari gap*/
+      min-height:100px;
+      max-height:150px;
+    }
+    /* Animation */
+    .parallax > use {
+      animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
+    }
+    .parallax > use:nth-child(1) {
+      animation-delay: -2s;
+      animation-duration: 7s;
+    }
+    .parallax > use:nth-child(2) {
+      animation-delay: -3s;
+      animation-duration: 10s;
+    }
+    .parallax > use:nth-child(3) {
+      animation-delay: -4s;
+      animation-duration: 13s;
+    }
+    .parallax > use:nth-child(4) {
+      animation-delay: -5s;
+      animation-duration: 20s;
+    }
+    @keyframes move-forever {
+      0% {
+      transform: translate3d(-90px,0,0);
+      }
+      100% { 
+        transform: translate3d(85px,0,0);
+      }
+    }
+    /*Shrinking for mobile*/
+    @media (max-width: 768px) {
+      .waves {
+        height:40px;
+        min-height:40px;
+      }
+      .content {
+        height:30vh;
+      }
+      h1 {
+        font-size:24px;
+      }
+    }
+    // --animation end--
     .log-in {
       display: flex;
       flex-direction: column;
