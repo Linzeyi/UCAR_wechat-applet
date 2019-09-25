@@ -147,7 +147,7 @@ export default {
 <style lang="less" scoped>
 .active {
   background-color: white;
-  color: rgb(26, 188, 156);
+  color: #FC9156;
   font-size: 30rpx;
 }
 
@@ -175,7 +175,7 @@ export default {
       height: 60rpx;
       float: left;
       transform: translateY(20rpx);
-      background-color: rgba(26, 188, 156, 0.5);
+      background-color: #FC9156;
     }
   }
 }
@@ -190,13 +190,6 @@ export default {
     font-size: 30rpx;
     font-weight: bold;
     padding-left: 10rpx;
-  }
-  .scroll-right-bottom {
-    opacity: 0.6;
-    text-align: center;
-    height: 100rpx;
-    line-height: 100rpx;
-    font-size: 30rpx;
   }
 }
 
