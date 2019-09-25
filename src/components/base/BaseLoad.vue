@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%" v-if="loadStatus !== 'online'">
+  <div class="wrap" v-if="loadStatus !== 'online'">
     <div class="loading-box" v-if="loadStatus === 'loading'">
       <img src="/static/images/loading.gif" alt="加载中..." />
     </div>
@@ -22,15 +22,21 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.loading-box {
-  height: 100%;
+.wrap {
+  height: 555px;
+  position: absolute;
+  top: 64px;
+  left: 0;
+  bottom: 48px;
+  right: 0;
+  z-index: 200;
   display: flex;
   justify-content: center;
   align-content: center;
   flex-wrap: wrap;
+  background-color: white;
 }
 .offline-box {
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
