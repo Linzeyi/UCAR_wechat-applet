@@ -4,7 +4,7 @@
     <div class="form">
       <div class="input-item">
         <span>账号</span>
-        <input type="text" placeholder="手机号" v-model="form.phone" maxlength="11" />
+        <input type="number" placeholder="手机号" v-model="form.phone" maxlength="11" />
       </div>
       <div class="input-item">
         <div class="switch-button">
@@ -25,7 +25,7 @@
           <captcha :phone="form.phone" :type="1"></captcha>
         </div>
         <span>验证码</span>
-        <input type="text" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
+        <input type="number" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
       </div>
       <div class="aggrement">
         <i
@@ -36,7 +36,7 @@
         <i class="iconfont" v-else @click="agreementActive = !agreementActive">&#xe656;</i>
         <p>
           已阅读并同意《
-          <span>用户服务协议</span>》
+          <span @click="showAgreement = true">用户服务协议</span>》
         </p>
       </div>
     </div>
@@ -44,20 +44,26 @@
       <span>注册</span>
     </base-button>
     <base-toast></base-toast>
+    <base-modal :showAgreement="showAgreement" @click="showAgreement = !showAgreement">
+      <protocol></protocol>
+    </base-modal>
   </div>
 </template>
 
 <script>
 import SwitchButton from "@/components/switchButton/SwitchButton";
 import Captcha from "@/components/captcha/Captcha";
+import Protocol from "@/components/protocol/Protocol";
 import BaseButton from "@/components/base/BaseButton";
 import BaseToast from "@/components/base/BaseToast";
+import BaseModal from "@/components/base/BaseModal";
 export default {
   onUnload() {
     this.form.phone = "";
     this.form.password = "";
     this.form.captcha = "";
     this.showPassword = false;
+    this.showAgreement = false;
     this.agreementActive = false;
   },
   data() {
@@ -68,6 +74,7 @@ export default {
         captcha: ""
       },
       showPassword: false,
+      showAgreement: false,
       agreementActive: false
     };
   },
@@ -75,7 +82,9 @@ export default {
     Captcha,
     SwitchButton,
     BaseButton,
-    BaseToast
+    BaseToast,
+    BaseModal,
+    Protocol
   },
   methods: {
     async handleCheck() {
@@ -121,9 +130,9 @@ export default {
           type: "error",
           content: "号码已注册或验证码错误"
         });
-        return
+        return;
       }
-      mpvue.navigateBack()
+      mpvue.navigateBack();
     }
   }
 };

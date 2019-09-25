@@ -238,6 +238,12 @@ export default {
   methods: {
     init () {
       console.log('orderDetail页面销毁')
+      this.payTypeList = [{ balance: 0 }]
+      this.order = {
+        receiptInfo: {},
+        shopGoodsList: []
+      }
+      this.selectPayType = {}
       this.$store.commit('Goods/SET_SHOWTYPEDIALOG', false)
     },
     backOff () {

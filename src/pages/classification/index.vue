@@ -99,7 +99,13 @@ export default {
       try {
         this.loadStatus = "loading";
         const result = await this.$http.post("/action/goods/getAllCategory");
-        this.classList = result.data;
+        const classList = result.data.map(item => {
+          if (item.length > 4) {
+            return item.slice(0, 4) + "...";
+          }
+          return item;
+        });
+        this.classList = classList;
         this.loadStatus = "online";
       } catch (error) {
         this.loadStatus = "offline";

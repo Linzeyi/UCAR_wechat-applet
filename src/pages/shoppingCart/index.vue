@@ -92,6 +92,7 @@
         <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
       </div>
     </base-custom-box>
+    <base-load :loadStatus="loadStatus" @reLoad="getShoppingCartGoodsList"></base-load>
   </div>
 </template>
 
@@ -101,6 +102,7 @@ import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 import numPicker from '@/components/numPicker/numPicker'
 import typeDialog from '@/components/typeDialog/typeDialog'
 import comPriceFixed from '@/components/comPriceFixed/comPriceFixed'
+import BaseLoad from "@/components/base/BaseLoad";
 
 export default {
   components: {
@@ -108,10 +110,12 @@ export default {
     typeDialog,
     BaseCustomBox,
     BaseNavigationBar,
-    comPriceFixed
+    comPriceFixed,
+    BaseLoad
   },
   data () {
     return {
+      loadStatus: '',
       isAllSelected: false,
       goodsList: [],
       invalidGoodsList: [],
@@ -155,6 +159,9 @@ export default {
       })
       return flag
     }
+  },
+  onLoad () {
+    this.loadStatus = "loading"
   },
   onShow () {
     this.getShoppingCartGoodsList()
@@ -269,10 +276,9 @@ export default {
       })
     },
     getShoppingCartGoodsList () {
-      wx.showLoading({
-        title: '正在加载',
-        mask: true
-      })
+      if (this.loadStatus === 'offline') {
+        this.loadStatus = "loading"
+      }
       this.$http.get('/action/order/getShoppingCartList').then(res => {
         console.log(res)
         if (res.data) {
@@ -280,24 +286,15 @@ export default {
           this.invalidGoodsList = res.data.invalidCart
           this.selectAll(false)
           this.updateSelectedInfo()
+          this.loadStatus = "online"
         } else {
-          wx.showToast({
-            title: '加载失败',
-            icon: 'none',
-            duration: 2000
-          })
+          this.loadStatus = "offline"
         }
-        wx.hideLoading()
         wx.stopPullDownRefresh()
       }).catch(err => {
         console.log(err)
-        wx.hideLoading()
+        this.loadStatus = "offline"
         wx.stopPullDownRefresh()
-        wx.showToast({
-          title: '加载失败',
-          icon: 'none',
-          duration: 2000
-        })
       })
     },
     handlerShowTypeDialog (goodsItem) {
