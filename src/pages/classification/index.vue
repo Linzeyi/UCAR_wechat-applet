@@ -26,7 +26,13 @@
             <span>{{classList[selectClassIndex]}}</span>
           </div>
           <div>
-            <goods-grid-list :goodsList="goodsList" :col="2" :isScroll="false" :size="10"></goods-grid-list>
+            <goods-grid-list
+              :goodsList="goodsList"
+              :col="2"
+              :isScroll="false"
+              :size="10"
+              :isIntegral="isIntegral"
+            ></goods-grid-list>
           </div>
         </scroll-view>
       </div>
@@ -57,7 +63,8 @@ export default {
       classList: [],
       loadStatus: "",
       pageNum: 1,
-      pageSize: 6
+      pageSize: 6,
+      isIntegral: true
     };
   },
   async onLoad() {
@@ -70,7 +77,7 @@ export default {
   },
   methods: {
     scrollHandle(e) {
-      this.getGoodsByCategory()
+      this.getGoodsByCategory();
     },
     clickItem(index) {
       this.$store.commit("Classification/SET_SELECTCLASSINDEX", index);
@@ -115,8 +122,13 @@ export default {
   },
   watch: {
     selectClassIndex(value) {
-      this.pageNum = 1
-      this.goodsList = []
+      if (value !== 0) {
+        this.isIntegral = false;
+      } else {
+        this.isIntegral = true;
+      }
+      this.pageNum = 1;
+      this.goodsList = [];
       this.selectMiddle(value);
       this.getGoodsByCategory();
     }

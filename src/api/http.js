@@ -75,8 +75,17 @@ fly.interceptors.request.use(request => {
   return request
 })
 
+let status = false
+let timer
 fly.interceptors.response.use(response => {
   if (response.data.code === 5) {
+    if (status) {
+      clearTimeout(timer)
+      timer = setTimeout(() => (status = false), 300)
+      return
+    }
+    status = true;
+    timer = setTimeout(() => (status = false), 300)
     wx.showModal({
       title: "跳转登录",
       content: "您还未登陆，登录后即可查看。",
@@ -85,7 +94,7 @@ fly.interceptors.response.use(response => {
         if (res.confirm) {
           mpvue.navigateTo({ url: '/pages/login/main' })
         } else if (res.cancel) {
-          mpvue.switchTab({ url: '/pages/index/main' })
+          mpvue.navigateBack()
         }
       }
     });

@@ -10,7 +10,10 @@
             <span>{{goodsItem.goodsName}}</span>
           </p>
           <p class="label">
-            <span class="price">
+            <span class="price" v-if="isIntegral">
+              {{goodsItem.minPrice === goodsItem.maxPrice ? goodsItem.minPrice : goodsItem.minPrice + '-' + goodsItem.maxPrice}} 分
+            </span>
+            <span class="price" v-else>
               <span class="logo">¥</span>
               {{goodsItem.minPrice === goodsItem.maxPrice ? goodsItem.minPrice : goodsItem.minPrice + '-' + goodsItem.maxPrice}}
             </span>
@@ -41,6 +44,12 @@
 <script>
 export default {
   props: {
+    isIntegral: {
+      type: Boolean,
+      default () {
+        return false
+      }
+    },
     isScroll: {
       type: Boolean,
       default () {

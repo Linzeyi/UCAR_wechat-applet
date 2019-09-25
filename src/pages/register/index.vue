@@ -116,15 +116,14 @@ export default {
         captcha: this.form.captcha,
         password: this.form.password
       });
-      console.log(result)
-      if (result.data.status !== 20000) {
+      if (result.status !== 20000) {
         this.$store.commit("BaseStore/SHOW_TOAST", {
           type: "error",
-          content: "该手机号已注册"
+          content: "号码已注册或验证码错误"
         });
         return
       }
-      this.Utils.navigateTo("/pages/login/main");
+      mpvue.navigateBack()
     }
   }
 };

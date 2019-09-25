@@ -117,7 +117,8 @@ export default {
     };
   },
   async onShow() {
-    this.userInfo = this.$store.getters["UserInfo/userInfo"];
+    const result = await this.$http.get("/action/user/getInfo");
+    this.userInfo = result.data.memberInfo;
   },
   computed: {
     getSex() {
@@ -231,13 +232,19 @@ export default {
       }
       this.saveUserInfo();
     },
-    saveUserInfo() {
-      this.$http.post("/action/user/modifyInfo", {
+    async saveUserInfo() {
+      const result = await this.$http.post("/action/user/modifyInfo", {
         avatarUrl: this.userInfo.avatarUrl,
         nickname: this.userInfo.nickname,
         email: this.userInfo.email,
         sex: this.userInfo.sex
       });
+      if (result.status === 20000) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "success",
+          content: "已保存用户信息"
+        });
+      }
     },
     logout() {
       const _this = this;
@@ -251,7 +258,7 @@ export default {
             wx.removeStorage({
               key: "token"
             });
-            _this.Utils.navigateTo("/pages/login/main");
+            _this.Utils.switchTab("/pages/userCenter/main");
           }
         }
       });
