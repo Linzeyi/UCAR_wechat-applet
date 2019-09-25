@@ -12,7 +12,10 @@
         </div>
         <div class="form-item">
           <span>用户ID</span>
-          <p>{{userInfo.id}}</p>
+          <p class="user-id">
+            {{userInfo.id}}
+            <i class="iconfont">&#xe610;</i>
+          </p>
         </div>
         <div class="form-item">
           <span>昵称</span>
@@ -116,7 +119,8 @@ export default {
       showLoading: false
     };
   },
-  async onShow() {
+  async onLoad() {
+    // this.userInfo.id = this.$store.getters['UserCenter/id']
     const result = await this.$http.get("/action/user/getInfo");
     this.userInfo = result.data.memberInfo;
   },
@@ -307,7 +311,7 @@ export default {
 .wrap {
   height: 100%;
   background-color: rgb(243, 243, 243);
-  padding: 20rpx;
+  padding: 40rpx 30rpx 30rpx;
   font-size: 30rpx;
   .settings {
     background-color: white;
@@ -315,7 +319,7 @@ export default {
     padding-top: 20rpx;
 
     .settings-title {
-      margin-left: 50rpx;
+      margin-left: 25rpx;
       font-weight: bold;
       font-size: 26rpx;
       color: rgb(148, 148, 148);
@@ -326,7 +330,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 70rpx;
+        padding: 0 25rpx;
         border-bottom: 2rpx solid rgb(228, 228, 228);
 
         &:last-child {
@@ -345,6 +349,12 @@ export default {
           }
           > i {
             vertical-align: -4rpx;
+          }
+        }
+        .user-id {
+          color: #c3c3c3;
+          i {
+            color: #994500;
           }
         }
       }
@@ -367,7 +377,7 @@ export default {
     border-radius: 20rpx;
     > div {
       height: 110rpx;
-      padding: 0 70rpx;
+      padding: 0 25rpx;
       border-bottom: 2rpx solid rgb(228, 228, 228);
       display: flex;
       justify-content: space-between;
