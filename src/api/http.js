@@ -82,7 +82,7 @@ fly.interceptors.response.use(response => {
     if (status) {
       clearTimeout(timer)
       timer = setTimeout(() => (status = false), 300)
-      return
+      return response.data.content
     }
     status = true;
     timer = setTimeout(() => (status = false), 300)

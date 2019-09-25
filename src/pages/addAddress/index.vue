@@ -6,7 +6,7 @@
     <BaseCustomBox>
       <div class="weui-cells weui-cells_form" @submit="submitForm('submit')">
         <div class="weui-cell">
-          <div class="weui-cell__hd">姓名</div>
+          <div class="weui-cell__hd">收件人</div>
           <input 
             type="text" 
             placeholder="请输入姓名"
@@ -146,6 +146,10 @@ export default {
 
     // 表单验证
     validateForm () {
+      if (this.formData.receiverName.length < 2) {
+        this.showToast('收件人姓名不少于2个字符', 'none')
+        return false
+      }
       if (!this.Utils.regularRule.phone.test(this.formData.receiverPhone)) {
         this.showToast('请输入正确的手机号', 'none')
         return false

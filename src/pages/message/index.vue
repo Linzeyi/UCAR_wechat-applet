@@ -48,7 +48,7 @@ export default {
   onShow () {
     // 发送请求获取所有消息
     this.$http.get('/action/message/getAllMessage').then(res => {
-      if (res.data) {
+      if (res && res.data) {
         this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
       } else {
         wx.showToast({
@@ -95,7 +95,7 @@ export default {
         this.$store.commit('Message/SET_MESSAGE_READ', this.setMessageRead)
       }
       this.$http.get('/action/message/getAllMessage').then(res => {
-        if (res.data) {
+        if (res && res.data) {
           this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
         } else {
           wx.showToast({
