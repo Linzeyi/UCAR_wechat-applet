@@ -37,7 +37,7 @@ export default {
     // 获取所有地址
     this.$http.get('/action/addr/list').then(res => {
       if (res) {
-        this.commit('UserCenter/SET_ADDRESS_LIST', res.data.addressList)
+        this.$store.commit('UserCenter/SET_ADDRESS_LIST', res.data.addressList)
       } else {
         wx.showToast({
           title: '获取地址失败',

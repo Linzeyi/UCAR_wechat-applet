@@ -120,6 +120,10 @@ export default {
               that.$http.post('/action/addr/setDefault', {addrId: address[index].id}).then(res => {
                 if (res.status === 20000) {
                   that.showToast('设置成功', 'success')
+                  wx.pageScrollTo({
+                    selector: '.address-wrap',
+                    duration: 600
+                  })
                 } else {
                   that.showToast('设置失败')
                 }
@@ -165,7 +169,6 @@ export default {
 .address-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
-  height: 100%;
   background-color: #f3f3f3;
   .address-list {
     padding-top: 2px;

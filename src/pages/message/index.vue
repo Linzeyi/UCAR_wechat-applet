@@ -1,5 +1,6 @@
 <template>
   <div class="message-wrap page">
+    <base-load :loadStatus="loadStatus" @reLoad="post"></base-load>
     <span class="panel header" v-if="unreadMessageList.length">未读消息</span>
     <div class="panel" v-for="(item, index) in unreadMessageList" :key="index">
       <div class="panel__hd title" @click="showUnread(index)" :class="{'unshow': !item.isShow, 'show': item.isShow}">
@@ -39,24 +40,21 @@
 </template>
 
 <script>
+import baseLoad from '@/components/base/BaseLoad'
+
 export default {
+  components: {
+    baseLoad
+  },
   data () {
     return {
-      messageList: []
+      messageList: [],
+      loadStatus: ''
     }
   },
   onShow () {
     // 发送请求获取所有消息
-    this.$http.get('/action/message/getAllMessage').then(res => {
-      if (res && res.data) {
-        this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
-      } else {
-        wx.showToast({
-          title: '获取消息失败',
-          icon: 'none'
-        })
-      }
-    })
+    this.post()
   },
   onUnload () {
     // 退出页面时把已读消息更新到store中
@@ -106,6 +104,22 @@ export default {
         wx.stopPullDownRefresh()
         wx.hideNavigationBarLoading()
       })
+    },
+    // 发送请求获取所有消息
+    post () {
+      this.loadStatus = 'loading'
+      this.$http.get('/action/message/getAllMessage').then(res => {
+        this.loadStatus = 'online'
+        if (res && res.data) {
+          this.$store.commit('Message/SET_MESSAGE_LIST', res.data)
+        } else {
+          this.loadStatus = 'offline'
+          wx.showToast({
+            title: '获取消息失败',
+            icon: 'none'
+          })
+        }
+      })
     }
   },
   // 下拉刷新
@@ -125,6 +139,10 @@ export default {
   font-family: @baoWoFont;
   height: 100%;
   padding: 5px 10px;
+  /deep/ .wrap {
+    position: fixed;
+    top: 0;
+  }
   .header {
     position: relative;
     left: 39%;

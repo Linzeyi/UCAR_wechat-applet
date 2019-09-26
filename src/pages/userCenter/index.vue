@@ -19,7 +19,13 @@
           </div>
           <div class="info">
             <div class="user-name">
-              <p class="name">{{ nickname }}</p><span>{{ grade }}</span>
+              <p class="name">{{ nickname }}</p>
+              <div class="grade" 
+                :class="[{ bronze: grade === '青铜' }, { silver: grade === '白银' }, { gold: grade === '黄金' }, { platinum: grade === '白金' }, { platinumPlus:grade === '白金Plus' }, { diamond: grade === '钻石' }]"
+                @touchstart.stop="goTouchStart" 
+                @touchend="goTouchEnd">
+                {{ grade }}<span class="tips" v-if="gradeTips && discount !== undefined && discount !== '1'">您可享受 {{ discount * 10 }} 折的购物优惠</span>
+              </div>
             </div>
             <p>积分：<span class="integral">{{ integral }}</span></p>
           </div>
@@ -36,7 +42,6 @@
       <div class="weui-cells">
         <div class="weui-cell" @click="routeTo('wallet')">
           <div class="weui-cell__hd">
-            <!-- <i class="iconfont">&#xe62b;</i> -->
             <img src="../../../static/images/wallet.svg" class="action-icon">
           </div>
           <div class="weui-cell__bd">
@@ -48,7 +53,6 @@
         </div>
         <div class="weui-cell" @click="routeTo('order')">
           <div class="weui-cell__hd">
-            <!-- <i class="iconfont">&#xe602;</i> -->
             <img src="../../../static/images/order.svg" class="action-icon">
           </div>
           <div class="weui-cell__bd">
@@ -60,7 +64,6 @@
         </div>
         <div class="weui-cell" @click="routeTo('address')">
           <div class="weui-cell__hd">
-            <!-- <i class="iconfont">&#xe686;</i> -->
             <img src="../../../static/images/address.svg" class="action-icon">
           </div>
           <div class="weui-cell__bd">
@@ -72,7 +75,6 @@
         </div>
         <div class="weui-cell" @click="routeTo('message')">
           <div class="weui-cell__hd">
-            <!-- <i class="iconfont">&#xe7a2;</i> -->
             <img src="../../../static/images/message.svg" class="action-icon">
           </div>
           <div class="weui-cell__bd">
@@ -99,7 +101,9 @@ export default {
     BaseCustomBox
   },
   data () {
-    return {}
+    return {
+      gradeTips: false // 显示等级提示
+    }
   },
   onShow () {
     // 加载个人中心所需数据
@@ -136,6 +140,10 @@ export default {
     // 等级
     grade () {
       return this.$store.getters['UserCenter/grade'] || '青铜'
+    },
+    // 折扣
+    discount () {
+      return this.$store.getters['UserCenter/discount'] || 10
     },
     // 订单条数
     orderNum () {
@@ -179,6 +187,14 @@ export default {
     test () {
       // this.$store.commit('Message/INIT_WEBSOCKET')
       this.$store.dispatch('Message/initWebSocket')
+    },
+
+    // 显示/隐藏 等级提示
+    goTouchStart () {
+      this.gradeTips = true
+    },
+    goTouchEnd () {
+      this.gradeTips = false
     }
   }
 }
@@ -273,21 +289,57 @@ export default {
         }
         .user-name {
           display: flex;
+          position: relative;
           .name {
             font-family: 'PingFangSC';
             font-size: 18px;
             color: #6e2c10;
           }
-          span {
-            border: 0.5px solid @orange;
+          .grade {
+            display: inline-block;
+            border: 0.5px solid #000000;
             border-radius:5px;
-            background-color: rgb(255, 171, 171);
+            background-color: rgb(255, 227, 201);
             padding: 0 5px;
             margin-left: 10px;
             font-size: 10px;
             align-self: center;
-            color: @orange;
+            color: #000000;
             line-height: inherit;
+            z-index: 100;
+            .tips {
+              margin-left: 10px;
+            }
+          }
+          .bronze {
+            color: #8c7853;
+            border: 0.5px solid #8c7853;
+            background-color: #e5c8ad;
+          }
+          .silver {
+            color: #c0c0c0;
+            border: 0.5px solid #c0c0c0;
+            background-color: #ffffff;
+          }
+          .gold {
+            color: #ffd700;
+            border: 0.5px solid #ffd700;
+            background-color: #803900;
+          }
+          .platinum {
+            color: #00cde1;
+            border: 0.5px solid #00cde1;
+            background-color: #ffdec4;
+          }
+          .platinumPlus {
+            color: #00cde1;
+            border: 0.5px solid #00cde1;
+            background-color: #111111;
+          }
+          .diamond {
+            color: #9595fa;
+            border: 0.5px solid #9595fa;
+            background-color: #ffffff;
           }
         }
         .integral {
@@ -319,11 +371,9 @@ export default {
     }
     .weui-cell {
       height: 45px;
-      // .weui-cell__hd .iconfont {
-        // font-size: 0.5rem;
-        // margin-right: 9px;
-        // color: @orange;
-      // }
+      &::before {
+        border-top: 0.3px solid #f3f3f3;
+      }
       .action-icon {
         height: 23px;
         width: 23px;

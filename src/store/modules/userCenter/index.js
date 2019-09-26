@@ -12,7 +12,7 @@ export default {
     integral: '0', // 积分
     grade: '塑料', // 账户星级
     growth: '0', // 成长值
-    discount: '0', // 等级优惠
+    discount: undefined, // 等级优惠
     phone: undefined, // 手机号
     avatarUrl: undefined, // 头像地址
     orderNum: undefined, // 订单条数
@@ -164,9 +164,14 @@ export default {
           // 设置登录状态
           state.isLogged = true
           // 连接webSocket
-          this.commit('Message/CONNECT_WEBSOCKET')
+          if (!this.state.Message.socket) {
+            this.commit('Message/CONNECT_WEBSOCKET')
+          }
         } else {
           state.isLogged = false
+          // 断开webSocket
+          this.commit('Message/CLOSE_WEBSOCKET')
+          // 清空个人中心数据
           this.commit('UserCenter/RESET_USER_CENTER_STORE')
         }
       })
