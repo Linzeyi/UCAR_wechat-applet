@@ -63,9 +63,9 @@ export default {
       this.score = index + 1
     },
     handlerComment () {
-      if (this.title === '') {
+      if (this.content === '') {
         wx.showToast({
-          title: '标题不能为空',
+          title: '评论内容不能为空',
           icon: 'none',
           duration: 2000
         })

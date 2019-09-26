@@ -82,11 +82,15 @@ export default {
     BaseLoad
   },
   onLoad () {
-    this.loadStatus = "loading";
-  },
-  onShow () {
+    this.loadStatus = "loading"
     this.size = this.pageSize
     this.getRecommendGoodsList()
+  },
+  async onPullDownRefresh() {
+    this.loadStatus = "loading"
+    this.size = this.pageSize
+    this.getRecommendGoodsList()
+    // 停止下拉刷新
   },
   watch: {
     size: {
@@ -102,10 +106,6 @@ export default {
     computedCategoryList () {
       return this.categoryList.splice(0, 10)
     }
-  },
-  async onPullDownRefresh() {
-    this.getRecommendGoodsList()
-    // 停止下拉刷新
   },
   methods: {
     scrollTo (name) {

@@ -1,10 +1,10 @@
 const Fly = require('flyio/dist/npm/wx')
 const config = require('./config')
-// const { CryptoApi } = require('./crypto')
+const { CryptoApi } = require('./crypto')
 const { SignApi } = require('./sign')
 const cid = config.Auth.cid
 const accountKey = config.Auth.accountKey
-// const key = CryptoApi.getKeys(accountKey) // 密钥
+const key = CryptoApi.getKeys(accountKey) // 密钥
 
 const log = function (msg) {
   console.log(msg)
@@ -33,13 +33,13 @@ Object.assign(fly.config, {
 fly.interceptors.request.use(request => {
   // console.log(request)
   const uid = ''
-  // console.log('accountKey:' + accountKey)
-  // console.log('key:' + key)
+  console.log('accountKey:' + accountKey)
+  console.log('key:' + key)
   const data = request.body ? JSON.stringify(request.body) : '' // 需要加密的请求数据，转成字符串
   // const data = request.body
   console.log('data:', data)
-  // const q = SignApi.getQ(data, accountKey) // 利用请求参数data和密钥key
-  const q = data
+  const q = CryptoApi.aesEncrypt(request.body, key) // 利用请求参数data和密钥key
+  // const q = data
   // console.log('q:' + q)
   const sign = SignApi.getSign({ // 利用cid、q、uid、accountKey生成签名
     cid,
@@ -49,7 +49,6 @@ fly.interceptors.request.use(request => {
   })
   // console.log('sign:' + sign)
   var queryData = { // 最终的请求体
-    sign,
     cid
   }
   if (uid) {
@@ -58,6 +57,7 @@ fly.interceptors.request.use(request => {
   if (q) {
     queryData.q = q
   }
+  queryData.sign = sign
   request.body = queryData // 放入请求体
   // console.log('请求体：', queryData)
 
@@ -78,6 +78,8 @@ fly.interceptors.request.use(request => {
 let status = false
 let timer
 fly.interceptors.response.use(response => {
+  // response = CryptoApi.aesDecrypt(response.content, key)
+  console.log(CryptoApi.aesDecrypt(response.content, key))
   if (response.data.code === 5) {
     wx.removeStorageSync('token')
     if (status) {
@@ -102,6 +104,7 @@ fly.interceptors.response.use(response => {
   }
   return response.data.content
 }, err => {
+  console.log(err)
   log(err)
 })
 export default fly
