@@ -84,11 +84,12 @@ fly.interceptors.response.use(response => {
       title: "跳转登录",
       content: "您还未登陆，请前往登录页面。",
       confirmColor: '#FF6421',
+      cancelText: '回到首页',
       success(res) {
         if (res.confirm) {
           mpvue.navigateTo({ url: '/pages/login/main' })
         } else if (res.cancel) {
-          mpvue.navigateBack()
+          mpvue.switchTab({ url: '/pages/index/main' })
         }
       }
     });

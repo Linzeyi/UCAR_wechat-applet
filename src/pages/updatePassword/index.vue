@@ -77,7 +77,8 @@ export default {
         });
         return;
       }
-      mpvue.navigateBack();
+      wx.removeStorageSync("token");
+      mpvue.switchTab({ url: "/pages/userCenter/main" });
     }
   }
 };
