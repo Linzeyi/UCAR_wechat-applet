@@ -62,7 +62,7 @@
             </p>
             <p class="small-font dicount-font" v-if="discountInfo.discount !== 1 && !checkIntegral">
               <span class="left">会员优惠</span>
-              <span class="right">{{discountInfo.discount}}折</span>
+              <span class="right">{{discountInfo.discount * 10}}折</span>
             </p>
             <p class="order-price-font" v-if="checkIntegral">
               <span class="left">商品积分</span>
@@ -410,7 +410,7 @@ export default {
                   that.getOrder()
                 } else {
                   wx.showToast({
-                    title: '确认失败！',
+                    title: res.msg,
                     icon: 'none',
                     duration: 2000
                   })
@@ -454,7 +454,7 @@ export default {
               confirmText: '前往充值',
               success (res) {
                 if (res.confirm) {
-
+                  mpvue.navigateTo({ url: '/pages/wallet/main' })
                 }
               }
             })
@@ -490,7 +490,7 @@ export default {
                       })
                     } else {
                       wx.showToast({
-                        title: '支付失败',
+                        title: res.msg,
                         icon: 'none',
                         duration: 2000
                       })

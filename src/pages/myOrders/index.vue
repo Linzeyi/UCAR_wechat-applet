@@ -185,6 +185,10 @@ export default {
     },
     getOrderList () {
       this.loading = true
+      wx.showLoading({
+        title: '加载中',
+        duration: 2000
+      })
       this.$http.get('/action/order/getOrderList', {
         status: this.selectTypeKey,
         start: this.start,
@@ -243,7 +247,7 @@ export default {
                   that.getOrderList()
                 } else {
                   wx.showToast({
-                    title: '确认失败！',
+                    title: res.msg,
                     icon: 'none',
                     duration: 2000
                   })
@@ -288,7 +292,7 @@ export default {
                 that.getOrderList()
               } else {
                 wx.showToast({
-                  title: '取消失败！',
+                  title: res.msg,
                   icon: 'none',
                   duration: 2000
                 })

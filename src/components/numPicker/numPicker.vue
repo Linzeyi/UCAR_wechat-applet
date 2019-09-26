@@ -51,9 +51,8 @@ export default {
     this.value = this.num
   },
   watch: {
-    num () {
+    num (newVal, oldVal) {
       this.value = this.num
-      this.$emit('changeObjectNum', this.objItem)
     }
   },
   methods: {
@@ -65,16 +64,12 @@ export default {
           duration: 2000
         })
         this.value = this.min
-        this.$emit('update:num', this.min)
       }
-      this.$emit('changeType')
+      this.$emit('changeObjectNum', this.value, this.value, this.objItem)
     },
     checkNum (e) {
       let val = e.target.value
       let reg = new RegExp(/^[1-9]\d*$/)
-      console.log('val: ' + val)
-      console.log(val === '')
-      console.log(Number(val))
       if (val === '' || Number(val) === this.min || reg.test(val)) {
         if (Number(val) > this.max) {
           this.value = this.min
@@ -107,8 +102,8 @@ export default {
     },
     reduce () {
       if (this.num > this.min) {
+        this.$emit('changeObjectNum', this.num - 1, this.num, this.objItem)
         this.$emit('update:num', this.num - 1)
-        this.$emit('changeType')
       } else {
         wx.showToast({
           title: '数值不能低于' + this.min,
@@ -119,8 +114,8 @@ export default {
     },
     plus () {
       if (this.num !== this.max) {
+        this.$emit('changeObjectNum', this.num + 1, this.num, this.objItem)
         this.$emit('update:num', this.num + 1)
-        this.$emit('changeType')
       } else {
         wx.showToast({
           title: '数值不能超过' + this.max,
