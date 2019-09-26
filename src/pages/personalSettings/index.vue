@@ -110,7 +110,8 @@ export default {
         avatarUrl: "",
         nickname: "",
         email: "",
-        sex: -1
+        sex: -1,
+        fid: ''
       },
       showToast: false,
       showAvatarSheet: false,
@@ -208,6 +209,7 @@ export default {
         });
         if (result.data.imgUrl) {
           this.userInfo.avatarUrl = result.data.imgUrl;
+          this.userInfo.fid = result.data.imgFid
         }
       } catch (error) {
         this.showLoading = false;
@@ -238,7 +240,7 @@ export default {
     },
     async saveUserInfo() {
       const result = await this.$http.post("/action/user/modifyInfo", {
-        avatarUrl: this.userInfo.avatarUrl,
+        avatarUrl: this.userInfo.fid,
         nickname: this.userInfo.nickname,
         email: this.userInfo.email,
         sex: this.userInfo.sex

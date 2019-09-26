@@ -22,7 +22,7 @@
           scroll-with-animation
           @scrolltolower="scrollHandle"
         >
-          <div class="scroll-right-lable">
+          <div class="scroll-right-title">
             <span>{{classList[selectClassIndex]}}</span>
           </div>
           <div>
@@ -182,11 +182,11 @@ export default {
 
 .scroll-right {
   background-color: rgb(243, 243, 243);
-  .scroll-right-lable {
+  .scroll-right-title {
     height: 100rpx;
     color: #555;
     line-height: 100rpx;
-    font-size: 30rpx;
+    font-size: 35rpx;
     font-weight: bold;
     text-align: center;
     transform: scale(1);
@@ -198,14 +198,14 @@ export default {
         position: fixed;
         top: 50%;
         background-color: #555;
-        width: 8%;
+        width: 15%;
         height: 2rpx;
       }
       &::before {
-        left: 30%;
+        left: 15%;
       }
       &::after {
-        right: 30%;
+        right: 15%;
       }
     }
   }
