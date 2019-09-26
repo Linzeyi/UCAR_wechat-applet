@@ -21,7 +21,7 @@
             <div class="user-name">
               <p class="name">{{ nickname }}</p><span>{{ grade }}</span>
             </div>
-            <p>积分：{{ integral }}</p>
+            <p>积分：<span class="integral">{{ integral }}</span></p>
           </div>
           <i class="iconfont setting">&#xe61f;</i>
         </div>
@@ -269,12 +269,14 @@ export default {
         flex: 3;
         & > p {
           font-size: 13px;
+          color: #ffc7af;
         }
         .user-name {
           display: flex;
           .name {
             font-family: 'PingFangSC';
             font-size: 18px;
+            color: #6e2c10;
           }
           span {
             border: 0.5px solid @orange;
@@ -288,16 +290,21 @@ export default {
             line-height: inherit;
           }
         }
+        .integral {
+          color: #ffc7af;
+        }
       }
       .setting {
         font-size: 0.6rem;
         flex: 0.7;
+        color: #a8542f;
       }
     }
     .phone {
       margin-left: 10px;
       p {
         font-size: 13px;
+        color: #ffddce;
       }
     }
   }

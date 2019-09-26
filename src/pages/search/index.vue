@@ -45,7 +45,8 @@
           <p>{{ item }}</p>
         </div>
       </div>
-      <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 155px;font-size: 18px;">暂无商品…</p>
+      <!-- <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 155px;font-size: 18px;">暂无商品…</p> -->
+      <base-load :loadStatus="loadStatus"></base-load>
       <div class="goods-warp">
         <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
           <goodsGridList 
@@ -64,10 +65,12 @@
 
 <script>
 import goodsGridList from '@/components/goodsGridList/goodsGridList'
+import baseLoad from '@/components/base/BaseLoad'
 
 export default {
   components: {
-    goodsGridList
+    goodsGridList,
+    baseLoad
   },
   data () {
     return {
@@ -81,15 +84,18 @@ export default {
       pageSize: 3,
       goodsList: [],
       accum: 1, // 查询触底累加
-      noResult: false // 是否有查询结果
+      noResult: false, // 是否有查询结果
+      loadStatus: '' // loading图标
     }
   },
   onLoad () {
     // 获取热门搜索
+    this.loadStatus = 'loading'
     this.$http.get('/action/goods/getPopularSearch').then(res => {
       if (res !== '' && res.status === 20000) {
         let para = JSON.parse(res.data)
         this.popularSearch = para
+        this.loadStatus = 'online'
       }
     })
   },
@@ -97,6 +103,8 @@ export default {
     this.isShowSearchPage = false
     this.isShowSearchResult = false
     this.noResult = false
+    this.goodsList = []
+    console.log('reset', this.goodsList)
   },
   methods: {
     // 搜索副页显示
@@ -114,7 +122,6 @@ export default {
           }
         }).then(res => {
           if (res.data) {
-            console.log(res.data, 'data')
             this.goodsList = res.data
           } else {
             this.goodsList = []
@@ -135,7 +142,6 @@ export default {
     },
     // 实时查询商品
     submitSearch () {
-      console.log(this.searchContent, '查询！')
       this.$http.post('/action/goods/searchGoods', {
         tagNo: 0,
         tagName: this.searchContent,
@@ -171,7 +177,6 @@ export default {
     }).then(res => {
       if (res.data) {
         this.goodsList = res.data
-        console.log(this.goodsList, 'goods list')
       }
     })
   }
