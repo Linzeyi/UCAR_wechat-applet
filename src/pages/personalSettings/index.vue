@@ -107,11 +107,11 @@ export default {
     return {
       userInfo: {
         phone: "",
-        avatarUrl: "",
         nickname: "",
         email: "",
         sex: -1,
-        fid: ''
+        avatarUrl: "",
+        fid: undefined
       },
       showToast: false,
       showAvatarSheet: false,
@@ -208,7 +208,7 @@ export default {
         });
         if (result.data.imgUrl) {
           this.userInfo.avatarUrl = result.data.imgUrl;
-          this.userInfo.fid = result.data.imgFid
+          this.userInfo.fid = result.data.imgFid;
         }
       } catch (error) {
         this.showLoading = false;
@@ -343,6 +343,8 @@ export default {
         .right-box {
           > input {
             width: 400rpx;
+            height: 40rpx;
+            min-height: 40rpx;
             display: inline-block;
             text-align: right;
             font-size: 30rpx;
