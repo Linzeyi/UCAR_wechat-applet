@@ -441,7 +441,7 @@ export default {
     .invalid-tips {
       display: block;
       width: 100%;
-      position: fixed;
+      position: sticky;
       bottom: 70px;
       height: 45px;
       line-height: 45px;

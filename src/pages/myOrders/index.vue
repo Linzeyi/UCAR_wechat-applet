@@ -51,12 +51,6 @@
                   </div>
                 </div>
               </div>
-              <div class="computed-info">
-                <span class="num">共{{orderItem.shopGoodsList.length}}件商品，</span>
-                合计：
-                <span class="price" v-if="orderItem.orderType">{{orderItem.payPrice}} 点积分</span>
-                <span class="price" v-else><span class="logo">¥</span>{{orderItem.payPrice}}</span>
-              </div>
               <div class="goods-footer">
                 <span class="option-btn" v-if="orderItem.status < 1" @click="cancelOrder(orderItem.orderNo)">取消订单</span>
                 <span class="option-btn" @click="toOrderDetail(orderItem.orderNo)">查看订单</span>
@@ -79,7 +73,6 @@
           </div>
           <div class="bottom-font-panel" v-if="loading">
             <p>
-              <i class="iconfont"></i>
               加载中...
             </p>
           </div>

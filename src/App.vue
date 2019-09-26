@@ -44,14 +44,14 @@ button {
   }
 }
 .lzy-list-wrap {
-  height: calc(100% - 70px);
-  overflow-y: auto;
+  // height: calc(100% - 70px);
+  // overflow-y: auto;
 }
 .lzy-footer {
   z-index: 10;
   background-color: #fff;
   border-top: 1px solid #eee;
-  position: fixed;
+  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;
@@ -91,6 +91,7 @@ button {
 .lzy-flex-box {
   display: flex;
   justify-content: center;
+  background: #fff;
   .left-box {
     .img-box {
       border-radius: 4px;

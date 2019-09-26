@@ -83,7 +83,7 @@
             <p class="total-price-font" v-else>
               <span class="left" v-if="checkIntegral && order.status !== 4">已花费</span>
               <span class="left" v-if="!checkIntegral && order.status !== 4">已付款</span>
-              <span class="left" v-if="order.status === 4">订单取消</span>
+              <span class="left" v-if="order.status === 4">订单已取消</span>
               <span class="right" v-if="checkIntegral && order.status !== 4">
                 {{order.payPrice}} 点积分
               </span>
@@ -121,10 +121,19 @@
           <div class="content-panel">
             <span class="title">订单状态</span>
             <span>{{getStatusList}}</span>
+            <span class="order-remark" v-if="order.orderRemark">（{{order.orderRemark}}）</span>
           </div>
           <div class="content-panel">
             <span class="title">创建时间</span>
             <span>{{order.createTime}}</span>
+          </div>
+          <div class="content-panel" v-if="order.status !== 0">
+            <span class="title" v-if="order.status === 1">付款时间</span>
+            <span class="title" v-if="order.status === 2">发货时间</span>
+            <span class="title" v-if="order.status === 3 && !checkAllGoodsIsCommented">收货时间</span>
+            <span class="title" v-if="order.status === 3 && checkAllGoodsIsCommented">评价时间</span>
+            <span class="title" v-if="order.status === 4">取消时间</span>
+            <span>{{order.modifyTime}}</span>
           </div>
           <div class="content-panel">
             <span class="title">我的备注</span>
@@ -535,6 +544,7 @@ export default {
 <style lang="less" scoped>
 .orderPay-wrap {
   box-sizing: border-box;
+  min-height: calc(100% - 70px);
   padding: 0;
   background-color: #f3f3f3;
   .wrap-panel {
@@ -568,6 +578,9 @@ export default {
         width: 70px;
         vertical-align: top;
         color: #999;
+      }
+      .order-remark {
+        color: orangered;
       }
     }
     &.top-panel {

@@ -161,9 +161,9 @@ export default {
           this.loadStatus = "online"
           this.getCategory()
         } else {
-          this.$nextTick(function () {
+          setTimeout(function () {
             that.$refs['goods_grid_list_el'].loadErr()
-          })
+          }, 200)
           this.loadStatus = "offline"
         }
         wx.stopPullDownRefresh()

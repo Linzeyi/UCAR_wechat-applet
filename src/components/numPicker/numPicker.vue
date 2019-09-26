@@ -162,6 +162,10 @@ export default {
       line-height: 50rpx;
       font-size: 16px;
       text-align: center;
+      &:active {
+        color: #666;
+        background-color: #f3f3f3;
+      }
       &.disabled {
         background-color: #eee;
         color: #aaa;
@@ -202,6 +206,10 @@ export default {
         }
         &.plus {
           border-left: 1px solid #ddd;
+        }
+        &:active {
+          color: #666;
+          background-color: #f3f3f3;
         }
       }
     }
