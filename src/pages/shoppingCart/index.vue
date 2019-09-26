@@ -7,7 +7,7 @@
       <div class="shoppingCart-wrap lzy-list-wrap">
         <div class="goods-list-wrap">
           <div class="goods-list" v-if="goodsList.length !== 0">
-            <div class="goods-box" v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex">
+            <div class="goods-box" v-for="(goodsItem, goodsIndex) in computedGoodsList" :key="goodsIndex">
               <movable-area class="movable-area">
                 <movable-view x="65" y="0" out-of-bounds="true" class="movable-view" direction="horizontal" inertia="true" damping="100">
                   <div class="left-box">
@@ -28,7 +28,7 @@
                       <p class="bottom-p">
                         <span class="price">
                           <span class="logo">¥</span>
-                          <com-price-fixed :price="(goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice )* goodsItem.num"></com-price-fixed>
+                          <com-price-fixed :price="goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice"></com-price-fixed>
                         </span>
                         <span class="numPicker-box">
                           <num-picker :objItem="goodsItem" :min="1" :isSmall="true" :max="goodsItem.stock" :num.sync="goodsItem.num" @changeObjectNum="changeShopGoodsNum"></num-picker>
@@ -47,7 +47,10 @@
               购物车空啦！
             </p>
           </div>
-          <div class="invalid-goods-list" v-if="invalidGoodsList.length !== 0">
+          <p class="loading-tips" v-if="!isLoading && size <= goodsList.length">下拉加载</p>
+          <p class="loading-tips" v-if="!isLoading && size > goodsList.length">没有更多</p>
+          <p class="loading-tips" v-if="isLoading">加载中...</p>
+          <div class="invalid-goods-list" v-if="invalidGoodsList.length !== 0 && size > goodsList.length">
             <div class="header">
               <span class="title">失效商品{{invalidGoodsList.length}}件</span>
             </div>
@@ -75,21 +78,21 @@
             </div>
           </div>
         </div>
-        <div class="cart-footer lzy-footer">
-          <div class="left-box">
-            <div class="select-box">
-              <i class="iconfont icon-select-no" v-if="!isAllSelected" @click="selectAll(true)">&#xe656;</i>
-              <i class="iconfont icon-select-fill" v-else  @click="selectAll(false)">&#xe655;</i>
-            </div>
-            <span class="select-title">全选</span>
-          </div>
-          <div class="right-box">
-            <span class="total">合计：</span>
-            <span class="price"><span class="logo">¥</span>{{totalPrice}}</span>
-            <button class="to-pay-btn" @click="toOrderConfirm">结算({{selectedNum}})</button>
-          </div>
-        </div>
         <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
+      </div>
+      <div class="cart-footer lzy-footer">
+        <div class="left-box">
+          <div class="select-box">
+            <i class="iconfont icon-select-no" v-if="!isAllSelected" @click="selectAll(true)">&#xe656;</i>
+            <i class="iconfont icon-select-fill" v-else  @click="selectAll(false)">&#xe655;</i>
+          </div>
+          <span class="select-title">全选</span>
+        </div>
+        <div class="right-box">
+          <span class="total">合计：</span>
+          <span class="price"><span class="logo">¥</span>{{totalPrice}}</span>
+          <button class="to-pay-btn" @click="toOrderConfirm">结算({{selectedNum}})</button>
+        </div>
       </div>
     </base-custom-box>
     <base-load :loadStatus="loadStatus" @reLoad="getShoppingCartGoodsList"></base-load>
@@ -115,6 +118,7 @@ export default {
   },
   data () {
     return {
+      isLoading: false,
       loadStatus: '',
       isAllSelected: false,
       goodsList: [],
@@ -123,10 +127,17 @@ export default {
         goodsNo: ''
       },
       totalPrice: 0,
-      selectedNum: 0
+      selectedNum: 0,
+      start: 0,
+      size: 5,
+      pageSize: 5
     }
   },
   computed: {
+    computedGoodsList () {
+      console.log(this.goodsList.slice(this.start, this.size))
+      return this.goodsList.slice(this.start, this.size)
+    },
     getDefaultImg () {
       return this.Utils.getSquareDefaultImg()
     },
@@ -161,13 +172,28 @@ export default {
     }
   },
   onLoad () {
+    this.size = this.pageSize
     this.loadStatus = "loading"
   },
   onShow () {
     this.getShoppingCartGoodsList()
+    this.selectAll(false)
   },
   async onPullDownRefresh() {
+    this.size = this.pageSize
     this.getShoppingCartGoodsList()
+    this.selectAll(false)
+  },
+  async onReachBottom () {
+    let that = this
+    this.isLoading = true
+    console.log('size:' + this.size + ';length:' + this.goodsList.length)
+    setTimeout(function() {
+      that.isLoading = false
+      if (that.size <= that.goodsList.length) {
+        that.size += that.pageSize
+      }
+    }, 1000)
   },
   methods: {
     getSelectedGoodsList () {
@@ -237,6 +263,11 @@ export default {
       this.changeProperty(goods.property, newNum, goods.property, oldNum, goods)
     },
     getShoppingCartGoodsList () {
+      let oldList = []
+      if (this.goodsList.length !== 0) {
+        oldList = JSON.parse(JSON.stringify(this.goodsList))
+        console.log(oldList[0].isSelected)
+      }
       if (this.loadStatus === 'offline') {
         this.loadStatus = "loading"
       }
@@ -244,8 +275,19 @@ export default {
         console.log(res)
         if (res.data) {
           this.goodsList = res.data.validCart
+          this.goodsList.map(item => {
+            console.log('新的商品', item)
+            oldList.map(oldItem => {
+              console.log('旧的商品', oldItem)
+              if (item.goodsNo === oldItem.goodsNo) {
+                console.log('选中商品：', item)
+                if (oldItem.isSelected) {
+                  this.selectGoods(item)
+                }
+              }
+            })
+          })
           this.invalidGoodsList = res.data.invalidCart
-          this.selectAll(false)
           this.updateSelectedInfo()
           this.loadStatus = "online"
         } else {
@@ -362,24 +404,30 @@ export default {
 </script>
 
 <style lang="less">
+.select-box, .tips-box {
+  width: 40px;
+  .iconfont {
+    margin-left: 5px;
+    font-size: 21px;
+    color: #ddd;
+    &.icon-select-fill {
+      color: orangered
+    }
+  }
+}
 .shoppingCart-wrap {
   box-sizing: border-box;
   padding: 10px 0;
   background-color: #f3f3f3;
-  .select-box, .tips-box {
-    width: 40px;
-    .iconfont {
-      margin-left: 5px;
-      font-size: 21px;
-      color: #ddd;
-      &.icon-select-fill {
-        color: orangered
-      }
-    }
-  }
   .goods-list-wrap {
     padding: 0 10px 30px 10px;
     box-sizing: border-box;
+    .loading-tips {
+      padding: 10px 0 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #999;
+    }
     .no-goods-panel {
       padding: 30px 0;
       p {
@@ -566,28 +614,28 @@ export default {
       }
     }
   }
-  .cart-footer {
-    .left-box {
-      .select-title {
-        font-size: 12px;
-        color: #666;
+}
+.cart-footer {
+  .left-box {
+    .select-title {
+      font-size: 12px;
+      color: #666;
+    }
+  }
+  .right-box {
+    .price {
+      color: #ff6421;
+      font-size: 16px;
+      .logo {
+        font-size: 11px;
+        margin-right: 6px;
       }
     }
-    .right-box {
-      .price {
-        color: #ff6421;
-        font-size: 16px;
-        .logo {
-          font-size: 11px;
-          margin-right: 6px;
-        }
-      }
-      .to-pay-btn {
-        background-color: #ff6421;
-        color: #fff;
-        &:active {
-          background-color: #ec4e09;
-        }
+    .to-pay-btn {
+      background-color: #ff6421;
+      color: #fff;
+      &:active {
+        background-color: #ec4e09;
       }
     }
   }

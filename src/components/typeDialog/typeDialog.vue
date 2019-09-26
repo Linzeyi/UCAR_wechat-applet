@@ -22,7 +22,7 @@
             </span>
           </p>
           <p class="stock">库存{{selectedProperty ? selectedProperty.stock : 0}}件</p>
-          <p class="info">已选：{{selectedProperty.propertyName}}</p>
+          <p class="info">已选：{{selectedProperty ? selectedProperty.propertyName : '无'}}</p>
         </div>
       </div>
       <div class="content-panel">
@@ -43,7 +43,7 @@
       <div class="content-panel numPicker-panel">
         <div class="header">
           <span>购买数量</span>
-          <span class="right-box"><num-picker :min="selectedProperty.stock? 1 : 0" :max="goods.categoryName === '积分' ? 1 : (selectedProperty.stock ? selectedProperty.stock : 0)" :num.sync="num"></num-picker></span>
+          <span class="right-box"><num-picker :min="selectedProperty ? (selectedProperty.stock? 1 : 0) : 1" :max="goods.categoryName === '积分' ? 1 : (selectedProperty ? selectedProperty.stock : 0)" :num.sync="num"></num-picker></span>
         </div>
         <p class="integral-font" v-if="goods.categoryName === '积分'">积分商品仅能兑换一件！</p>
       </div>

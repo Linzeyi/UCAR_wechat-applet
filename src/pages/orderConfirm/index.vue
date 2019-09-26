@@ -88,18 +88,18 @@
             <textarea v-model="order.remark" placeholder="请输入针对该订单的备注信息..." maxlength="300" auto-height="true"></textarea>
           </div>
         </div>
-        <div class="order-footer lzy-footer">
-          <div class="right-box">
-            <span class="num">共{{getTotalNum}}件，</span>
-            合计:
-            <span class="total-price" v-if="checkIntegral">
-              {{getCurrentIntegral}} 点积分
-            </span>
-            <span class="total-price" v-else>
-              <span class="logo">¥</span>{{getTotalPrice}}
-            </span>
-            <button class="confirmOrder-btn" @click="toOrderDetail">提交订单</button>
-          </div>
+      </div>
+      <div class="order-footer lzy-footer">
+        <div class="right-box">
+          <span class="num">共{{getTotalNum}}件，</span>
+          合计:
+          <span class="total-price" v-if="checkIntegral">
+            {{getCurrentIntegral}} 点积分
+          </span>
+          <span class="total-price" v-else>
+            <span class="logo">¥</span>{{getTotalPrice}}
+          </span>
+          <button class="confirmOrder-btn" @click="toOrderDetail">提交订单</button>
         </div>
       </div>
     </base-custom-box>
@@ -330,6 +330,7 @@ export default {
 <style lang="less" scoped>
 .orderConfirm-wrap {
   box-sizing: border-box;
+  min-height: calc(100% - 70px);
   padding: 10px;
   background-color: #f3f3f3;
   .order-panel {
@@ -454,27 +455,27 @@ export default {
       }
     }
   }
-  .order-footer {
-    .right-box {
-      .num {
+}
+.order-footer {
+  .right-box {
+    .num {
+      font-size: 11px;
+      color: #999;
+    }
+    .total-price {
+      margin-left: 6px;
+      font-size: 16px;
+      color: #ff6421;
+      .logo {
         font-size: 11px;
-        color: #999;
+        margin-right: 4px;
       }
-      .total-price {
-        margin-left: 6px;
-        font-size: 16px;
-        color: #ff6421;
-        .logo {
-          font-size: 11px;
-          margin-right: 4px;
-        }
-      }
-      .confirmOrder-btn {
-        background-color: #ff6421;
-        color: #fff;
-        &:active {
-          background-color: #ec4e09;
-        }
+    }
+    .confirmOrder-btn {
+      background-color: #ff6421;
+      color: #fff;
+      &:active {
+        background-color: #ec4e09;
       }
     }
   }

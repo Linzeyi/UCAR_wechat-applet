@@ -16,7 +16,7 @@
     </div>
     <div class="comment-panel">
       <div class="panel-content text-content">
-        <textarea v-model="content" placeholder="评论内容" maxlength="400" auto-height></textarea>
+        <textarea v-model.lazy="content" placeholder="评论内容" maxlength="200" auto-height></textarea>
       </div>
     </div>
     <div class="comment-panel btn-panel">
@@ -63,46 +63,49 @@ export default {
       this.score = index + 1
     },
     handlerComment () {
-      if (this.content === '') {
-        wx.showToast({
-          title: '评论内容不能为空',
-          icon: 'none',
-          duration: 2000
-        })
-      } else if (this.score <= 0) {
-        wx.showToast({
-          title: '未选择评分',
-          icon: 'none',
-          duration: 2000
-        })
-      } else {
-        this.$http.post('/action/comment/sendComment', {
-          goodsNo: this.goods.goodsNo,
-          orderNo: this.orderNo,
-          goodsPropertyId: this.goods.property.id,
-          goodsPropertyName: this.goods.property.propertyName,
-          content: this.content,
-          goodsScore: this.score
-        }).then(res => {
-          console.log(res)
-          if (res.data) {
-            wx.showToast({
-              title: '成功发表评论',
-              icon: 'success',
-              duration: 2000
-            })
-            this.goods.commentStatus = 1
-            this.init()
-            this.$emit('commentSucceed')
-          } else {
-            wx.showToast({
-              title: '发表失败',
-              icon: 'none',
-              duration: 2000
-            })
-          }
-        })
-      }
+      let that = this
+      setTimeout(function () {
+        if (that.content === '') {
+          wx.showToast({
+            title: '评论内容不能为空',
+            icon: 'none',
+            duration: 2000
+          })
+        } else if (that.score <= 0) {
+          wx.showToast({
+            title: '未选择评分',
+            icon: 'none',
+            duration: 2000
+          })
+        } else {
+          that.$http.post('/action/comment/sendComment', {
+            goodsNo: that.goods.goodsNo,
+            orderNo: that.orderNo,
+            goodsPropertyId: that.goods.property.id,
+            goodsPropertyName: that.goods.property.propertyName,
+            content: that.content,
+            goodsScore: that.score
+          }).then(res => {
+            console.log(res)
+            if (res.data) {
+              wx.showToast({
+                title: '成功发表评论',
+                icon: 'success',
+                duration: 2000
+              })
+              that.goods.commentStatus = 1
+              that.init()
+              that.$emit('commentSucceed')
+            } else {
+              wx.showToast({
+                title: '发表失败',
+                icon: 'none',
+                duration: 2000
+              })
+            }
+          })
+        }
+      }, 100)
     }
   }
 }
