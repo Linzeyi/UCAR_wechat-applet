@@ -13,7 +13,7 @@
         <div class="form-item">
           <span>用户ID</span>
           <p class="user-id">
-            {{userInfo.id}}
+            {{userInfo.phone}}
             <i class="iconfont">&#xe610;</i>
           </p>
         </div>
@@ -106,7 +106,7 @@ export default {
   data() {
     return {
       userInfo: {
-        id: "",
+        phone: "",
         avatarUrl: "",
         nickname: "",
         email: "",
@@ -121,7 +121,6 @@ export default {
     };
   },
   async onLoad() {
-    // this.userInfo.id = this.$store.getters['UserCenter/id']
     const result = await this.$http.get("/action/user/getInfo");
     this.userInfo = result.data.memberInfo;
   },
