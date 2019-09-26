@@ -124,7 +124,7 @@ export default {
   async onLoad() {
     const result = await this.$http.get("/action/user/getInfo");
     this.userInfo = result.data.memberInfo;
-    this.handleCheckDebounce = this.Utils.handleDebounce(this.handleCheck)
+    this.handleCheckDebounce = this.Utils.debounce(this.handleCheck)
   },
   computed: {
     getSex() {

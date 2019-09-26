@@ -76,9 +76,9 @@ export function sleep(interval) {
   })
 }
 
-export function handleDebounce(func) {
+export function debounce(func) {
   let timer = false
-  return function debounce() {
+  return function () {
     if (timer) {
       clearTimeout(timer)
       timer = setTimeout(() => (timer = false), 500)
@@ -101,5 +101,5 @@ export default {
   getSquareDefaultImg,
   switchTab,
   sleep,
-  handleDebounce
+  debounce
 }
