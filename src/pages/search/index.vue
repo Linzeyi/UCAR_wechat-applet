@@ -232,8 +232,13 @@ export default {
     }
   }
   .search-page {
+    position: relative;
     height:100%;
     background-color: #f3f3f3;
+    /deep/ .wrap {
+      position: absolute;
+      top: 0;
+    }
     .page-search-bar {
       display: flex;
       align-content: center;
