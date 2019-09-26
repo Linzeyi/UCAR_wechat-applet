@@ -31,7 +31,7 @@
                           <com-price-fixed :price="(goodsItem.property.discountPrice ? goodsItem.property.discountPrice : goodsItem.property.salePrice )* goodsItem.num"></com-price-fixed>
                         </span>
                         <span class="numPicker-box">
-                          <num-picker :objItem="goodsItem" :min="1" :isSmall="true" :max="goodsItem.stock" :num.sync="goodsItem.num" @changeObjectNum="changeShopGoodsNum" @changeProperty="changeProperty"></num-picker>
+                          <num-picker :objItem="goodsItem" :min="1" :isSmall="true" :max="goodsItem.stock" :num.sync="goodsItem.num" @changeObjectNum="changeShopGoodsNum"></num-picker>
                         </span>
                       </p>
                     </div>
@@ -190,10 +190,6 @@ export default {
     },
     changeProperty (newProperty, newNum, oldProperty, oldNum, goods) {
       console.log('新的规格：', newProperty, '新的数量：', newNum, '旧的规格：', oldProperty, '旧的数量：', oldNum)
-      wx.showLoading({
-        title: '修改规格',
-        mask: true
-      })
       let oldCartItem = JSON.parse(JSON.stringify(goods))
       oldCartItem.property = oldProperty
       oldCartItem.num = oldNum
@@ -205,8 +201,7 @@ export default {
         newCartItem: newCartItem
       }).then(res => {
         if (res.data) {
-          goods.property = newProperty
-          goods.num = newNum
+          this.getShoppingCartGoodsList()
           wx.showToast({
             title: '修改成功',
             icon: 'success',
@@ -215,7 +210,7 @@ export default {
           this.updateSelectedInfo()
         } else {
           wx.showToast({
-            title: '修改失败',
+            title: res.msg,
             icon: 'none',
             duration: 2000
           })
@@ -233,47 +228,13 @@ export default {
         })
       })
     },
-    changeShopGoodsNum (goods) {
+    changeShopGoodsNum (newNum, oldNum, goods) {
+      console.log('修改数量')
       wx.showLoading({
         title: '修改数量',
         mask: true
       })
-      this.$http.get('/action/order/updateGoodsInCart', {
-        goodsNo: goods.goodsNo,
-        goodsName: goods.goodsName,
-        property: goods.property,
-        num: goods.num
-      }).then(res => {
-        if (res.data) {
-          wx.showToast({
-            title: '修改成功',
-            icon: 'success',
-            duration: 2000
-          })
-          this.updateSelectedInfo()
-        } else {
-          this.goodsList = []
-          this.getShoppingCartGoodsList()
-          wx.showToast({
-            title: '修改失败',
-            icon: 'none',
-            duration: 2000
-          })
-        }
-        wx.hideLoading()
-        wx.stopPullDownRefresh()
-      }).catch(err => {
-        console.log(err)
-        wx.hideLoading()
-        wx.stopPullDownRefresh()
-        this.goodsList = []
-        this.getShoppingCartGoodsList()
-        wx.showToast({
-          title: '修改失败',
-          icon: 'none',
-          duration: 2000
-        })
-      })
+      this.changeProperty(goods.property, newNum, goods.property, oldNum, goods)
     },
     getShoppingCartGoodsList () {
       if (this.loadStatus === 'offline') {

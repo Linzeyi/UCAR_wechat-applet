@@ -171,6 +171,7 @@ export default {
       let minPrice = 0
       let maxPrice = 0
       if (this.goods.hasOwnProperty('propertyList')) {
+        minPrice = this.goods.propertyList[0].discountPrice ? this.goods.propertyList[0].discountPrice : this.goods.propertyList[0].salePrice
         this.goods.propertyList.map(item => {
           let price = item.discountPrice ? item.discountPrice : item.salePrice
           if (price >= maxPrice) {

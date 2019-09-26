@@ -3,7 +3,7 @@
     <base-navigation-bar name="首页">
       <i class="iconfont" @click="Utils.navigateTo('/pages/search/main')">&#xe60b;</i>
     </base-navigation-bar>
-    <base-custom-box>
+    <base-custom-box v-if="loadStatus === 'online'">
       <div class="home-wrap">
         <div class="swiper-box">
           <com-swiper :imgList="imgList" :isLink="true"></com-swiper>
@@ -87,7 +87,6 @@ export default {
   onShow () {
     this.size = this.pageSize
     this.getRecommendGoodsList()
-    this.getCategory()
   },
   watch: {
     size: {
@@ -150,9 +149,6 @@ export default {
       this.imgList = arr
     },
     getRecommendGoodsList () {
-      if (this.loadStatus === 'offline') {
-        this.loadStatus = "loading"
-      }
       let that = this
       this.$http.get('/action/goods/getRecommendGoodsList', {
         start: this.start,
@@ -163,6 +159,7 @@ export default {
           this.goodsList = res.data
           this.getRandomImgList()
           this.loadStatus = "online"
+          this.getCategory()
         } else {
           this.$nextTick(function () {
             that.$refs['goods_grid_list_el'].loadErr()
@@ -239,6 +236,9 @@ export default {
             padding: 5px 0;
             font-size: 12px;
             font-weight: 300;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
       }
