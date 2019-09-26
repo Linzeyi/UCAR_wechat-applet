@@ -31,13 +31,14 @@ export default {
   data() {
     return {
       form: {
-        oldPwd: "",
         password: "",
-        againPassword: "",
-        captcha: "",
-        phone: ""
+        captcha: ""
       }
     };
+  },
+  onUnload() {
+    this.form.password = "";
+    this.form.captcha = "";
   },
   components: {
     Captcha,
@@ -74,9 +75,9 @@ export default {
           type: "error",
           content: "验证码错误"
         });
-        return
+        return;
       }
-      mpvue.navigateBack()
+      mpvue.navigateBack();
     }
   }
 };

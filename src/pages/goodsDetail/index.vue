@@ -165,10 +165,6 @@ export default {
     },
     getGoodsByNo () {
       this.init()
-      wx.showLoading({
-        title: '正在加载',
-        mask: true
-      })
       this.$http.get('/action/goods/getGoodsDetailByGoodsNo', {
         goodsNo: this.goods.goodsNo
       }).then(res => {
@@ -242,8 +238,9 @@ export default {
                       duration: 2000
                     })
                   } else {
+                    that.getGoodsByNo()
                     wx.showToast({
-                      title: '添加失败',
+                      title: res.msg,
                       icon: 'none',
                       duration: 2000
                     })

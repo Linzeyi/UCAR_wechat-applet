@@ -179,21 +179,21 @@ export default {
       const detail = e.mp.detail;
       if (detail.userInfo) {
         const url = detail.userInfo.avatarUrl;
-        await this.handleWechhatAvatar(url);
+        await this.handleWechatAvatar(url);
       }
     },
     async handleTempAvatar(tempPath) {
       let base64 = wx.getFileSystemManager().readFileSync(tempPath, "base64");
       await this.uploadAvatar(base64);
     },
-    handleWechhatAvatar(tempPath) {
+    handleWechatAvatar(tempPath) {
       const _this = this;
       wx.request({
         url: tempPath,
         responseType: "arraybuffer",
-        async success(res) {
+        success(res) {
           let base64 = wx.arrayBufferToBase64(res.data);
-          await _this.uploadAvatar(base64);
+          _this.uploadAvatar(base64);
         }
       });
     },

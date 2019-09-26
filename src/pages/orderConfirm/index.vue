@@ -76,7 +76,7 @@
           </p>
           <p class="discount-font">
             <span class="font-title">享受折扣</span>
-            <span class="font-content" v-if="discountInfo.discount !== 1">{{discountInfo.discount}} 折</span>
+            <span class="font-content" v-if="discountInfo.discount !== 1">{{discountInfo.discount * 10}} 折</span>
             <span class="font-content" v-else>暂无折扣</span>
           </p>
         </div>

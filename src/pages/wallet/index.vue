@@ -1,5 +1,5 @@
 <template>
-  <div class="wallet-wrap" v-if="false">
+  <div class="wallet-wrap" v-if="true">
     <div class="recharge-content">
       <p>充值金额</p>
       <div class="amount">
