@@ -417,7 +417,7 @@ export default {
 }
 .shoppingCart-wrap {
   box-sizing: border-box;
-  padding: 10px 0;
+  padding: 10px 0 80px;
   background-color: #f3f3f3;
   .goods-list-wrap {
     padding: 0 10px 30px 10px;

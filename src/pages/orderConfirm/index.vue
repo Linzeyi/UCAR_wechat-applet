@@ -331,7 +331,7 @@ export default {
 .orderConfirm-wrap {
   box-sizing: border-box;
   min-height: calc(100% - 70px);
-  padding: 10px;
+  padding: 10px 0 80px;
   background-color: #f3f3f3;
   .order-panel {
     background-color: #fff;

@@ -91,6 +91,7 @@ button {
 .lzy-flex-box {
   display: flex;
   justify-content: center;
+  background: #fff;
   .left-box {
     .img-box {
       border-radius: 4px;
