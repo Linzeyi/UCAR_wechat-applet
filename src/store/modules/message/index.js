@@ -74,13 +74,13 @@ export default {
         })
         wx.onSocketMessage(res => {
           if (res.data !== '连接成功') {
-            console.log('[Socket] 收到一条消息JSON：', JSON.parse(res.data))
+            console.log('[Socket] 收到一条消息：', JSON.parse(res.data))
             // 把已读消息更新到store中
             that.commit('Message/SET_MESSAGE_READ', that.state.Message.setMessageRead)
             that.state.Message.setMessageRead.length = 0
             that.commit('Message/ADD_NEW_MESSAGE', JSON.parse(res.data))
           } else {
-            console.log('[Socket] 收到一条消息JSON：', res.data)
+            console.log('[Socket] 收到一条消息：', res.data)
           }
         })
       } catch (e) {
@@ -88,10 +88,13 @@ export default {
       }
     },
     CLOSE_WEBSOCKET (state) {
-      if (state.socket) {
-        state.socket.closeSocket()
+      if (state.socket && state.socket.readyState === 1) {
+        wx.closeSocket()
+        state.socket = undefined
       }
-      console.log('[Socket] 关闭socket')
+      wx.onSocketClose(() => {
+        console.log('[Socket] 关闭socket')
+      })
     },
     ADD_NEW_MESSAGE (state, message) {
       state.messageList.unshift(message)

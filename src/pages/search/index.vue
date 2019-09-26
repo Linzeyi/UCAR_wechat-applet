@@ -35,6 +35,7 @@
         </div>
         <span class="cancel search-bar__ft" @click="showSearchPage()">取消</span>
       </div>
+      <base-load :loadStatus="loadStatus"></base-load>
       <div class="search-list" v-if="goodsList.length <= 0 && false">
         <div 
           class="recommend-search-list" 
@@ -45,8 +46,7 @@
           <p>{{ item }}</p>
         </div>
       </div>
-      <!-- <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 155px;font-size: 18px;">暂无商品…</p> -->
-      <base-load :loadStatus="loadStatus"></base-load>
+      <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 155px;font-size: 18px;">暂无商品…</p>
       <div class="goods-warp">
         <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
           <goodsGridList 
@@ -90,12 +90,10 @@ export default {
   },
   onLoad () {
     // 获取热门搜索
-    this.loadStatus = 'loading'
     this.$http.get('/action/goods/getPopularSearch').then(res => {
       if (res !== '' && res.status === 20000) {
         let para = JSON.parse(res.data)
         this.popularSearch = para
-        this.loadStatus = 'online'
       }
     })
   },
@@ -110,9 +108,11 @@ export default {
     // 搜索副页显示
     showSearchPage (arg) {
       this.isShowSearchPage = !this.isShowSearchPage
+      this.goodsList = []
       this.clearSize()
       if (arg) {
         this.searchContent = arg.tagName
+        this.loadStatus = 'loading'
         this.$http.post('/action/goods/searchGoods', {
           tagNo: arg.tagNo,
           tagName: arg.tagName,
@@ -121,6 +121,7 @@ export default {
             size: this.size
           }
         }).then(res => {
+          this.loadStatus = 'online'
           if (res.data) {
             this.goodsList = res.data
           } else {
@@ -142,6 +143,7 @@ export default {
     },
     // 实时查询商品
     submitSearch () {
+      this.loadStatus = 'loading'
       this.$http.post('/action/goods/searchGoods', {
         tagNo: 0,
         tagName: this.searchContent,
@@ -150,6 +152,7 @@ export default {
           size: this.size
         }
       }).then(res => {
+        this.loadStatus = 'online'
         if (res.data) {
           this.goodsList = res.data
         } else {
@@ -229,8 +232,13 @@ export default {
     }
   }
   .search-page {
+    position: relative;
     height:100%;
     background-color: #f3f3f3;
+    /deep/ .wrap {
+      position: absolute;
+      top: 0;
+    }
     .page-search-bar {
       display: flex;
       align-content: center;
