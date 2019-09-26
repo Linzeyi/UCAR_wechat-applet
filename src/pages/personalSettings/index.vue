@@ -70,7 +70,7 @@
         <i class="iconfont icon-size">&#xe6ab;</i>
       </div>
     </div>
-    <div class="save-bottom" @click="handleCheck">
+    <div class="save-bottom" @click="handleCheckDebounce">
       <span>保存用户信息</span>
     </div>
     <mp-toast type="error" v-model="showToast" content="未取得授权" :duration="1500"></mp-toast>
@@ -117,12 +117,14 @@ export default {
       showAvatarSheet: false,
       showGenderSheet: false,
       focusIndex: "",
-      showLoading: false
+      showLoading: false,
+      handleCheckDebounce: ''
     };
   },
   async onLoad() {
     const result = await this.$http.get("/action/user/getInfo");
     this.userInfo = result.data.memberInfo;
+    this.handleCheckDebounce = this.Utils.handleDebounce(this.handleCheck)
   },
   computed: {
     getSex() {
@@ -184,23 +186,41 @@ export default {
     },
     async handleTempAvatar(tempPath) {
       let base64 = wx.getFileSystemManager().readFileSync(tempPath, "base64");
-      await this.uploadAvatar(base64);
+      this.showLoading = true;
+      try {
+        await this.uploadAvatar(base64);
+        this.showLoading = false;
+      } catch (error) {
+        this.showLoading = false;
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "文件上传失败，请检查网络"
+        });
+      }
     },
-    handleWechatAvatar(tempPath) {
+    async handleWechatAvatar(tempPath) {
       const _this = this;
+      this.showLoading = true;
       wx.request({
         url: tempPath,
         responseType: "arraybuffer",
-        success(res) {
+        async success(res) {
           let base64 = wx.arrayBufferToBase64(res.data);
-          _this.uploadAvatar(base64);
+          await _this.uploadAvatar(base64);
+          _this.showLoading = false;
+        },
+        fail(res) {
+          _this.showLoading = false;
+          _this.$store.commit("BaseStore/SHOW_TOAST", {
+            type: "error",
+            content: "文件上传失败，请检查网络"
+          });
         }
       });
     },
     async uploadAvatar(base64) {
       base64 = "data:image/png;base64," + base64;
       const encodeBase64 = base64.replace(/\+/g, ".");
-      this.showLoading = true;
       try {
         const result = await this.$http.post("/action/user/uploadAvatar", {
           fileName: "avatar.jpg",
@@ -211,13 +231,11 @@ export default {
           this.userInfo.fid = result.data.imgFid;
         }
       } catch (error) {
-        this.showLoading = false;
         this.$store.commit("BaseStore/SHOW_TOAST", {
           type: "error",
           content: "上传失败，请检查网络~"
         });
       }
-      this.showLoading = false;
     },
     async handleCheck() {
       let flag = false;
@@ -311,7 +329,7 @@ export default {
 
 .wrap {
   height: 100%;
-  background-color: rgb(243, 243, 243);
+  background-color: rgb(231, 231, 231);
   padding: 40rpx 30rpx 30rpx;
   font-size: 30rpx;
   .settings {
