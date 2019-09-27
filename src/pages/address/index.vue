@@ -39,11 +39,17 @@
     <div class="add" @click="routeTo('add')">
       <i class="iconfont">&#xe608;</i>
     </div>
+    <message-toast v-if="hidden"></message-toast>
   </div>
 </template>
 
 <script>
+import messageToast from '@/components/message/messageToast'
+
 export default {
+  components: {
+    messageToast
+  },
   data () {
     return {
       currentDefault: 0,
@@ -67,6 +73,10 @@ export default {
   computed: {
     addressList () {
       return this.$store.getters['UserCenter/addressList']
+    },
+    // 新消息弹窗
+    hidden () {
+      return this.$store.getters['Message/showMessageToast']
     }
   },
   methods: {
