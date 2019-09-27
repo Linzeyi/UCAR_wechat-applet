@@ -78,7 +78,6 @@
             </div>
           </div>
         </div>
-        <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
       </div>
       <div class="cart-footer lzy-footer">
         <div class="left-box">
@@ -95,6 +94,7 @@
         </div>
       </div>
     </base-custom-box>
+    <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
     <base-load :loadStatus="loadStatus" @reLoad="getShoppingCartGoodsList"></base-load>
   </div>
 </template>
