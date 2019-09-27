@@ -60,17 +60,20 @@
         </div>
       </div>
     </div>
+    <message-toast v-if="hidden"></message-toast>
   </div>
 </template>
 
 <script>
 import goodsGridList from '@/components/goodsGridList/goodsGridList'
 import baseLoad from '@/components/base/BaseLoad'
+import messageToast from '@/components/message/messageToast'
 
 export default {
   components: {
     goodsGridList,
-    baseLoad
+    baseLoad,
+    messageToast
   },
   data () {
     return {
@@ -104,6 +107,12 @@ export default {
     this.noResult = false
     this.goodsList = []
     console.log('reset', this.goodsList)
+  },
+  computed: {
+    // 新消息弹窗
+    hidden () {
+      return this.$store.getters['Message/showMessageToast']
+    }
   },
   methods: {
     // 搜索副页显示

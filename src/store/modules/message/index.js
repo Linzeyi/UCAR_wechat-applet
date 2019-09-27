@@ -9,7 +9,10 @@ export default {
     connection: 10, // 断开重新连接次数
     setMessageRead: [],
     FIRST_CONNECTION: 3, // 初次连接失败可允许的重连次数
-    DURATION: 10000 // 重连间隔时间 ms
+    DURATION: 10000, // 重连间隔时间 ms
+    showMessageToast: false, // 控制新消息toast
+    toastTimer: 0, // 多条新消息弹窗定时器
+    closeToastTimer: 0 // 关闭新消息弹窗定时器
   },
   getters: {
     socket: state => state.socket,
@@ -37,7 +40,8 @@ export default {
     },
     newMessageNum: (state, getters) => {
       return getters.newMessageList.length || 0
-    }
+    },
+    showMessageToast: state => state.showMessageToast
   },
   mutations: {
     SET_MESSAGE_LIST (state, list) {
@@ -52,6 +56,7 @@ export default {
           url: 'ws://10.104.118.231:8080/trainljsys/websocket/' + this.getters['UserCenter/id'],
           // url: 'ws://10.112.11.18:8090',
           // url: 'ws://localhost:8181',
+          // url: 'ws://10.112.172.101:8181',
           success () {
             console.log('[Socket] 创建连接…')
           }
@@ -77,8 +82,16 @@ export default {
             console.log('[Socket] 收到一条消息：', JSON.parse(res.data))
             // 把已读消息更新到store中
             that.commit('Message/SET_MESSAGE_READ', that.state.Message.setMessageRead)
-            that.state.Message.setMessageRead.length = 0
+            state.setMessageRead.length = 0
             that.commit('Message/ADD_NEW_MESSAGE', JSON.parse(res.data))
+            // 显示消息弹窗
+            that.commit('Message/SHOW_MESSAGE_TOAST')
+            // 设置关闭弹窗定时器
+            clearTimeout(state.closeToastTimer)
+            state.closeToastTimer = 0
+            state.closeToastTimer = setTimeout(() => {
+              state.showMessageToast = false
+            }, 10000)
           } else {
             console.log('[Socket] 收到一条消息：', res.data)
           }
@@ -111,6 +124,18 @@ export default {
     },
     RESET_MESSAGE_LIST (state) {
       state.messageList = undefined
+    },
+    SHOW_MESSAGE_TOAST (state) {
+      if (state.showMessageToast) {
+        state.showMessageToast = false
+        clearTimeout(state.toastTimer)
+        state.toastTimer = 0
+        state.toastTimer = setTimeout(() => {
+          state.showMessageToast = true
+        }, 200)
+      } else {
+        state.showMessageToast = true
+      }
     }
   },
   actions: {

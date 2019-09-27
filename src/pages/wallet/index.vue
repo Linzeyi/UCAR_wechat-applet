@@ -12,6 +12,7 @@
       :disabled="!amount" 
       @click="confirm"
       :style="canConfirm ? 'opacity: 1' : 'opacity: 0.5'">确定</button>
+    <message-toast v-if="hidden"></message-toast>
   </div>
   <base-no-result v-else>
     <p>暂无商品…</p>
@@ -20,10 +21,12 @@
 
 <script>
 import baseNoResult from '@/components/base/BaseNoResult'
+import messageToast from '@/components/message/messageToast'
 
 export default {
   components: {
-    baseNoResult
+    baseNoResult,
+    messageToast
   },
   data () {
     return {
@@ -40,6 +43,9 @@ export default {
       } else {
         return false
       }
+    },
+    hidden () {
+      return this.$store.getters['Message/showMessageToast']
     }
   },
   methods: {

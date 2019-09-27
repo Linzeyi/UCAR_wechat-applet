@@ -288,6 +288,7 @@ export default {
             }
             that.$http.post('/action/order/setOrder', that.order).then(res => {
               console.log(res)
+              wx.hideLoading()
               if (res.data) {
                 wx.showModal({
                   title: '下单成功',
@@ -303,21 +304,28 @@ export default {
                   }
                 })
               } else {
-                wx.showToast({
+                wx.showModal({
                   title: '下单失败',
-                  icon: 'none',
-                  duration: 2000
+                  content: res.msg,
+                  showCancel: false,
+                  confirmText: '返回',
+                  success () {
+                    mpvue.navigateBack({ delta: 1 })
+                  }
                 })
               }
-              wx.hideLoading()
             }).catch(err => {
               console.log(err)
-              wx.showToast({
-                title: '下单失败',
-                icon: 'none',
-                duration: 2000
-              })
               wx.hideLoading()
+              wx.showModal({
+                title: '下单失败',
+                content: '系统服务异常',
+                showCancel: false,
+                confirmText: '返回',
+                success () {
+                  mpvue.navigateBack({ delta: 1 })
+                }
+              })
             })
           }
         }

@@ -77,6 +77,12 @@ export default {
             icon: 'none',
             duration: 2000
           })
+        } else if (that.content.trim().length === 0) {
+          wx.showToast({
+            title: '评论内容不能为空格',
+            icon: 'none',
+            duration: 2000
+          })
         } else {
           that.$http.post('/action/comment/sendComment', {
             goodsNo: that.goods.goodsNo,

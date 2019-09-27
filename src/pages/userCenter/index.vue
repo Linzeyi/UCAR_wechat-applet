@@ -87,6 +87,7 @@
         </div>
         <!-- <button class="weui-input" @click="test">TEST</button> -->
       </div>
+      <message-toast v-if="hidden"></message-toast>
     </BaseCustomBox>
   </div>
 </template>
@@ -94,11 +95,13 @@
 <script>
 import BaseNavigationBar from "@/components/base/BaseNavigationBar";
 import BaseCustomBox from "@/components/base/BaseCustomBox";
+import messageToast from '@/components/message/messageToast'
 
 export default {
   components: {
     BaseNavigationBar,
-    BaseCustomBox
+    BaseCustomBox,
+    messageToast
   },
   data () {
     return {
@@ -156,6 +159,10 @@ export default {
     // 总消息条数
     messageNum () {
       return this.$store.getters['Message/messageNum']
+    },
+    // 新消息弹窗
+    hidden () {
+      return this.$store.getters['Message/showMessageToast']
     }
   },
   methods: {
