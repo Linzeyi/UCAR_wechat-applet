@@ -5,7 +5,7 @@
     </div>
     <div class="form">
       <div class="form-item">
-        <input type="text">
+        <input type="number" placeholder="手机号">
       </div>
       <div class="form-item">
         <input type="text">
