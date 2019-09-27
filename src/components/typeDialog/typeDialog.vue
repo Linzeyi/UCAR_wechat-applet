@@ -189,8 +189,10 @@ export default {
           this.propertyList = res.data.propertyReList
           this.num = this.pNum ? this.pNum : 1
           if (JSON.stringify(this.property) === '{}' || JSON.stringify(this.property.stock) === 'undefiend') {
+            console.log('没有传入的已选规格', this.propertyList[0])
             this.selectedProperty = this.propertyList[0]
           } else {
+            console.log('有传入的已选规格', this.property)
             this.selectedProperty = this.property
             this.propertyList.map(item => {
               if (item.id === this.property.id) {
@@ -198,6 +200,7 @@ export default {
               }
             })
           }
+          console.log('最后的选中规格', this.selectedProperty)
           if (!this.selectedProperty.stock) {
             this.num = 0
           }
@@ -257,7 +260,7 @@ export default {
 
 <style lang="less" scoped>
 .property-actionSheet-wrap {
-  z-index: 99999999999;
+  z-index: 99;
   display: none;
   position: fixed;
   left: 0;

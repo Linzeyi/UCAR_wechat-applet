@@ -48,8 +48,8 @@
             </p>
           </div>
           <p class="loading-tips" v-if="!isLoading && size <= goodsList.length">下拉加载</p>
-          <p class="loading-tips" v-if="!isLoading && size > goodsList.length">没有更多</p>
-          <p class="loading-tips" v-if="isLoading">加载中...</p>
+          <p class="loading-tips" v-if="!isLoading && size > goodsList.length && goodsList.length != 0">没有更多</p>
+          <p class="loading-tips" v-if="isLoading && goodsList.length != 0">加载中...</p>
           <div class="invalid-goods-list" v-if="invalidGoodsList.length !== 0 && size > goodsList.length">
             <div class="header">
               <span class="title">失效商品{{invalidGoodsList.length}}件</span>
@@ -78,7 +78,6 @@
             </div>
           </div>
         </div>
-        <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
       </div>
       <div class="cart-footer lzy-footer">
         <div class="left-box">
@@ -95,6 +94,7 @@
         </div>
       </div>
     </base-custom-box>
+    <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
     <base-load :loadStatus="loadStatus" @reLoad="getShoppingCartGoodsList"></base-load>
   </div>
 </template>
@@ -198,11 +198,9 @@ export default {
   methods: {
     getSelectedGoodsList () {
       let selectedGoodsList = []
-      console.log('获取选中的商品列表：', this.goodsList)
       this.goodsList.map(item => {
         console.log(item)
         if (item.isSelected) {
-          console.log('选中商品：', item)
           selectedGoodsList.push(item)
         }
       })
@@ -276,11 +274,8 @@ export default {
         if (res.data) {
           this.goodsList = res.data.validCart
           this.goodsList.map(item => {
-            console.log('新的商品', item)
             oldList.map(oldItem => {
-              console.log('旧的商品', oldItem)
               if (item.goodsNo === oldItem.goodsNo) {
-                console.log('选中商品：', item)
                 if (oldItem.isSelected) {
                   this.selectGoods(item)
                 }
@@ -419,6 +414,7 @@ export default {
   box-sizing: border-box;
   padding: 10px 0 80px;
   background-color: #f3f3f3;
+  min-height: calc(100% - 70px);
   .goods-list-wrap {
     padding: 0 10px 30px 10px;
     box-sizing: border-box;

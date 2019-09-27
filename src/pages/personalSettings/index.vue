@@ -3,7 +3,7 @@
     <div class="settings">
       <p class="settings-title">基础信息</p>
       <div class="form">
-        <div class="form-item form-avatar" @click="showAvatarSheet = true;focusIndex=''">
+        <div class="form-item form-avatar" @click="showAvatarSheet = true">
           <span>头像</span>
           <div class="avatar-right-box">
             <img :src="userInfo.avatarUrl" @click.stop="previewImage" mode="aspectFill" />
@@ -25,11 +25,12 @@
               placeholder="--"
               v-model="userInfo.nickname"
               @focus="focusIndex='nickname'"
+              @blur="focusIndex=''"
             />
             <i
               class="iconfont icon-cancel icon-size"
               v-if="userInfo.nickname !== '' && focusIndex === 'nickname'"
-              @click="userInfo.nickname = ''"
+              @touchstart="userInfo.nickname = ''"
             >&#xe65c;</i>
             <i class="iconfont icon-size" v-else>&#xe6ab;</i>
           </div>
@@ -42,16 +43,17 @@
               placeholder="--"
               v-model="userInfo.email"
               @focus="focusIndex='email'"
+              @blur="focusIndex=''"
             />
             <i
               class="iconfont icon-cancel icon-size"
               v-if="userInfo.email !== '' && focusIndex === 'email'"
-              @click="userInfo.email = ''"
+              @touchstart="userInfo.email = ''"
             >&#xe65c;</i>
             <i class="iconfont icon-size" v-else>&#xe6ab;</i>
           </div>
         </div>
-        <div class="form-item" @click="showGenderSheet=true;focusIndex=''">
+        <div class="form-item" @click="showGenderSheet=true">
           <span>性别</span>
           <div>
             <span>{{getSex}}</span>
@@ -118,13 +120,13 @@ export default {
       showGenderSheet: false,
       focusIndex: "",
       showLoading: false,
-      handleCheckDebounce: ''
+      handleCheckDebounce: ""
     };
   },
   async onLoad() {
     const result = await this.$http.get("/action/user/getInfo");
     this.userInfo = result.data.memberInfo;
-    this.handleCheckDebounce = this.Utils.debounce(this.handleCheck)
+    this.handleCheckDebounce = this.Utils.debounce(this.handleCheck);
   },
   computed: {
     getSex() {
@@ -369,7 +371,7 @@ export default {
             vertical-align: middle;
           }
           > i {
-            vertical-align: -4rpx;
+            vertical-align: -6rpx;
           }
         }
         .user-id {

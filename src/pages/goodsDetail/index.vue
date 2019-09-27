@@ -141,6 +141,7 @@ export default {
   },
   onShow () {
     this.num = 1
+    this.getGoodsByNo()
   },
   onUnload () {
     this.currentTabKey = 0
@@ -164,7 +165,6 @@ export default {
       console.log('赋值规格后的商品', this.goods)
     },
     getGoodsByNo () {
-      this.init()
       this.$http.get('/action/goods/getGoodsDetailByGoodsNo', {
         goodsNo: this.goods.goodsNo
       }).then(res => {

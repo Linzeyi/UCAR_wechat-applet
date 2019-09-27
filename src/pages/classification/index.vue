@@ -13,7 +13,7 @@
             :key="idx"
           >
             <div class="high-light" v-show="selectClassIndex === idx"></div>
-            <span>{{item}}</span>
+            <p class="class-name">{{item}}</p>
           </div>
         </scroll-view>
         <scroll-view
@@ -99,13 +99,7 @@ export default {
       try {
         this.loadStatus = "loading";
         const result = await this.$http.post("/action/goods/getAllCategory");
-        const classList = result.data.map(item => {
-          if (item.length > 4) {
-            return item.slice(0, 4) + "...";
-          }
-          return item;
-        });
-        this.classList = classList;
+        this.classList = result.data;
         this.loadStatus = "online";
       } catch (error) {
         this.loadStatus = "offline";
@@ -176,6 +170,11 @@ export default {
       float: left;
       transform: translateY(20rpx);
       background-color: #fc9156;
+    }
+    .class-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }
