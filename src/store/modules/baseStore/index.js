@@ -65,8 +65,8 @@ export default {
         commit('SHOW_TOAST', { type: 'error', content: '昵称不能为空' })
         return
       }
-      if (!/^[A-Za-z0-9\u4e00-\u9fa5]{2,10}$/.test(nickname)) {
-        commit('SHOW_TOAST', { type: 'error', content: '昵称为2-10位字母数字或中文字符' })
+      if (!/^[A-Za-z0-9\u4e00-\u9fa5]{2,12}$/.test(nickname)) {
+        commit('SHOW_TOAST', { type: 'error', content: '昵称为2-12位字母数字或中文字符' })
         return
       }
       return true
