@@ -372,7 +372,7 @@ export default {
             vertical-align: middle;
           }
           > i {
-            vertical-align: -4rpx;
+            vertical-align: -8rpx;
           }
         }
         .user-id {
