@@ -96,6 +96,7 @@ export default {
         this.popularSearch = para
       }
     })
+    this.loadStatus = 'online'
   },
   onUnload () {
     this.isShowSearchPage = false
@@ -236,8 +237,9 @@ export default {
     height:100%;
     background-color: #f3f3f3;
     /deep/ .wrap {
-      position: absolute;
-      top: 0;
+      position: fixed;
+      top: 60px;
+      bottom: -100px;
     }
     .page-search-bar {
       display: flex;

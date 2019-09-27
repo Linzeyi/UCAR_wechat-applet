@@ -257,7 +257,7 @@ export default {
 
 <style lang="less" scoped>
 .property-actionSheet-wrap {
-  z-index: 99999999999;
+  z-index: 99;
   display: none;
   position: fixed;
   left: 0;
