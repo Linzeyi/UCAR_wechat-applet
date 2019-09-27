@@ -118,13 +118,16 @@ export default {
       showGenderSheet: false,
       focusIndex: "",
       showLoading: false,
-      handleCheckDebounce: ''
+      handleCheckDebounce: ""
     };
+  },
+  onUnload() {
+    this.focusIndex = "";
   },
   async onLoad() {
     const result = await this.$http.get("/action/user/getInfo");
     this.userInfo = result.data.memberInfo;
-    this.handleCheckDebounce = this.Utils.debounce(this.handleCheck)
+    this.handleCheckDebounce = this.Utils.debounce(this.handleCheck);
   },
   computed: {
     getSex() {
