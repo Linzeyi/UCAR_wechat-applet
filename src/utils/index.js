@@ -1,9 +1,9 @@
-function formatNumber (n) {
+function formatNumber(n) {
   const str = n.toString()
   return str[1] ? str : `0${str}`
 }
 
-export function formatTime (date) {
+export function formatTime(date) {
   date = new Date(date)
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -18,11 +18,11 @@ export function formatTime (date) {
   return `${t1} ${t2}`
 }
 
-export function getYMDTime (date) {
+export function getYMDTime(date) {
   return formatTime(date).split(' ')[0]
 }
 
-export function getHMSTime (date) {
+export function getHMSTime(date) {
   return formatTime(date).split(' ')[1]
 }
 
@@ -33,7 +33,7 @@ export const regularRule = {
   postCode: /^([0-9]{6})|0$/
 }
 
-export function limitMoney (val) {
+export function limitMoney(val) {
   let sNum = val.toString() // 先转换成字符串类型
   if (sNum.indexOf('.') === 0) { // 第一位就是 .
     console.log('first str is .')
@@ -49,11 +49,11 @@ export function limitMoney (val) {
 }
 
 export function navigateTo(url) {
-  mpvue.navigateTo({url})
+  mpvue.navigateTo({ url })
 }
 
 export function switchTab(url) {
-  mpvue.switchTab({url})
+  mpvue.switchTab({ url })
 }
 
 // 时间戳转时间
@@ -62,11 +62,11 @@ export function timestampTo(time = +new Date()) {
   return date.toJSON().substr(0, 19).replace('T', ' ');
 }
 
-export function getSwiperDefaultImg () {
+export function getSwiperDefaultImg() {
   return '/static/images/default-img_swiper.png'
 }
 
-export function getSquareDefaultImg () {
+export function getSquareDefaultImg() {
   return '/static/images/default-img_80x80.png'
 }
 
@@ -74,6 +74,19 @@ export function sleep(interval) {
   return new Promise(resolve => {
     setTimeout(resolve, interval);
   })
+}
+
+export function debounce(func) {
+  let timer = false
+  return function () {
+    if (timer) {
+      clearTimeout(timer)
+      timer = setTimeout(() => (timer = false), 500)
+      return
+    }
+    timer = setTimeout(() => (timer = false), 500)
+    func()
+  }
 }
 
 export default {
@@ -87,5 +100,6 @@ export default {
   getSwiperDefaultImg,
   getSquareDefaultImg,
   switchTab,
-  sleep
+  sleep,
+  debounce
 }
