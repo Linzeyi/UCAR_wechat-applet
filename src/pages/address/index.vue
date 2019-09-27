@@ -172,6 +172,7 @@ export default {
   background-color: #f3f3f3;
   .address-list {
     padding-top: 2px;
+    height: 100%;
     .mo-box {
       overflow: hidden;
       margin: 10px 10px;
