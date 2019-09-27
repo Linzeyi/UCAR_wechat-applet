@@ -13,7 +13,7 @@
             :key="idx"
           >
             <div class="high-light" v-show="selectClassIndex === idx"></div>
-            <p class="class-name">{{classSlice[idx]}}</p>
+            <p>{{classSlice[idx]}}</p>
           </div>
         </scroll-view>
         <scroll-view
@@ -178,11 +178,6 @@ export default {
       float: left;
       transform: translateY(20rpx);
       background-color: #fc9156;
-    }
-    .class-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
   }
 }
