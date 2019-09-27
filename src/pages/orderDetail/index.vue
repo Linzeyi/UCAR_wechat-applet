@@ -312,22 +312,13 @@ export default {
             })
           }
           if (this.checkIntegral) {
-            this.payTypeList = [
-              {
-                name: '积分',
-                balance: 0
-              }
-            ]
+            this.payTypeList.name = '积分'
             this.getIntergral()
           } else {
-            this.payTypeList = [
-              {
-                name: '余额',
-                balance: 0
-              }
-            ]
+            this.payTypeList.name = '余额'
             this.getBalance()
           }
+          this.selectPayType = this.payTypeList[0]
         } else {
           wx.showToast({
             title: '获取失败',
@@ -482,6 +473,7 @@ export default {
                     orderNo: that.order.orderNo
                   }).then(res => {
                     console.log(res)
+                    wx.hideLoading()
                     if (res.data) {
                       wx.showModal({
                         title: '支付成功',
@@ -493,8 +485,8 @@ export default {
                             mpvue.navigateTo({ url: '/pages/myOrders/main' })
                           } else {
                             console.log('付款成功，支付订单：', that.order)
-                            that.getOrder()
                           }
+                          that.getOrder()
                         }
                       })
                     } else {
@@ -503,16 +495,26 @@ export default {
                         icon: 'none',
                         duration: 2000
                       })
+                      setTimeout(function () {
+                        that.getOrder()
+                        wx.pageScrollTo({
+                          scrollTop: 0
+                        })
+                      }, 1000)
                     }
-                    wx.hideLoading()
                   }).catch(err => {
                     console.log(err)
-                    wx.hideLoading()
                     wx.showToast({
                       title: '支付失败',
                       icon: 'none',
                       duration: 2000
                     })
+                    setTimeout(function () {
+                      that.getOrder()
+                      wx.pageScrollTo({
+                        scrollTop: 0
+                      })
+                    }, 1000)
                   })
                 } else {
                   wx.showToast({
