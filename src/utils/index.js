@@ -89,6 +89,18 @@ export function debounce(func) {
   }
 }
 
+export function delayDebounce(func) {
+  let timer
+  return function () {
+    if (timer) {
+      clearTimeout(timer)
+      timer = setTimeout(() => { func() }, 300)
+      return
+    }
+    timer = setTimeout(() => { func() }, 300)
+  }
+}
+
 export default {
   formatNumber,
   formatTime,
@@ -101,5 +113,6 @@ export default {
   getSquareDefaultImg,
   switchTab,
   sleep,
-  debounce
+  debounce,
+  delayDebounce
 }

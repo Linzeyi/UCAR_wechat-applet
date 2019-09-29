@@ -30,7 +30,7 @@
                 <div class="flex-box" @click="toGoodsDetail(goodsItem)">
                   <div class="left-box">
                     <div class="img-box">
-                      <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片"></image>
+                      <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片" mode="aspectFit"></image>
                     </div>
                   </div>
                   <div class="content-box">

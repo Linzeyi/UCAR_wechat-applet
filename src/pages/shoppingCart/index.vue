@@ -94,6 +94,7 @@
         </div>
       </div>
     </base-custom-box>
+    <message-toast v-if="hidden"></message-toast>
     <type-dialog :parentType="'shoppingCart'" :goods="selectedGoods" :property="selectedGoods.property" :pNum="selectedGoods.num" @changeProperty="changeProperty"></type-dialog>
     <base-load :loadStatus="loadStatus" @reLoad="getShoppingCartGoodsList"></base-load>
   </div>
@@ -105,7 +106,8 @@ import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 import numPicker from '@/components/numPicker/numPicker'
 import typeDialog from '@/components/typeDialog/typeDialog'
 import comPriceFixed from '@/components/comPriceFixed/comPriceFixed'
-import BaseLoad from "@/components/base/BaseLoad";
+import BaseLoad from "@/components/base/BaseLoad"
+import messageToast from '@/components/message/messageToast'
 
 export default {
   components: {
@@ -114,7 +116,8 @@ export default {
     BaseCustomBox,
     BaseNavigationBar,
     comPriceFixed,
-    BaseLoad
+    BaseLoad,
+    messageToast
   },
   data () {
     return {
@@ -134,6 +137,9 @@ export default {
     }
   },
   computed: {
+    hidden () {
+      return this.$store.getters['Message/showMessageToast']
+    },
     computedGoodsList () {
       console.log(this.goodsList.slice(this.start, this.size))
       return this.goodsList.slice(this.start, this.size)
