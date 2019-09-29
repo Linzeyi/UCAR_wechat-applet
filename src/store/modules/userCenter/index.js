@@ -152,7 +152,9 @@ export default {
           state.grade = res.data.grade
           state.growth = res.data.growth + ''
           state.discount = res.data.discount + ''
-          state.avatarUrl = res.data.imgUrl
+          if (res.data.imgUrl !== state.avatarUrl) {
+            state.avatarUrl = res.data.imgUrl
+          }
           state.nickname = res.data.nickname
           state.orderNum = res.data.orderNum
           state.phone = res.data.phone

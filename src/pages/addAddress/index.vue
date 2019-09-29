@@ -105,7 +105,8 @@ export default {
         postCode: '',
         region: [],
         address: '',
-        isDefault: false // 标示新增地址是否为默认
+        isDefault: false, // 标示新增地址是否为默认
+        submitTimer: 0 // 提交防抖计时器
       },
       focus: undefined // 用于存储目前聚焦的input
     }
@@ -171,27 +172,31 @@ export default {
       if (this.formCanSubmit) {
         // 检验表单内容合法性
         if (this.validateForm()) {
-          console.log('提交！')
-          let param = {
-            receiver: this.formData.receiverName,
-            phone: this.formData.receiverPhone,
-            postCode: this.formData.postCode,
-            province: this.formData.region[0],
-            city: this.formData.region[1],
-            district: this.formData.region[2],
-            addressDetail: this.formData.address,
-            isDefault: Number(this.formData.isDefault)
-          }
-          this.$http.post('/action/addr/add', param).then(res => {
-            if (res) {
-              if (res.status === 20000) {
-                mpvue.navigateBack()
-                this.showToast('添加成功', 'success')
-              } else if (res.msg) {
-                this.showToast(res.msg, 'none')
-              }
+          clearTimeout(this.submitTimer)
+          this.submitTimer = 0
+          this.submitTimer = setTimeout(() => {
+            console.log('提交！')
+            let param = {
+              receiver: this.formData.receiverName,
+              phone: this.formData.receiverPhone,
+              postCode: this.formData.postCode,
+              province: this.formData.region[0],
+              city: this.formData.region[1],
+              district: this.formData.region[2],
+              addressDetail: this.formData.address,
+              isDefault: Number(this.formData.isDefault)
             }
-          })
+            this.$http.post('/action/addr/add', param).then(res => {
+              if (res) {
+                if (res.status === 20000) {
+                  mpvue.navigateBack()
+                  this.showToast('添加成功', 'success')
+                } else if (res.msg) {
+                  this.showToast(res.msg, 'none')
+                }
+              }
+            })
+          }, 500)
         }
       } else {
         this.showToast('地址信息未填写完整', 'none')

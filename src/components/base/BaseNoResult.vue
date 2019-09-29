@@ -1,9 +1,35 @@
 <template>
   <div class="no-result-wrap">
-    <img src="../../../static/images/no_result_rocket.svg" alt="">
-    <slot></slot>
+    <div v-for="(item, index) in imgSource" :key="index">
+      <img :src="imgSource[index]" alt="" v-if="imgIndex === index">
+    </div>
+    <p>暂无结果</p>
   </div>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      imgSource: [
+        '../../../static/images/noResult-icon/one.png',
+        '../../../static/images/noResult-icon/two.png',
+        '../../../static/images/noResult-icon/three.png',
+        '../../../static/images/noResult-icon/four.png',
+        '../../../static/images/noResult-icon/five.png',
+        '../../../static/images/noResult-icon/six.png',
+        '../../../static/images/noResult-icon/seven.png'
+      ],
+      imgIndex: 0
+    }
+  },
+  onShow () {
+    setTimeout(() => {
+      this.imgIndex++
+    }, 2000)
+  }
+}
+</script>
 
 <style lang="less" scoped>
 @baoWoBlack: #515151;

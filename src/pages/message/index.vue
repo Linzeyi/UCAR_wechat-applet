@@ -1,50 +1,59 @@
 <template>
   <div class="message-wrap page">
-    <base-load :loadStatus="loadStatus" @reLoad="post"></base-load>
-    <span class="panel header" v-if="unreadMessageList.length">未读消息</span>
-    <div class="panel" v-for="(item, index) in unreadMessageList" :key="index">
-      <div class="panel__hd title" @click="showUnread(index)" :class="{'unshow': !item.isShow, 'show': item.isShow}">
-        <i class="iconfont red-point" v-if="!item.isRead">&#xe606;</i>
-        <p>{{ item.content }}</p>
-        <div class="title__ft"></div>
-      </div>
-      <div class="panel__bd" v-if="item.isShow">
-        <div class="weui-media-box">
-          <p class="weui-media-box__desc">
-            {{ item.content }}
-          </p>
-          <ul class="weui-media-box__info">
-            <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.dateTime }}</li>
-          </ul>
+    <BaseNavigationBar name="我的消息">
+      <i class="iconfont" @click="back">&#xe625;</i>
+    </BaseNavigationBar>
+    <BaseCustomBox>
+      <base-load :loadStatus="loadStatus" @reLoad="post"></base-load>
+      <span class="panel header" v-if="unreadMessageList.length">未读消息</span>
+      <div class="panel" v-for="(item, index) in unreadMessageList" :key="index">
+        <div class="panel__hd title" @click="showUnread(index)" :class="{'unshow': !item.isShow, 'show': item.isShow}">
+          <i class="iconfont red-point" v-if="!item.isRead">&#xe606;</i>
+          <p>{{ item.content }}</p>
+          <div class="title__ft"></div>
+        </div>
+        <div class="panel__bd" v-if="item.isShow">
+          <div class="weui-media-box">
+            <p class="weui-media-box__desc">
+              {{ item.content }}
+            </p>
+            <ul class="weui-media-box__info">
+              <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.dateTime }}</li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-    <span class="panel header" v-if="readMessageList.length" style="color: #b3b3b3">已读消息</span>
-    <div class="panel" v-for="(item, index) in readMessageList" :key="index">
-      <div class="panel__hd title" @click="showReaded(index)" :class="{'unshow': !item.isShow, 'show': item.isShow}">
-        <p>{{ item.content }}</p>
-        <div class="title__ft"></div>
-      </div>
-      <div class="panel__bd" v-if="item.isShow">
-        <div class="weui-media-box">
-          <p class="weui-media-box__desc">
-            {{ item.content }}
-          </p>
-          <ul class="weui-media-box__info">
-            <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.dateTime }}</li>
-          </ul>
+      <span class="panel header" v-if="readMessageList.length" style="color: #b3b3b3">已读消息</span>
+      <div class="panel" v-for="(item, index) in readMessageList" :key="index">
+        <div class="panel__hd title" @click="showReaded(index)" :class="{'unshow': !item.isShow, 'show': item.isShow}">
+          <p>{{ item.content }}</p>
+          <div class="title__ft"></div>
+        </div>
+        <div class="panel__bd" v-if="item.isShow">
+          <div class="weui-media-box">
+            <p class="weui-media-box__desc">
+              {{ item.content }}
+            </p>
+            <ul class="weui-media-box__info">
+              <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.dateTime }}</li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+    </BaseCustomBox>
   </div>
 </template>
 
 <script>
 import baseLoad from '@/components/base/BaseLoad'
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
+import BaseCustomBox from "@/components/base/BaseCustomBox"
 
 export default {
   components: {
-    baseLoad
+    baseLoad,
+    BaseNavigationBar,
+    BaseCustomBox
   },
   data () {
     return {
@@ -120,6 +129,10 @@ export default {
           })
         }
       })
+    },
+    // 页面返回
+    back () {
+      mpvue.navigateBack()
     }
   },
   // 下拉刷新

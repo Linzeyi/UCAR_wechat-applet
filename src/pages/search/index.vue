@@ -1,65 +1,70 @@
 <template>
   <div class="search-wrap">
-    <div class="popular-page" v-if="!isShowSearchPage">
-      <div class="weui-cell search-bar" @click="showSearchPage()">
-        <i class="iconfont search-icon">&#xe60b;</i>
-        <p>{{ recommendSearch[0] }}</p>
+    <BaseNavigationBar name="搜索">
+      <i class="iconfont" @click="back">&#xe625;</i>
+    </BaseNavigationBar>
+    <BaseCustomBox>
+      <div class="popular-page" v-if="!isShowSearchPage">
+        <div class="weui-cell search-bar" @click="showSearchPage()">
+          <i class="iconfont search-icon">&#xe60b;</i>
+          <p>{{ recommendSearch[0] }}</p>
+        </div>
+        <b class="popular-title">
+          <img src="../../../static/images/heat.svg" class="icon-heat">
+          热门搜索
+        </b>
+        <div 
+          class="popular-list" 
+          v-for="(item, index) in popularSearch" 
+          :key="index"
+          @click="showSearchPage(item)">
+          <p>{{ item.tagName }}</p>
+        </div>
       </div>
-      <b class="popular-title">
-        <img src="../../../static/images/heat.svg" class="icon-heat">
-        热门搜索
-      </b>
-      <div 
-        class="popular-list" 
-        v-for="(item, index) in popularSearch" 
-        :key="index"
-        @click="showSearchPage(item)">
-        <p>{{ item.tagName }}</p>
-      </div>
-    </div>
-    <div class="page search-page" v-else>
-      <div class="page-search-bar">
-        <div class="weui-cell search-bar__bd">
-          <i class="iconfont weui-cell__hd search-icon">&#xe60b;</i>
-          <input 
-            type="text" 
-            class="weui-cell__bd" 
-            :placeholder="'搜索'" 
-            v-model="searchContent"
-            :focus="isShowSearchPage"
-            @input="clearSize"
-            @blur="submitSearch">
-          <div class="weui-icon-clear clear-icon" v-if="searchContent.length > 0" @click="clearInput">
-            <icon type="clear" size="14"></icon>
+      <div class="page search-page" v-else>
+        <div class="page-search-bar">
+          <div class="weui-cell search-bar__bd">
+            <i class="iconfont weui-cell__hd search-icon">&#xe60b;</i>
+            <input 
+              type="text" 
+              class="weui-cell__bd" 
+              :placeholder="'搜索'" 
+              v-model="searchContent"
+              :focus="isShowSearchPage"
+              @input="clearSize"
+              @blur="submitSearch">
+            <div class="weui-icon-clear clear-icon" v-if="searchContent.length > 0" @click="clearInput">
+              <icon type="clear" size="14"></icon>
+            </div>
+          </div>
+          <span class="cancel search-bar__ft" @click="showSearchPage()">取消</span>
+        </div>
+        <base-load :loadStatus="loadStatus"></base-load>
+        <div class="search-list" v-if="goodsList.length <= 0 && false">
+          <div 
+            class="recommend-search-list" 
+            v-for="(item, index) in recommendSearch" 
+            :key="index"
+            @click="searchByRecommend(item)">
+            <i class="iconfont weui-cell__hd search-icon">&#xe60b;</i>
+            <p>{{ item }}</p>
           </div>
         </div>
-        <span class="cancel search-bar__ft" @click="showSearchPage()">取消</span>
-      </div>
-      <base-load :loadStatus="loadStatus"></base-load>
-      <div class="search-list" v-if="goodsList.length <= 0 && false">
-        <div 
-          class="recommend-search-list" 
-          v-for="(item, index) in recommendSearch" 
-          :key="index"
-          @click="searchByRecommend(item)">
-          <i class="iconfont weui-cell__hd search-icon">&#xe60b;</i>
-          <p>{{ item }}</p>
+        <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 155px;font-size: 18px;">暂无商品…</p>
+        <div class="goods-warp">
+          <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
+            <goodsGridList 
+              :goodsList="goodsList" 
+              :col="2" 
+              :start.sync="start" 
+              :size.sync="size" 
+              :pageSize="pageSize"
+              :isScroll="false">
+            </goodsGridList>
+          </div>
         </div>
       </div>
-      <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 155px;font-size: 18px;">暂无商品…</p>
-      <div class="goods-warp">
-        <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
-          <goodsGridList 
-            :goodsList="goodsList" 
-            :col="2" 
-            :start.sync="start" 
-            :size.sync="size" 
-            :pageSize="pageSize"
-            :isScroll="false">
-          </goodsGridList>
-        </div>
-      </div>
-    </div>
+    </BaseCustomBox>
     <message-toast v-if="hidden"></message-toast>
   </div>
 </template>
@@ -68,12 +73,16 @@
 import goodsGridList from '@/components/goodsGridList/goodsGridList'
 import baseLoad from '@/components/base/BaseLoad'
 import messageToast from '@/components/message/messageToast'
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
+import BaseCustomBox from "@/components/base/BaseCustomBox"
 
 export default {
   components: {
     goodsGridList,
     baseLoad,
-    messageToast
+    messageToast,
+    BaseNavigationBar,
+    BaseCustomBox
   },
   data () {
     return {
@@ -175,6 +184,10 @@ export default {
     clearSize () {
       this.accum = 1
       this.noResult = false
+    },
+    // 页面返回
+    back () {
+      mpvue.navigateBack()
     }
   },
   // 商品列表触底事件

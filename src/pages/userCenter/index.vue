@@ -19,12 +19,20 @@
           </div>
           <div class="info">
             <div class="user-name">
-              <p class="name">{{ nickname }}</p>
+              <p class="name" :class="{'long-name': nickname.length > 6}">{{ nickname }}</p>
               <div class="grade" 
-                :class="[{ bronze: grade === '青铜' }, { silver: grade === '白银' }, { gold: grade === '黄金' }, { platinum: grade === '白金' }, { platinumPlus:grade === '白金Plus' }, { diamond: grade === '钻石' }]"
+                :class="[{ bronze: grade === '青铜' }, { silver: grade === '白银' }, 
+                { gold: grade === '黄金' }, { platinum: grade === '白金' }, 
+                { platinumPlus:grade === '白金Plus' }, { diamond: grade === '钻石' },
+                {'long-grade': nickname.length > 6}]"
                 @touchstart.stop="goTouchStart" 
                 @touchend="goTouchEnd">
-                {{ grade }}<span class="tips" v-if="gradeTips && discount !== undefined && discount !== '1'">您可享受 {{ discount * 10 }} 折的购物优惠</span>
+                {{ grade }}
+                <span 
+                  class="tips" 
+                  v-if="gradeTips && discount !== undefined && discount !== '1'"
+                  :class="{'long-tips': nickname.length > 6}">
+                  您可享受 {{ discount * 10 }} 折的购物优惠</span>
               </div>
             </div>
             <p>积分：<span class="integral">{{ integral }}</span></p>
@@ -301,8 +309,10 @@ export default {
             font-family: 'PingFangSC';
             font-size: 18px;
             color: #6e2c10;
+            white-space: nowrap;
           }
           .grade {
+            position: relative;
             display: inline-block;
             border: 0.5px solid #000000;
             border-radius:5px;
@@ -314,9 +324,23 @@ export default {
             color: #000000;
             line-height: inherit;
             z-index: 100;
-            .tips {
-              margin-left: 10px;
-            }
+            white-space: nowrap;
+          }
+          .long-grade {
+            position: absolute;
+            bottom: -18px;
+            left: 75px;
+          }
+          .tips {
+            position: absolute;
+            top: -18px;
+            white-space: nowrap;
+            .grade
+          }
+          .long-tips {
+            position: absolute;
+            top: 0;
+            .grade
           }
           .bronze {
             color: #8c7853;

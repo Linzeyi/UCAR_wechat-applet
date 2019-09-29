@@ -99,7 +99,8 @@ export default {
   data () {
     return {
       formData: undefined, // 收件地址表单
-      focus: undefined // 用于判断目前聚焦的input
+      focus: undefined, // 用于判断目前聚焦的input
+      submitTimer: 0 // 提交防抖计时器
     }
   },
   onLoad (option) {
@@ -173,28 +174,32 @@ export default {
       if (this.formCanSubmit) {
         // 检验表单内容合法性
         if (this.validateForm()) {
-          console.log('提交！')
-          let param = {
-            id: this.formData.id,
-            receiver: this.formData.receiverName,
-            phone: this.formData.receiverPhone,
-            postCode: this.formData.postCode,
-            province: this.formData.region[0],
-            city: this.formData.region[1],
-            district: this.formData.region[2],
-            addressDetail: this.formData.address,
-            isDefault: Number(this.formData.isDefault)
-          }
-          this.$http.post('/action/addr/update', param).then(res => {
-            if (res) {
-              if (res.status === 20000) {
-                mpvue.navigateBack()
-                this.showToast('修改成功', 'success')
-              } else {
-                this.showToast('修改失败', 'none')
-              }
+          clearTimeout(this.submitTimer)
+          this.submitTimer = 0
+          this.submitTimer = setTimeout(() => {
+            let param = {
+              id: this.formData.id,
+              receiver: this.formData.receiverName,
+              phone: this.formData.receiverPhone,
+              postCode: this.formData.postCode,
+              province: this.formData.region[0],
+              city: this.formData.region[1],
+              district: this.formData.region[2],
+              addressDetail: this.formData.address,
+              isDefault: Number(this.formData.isDefault)
             }
-          })
+            this.$http.post('/action/addr/update', param).then(res => {
+              if (res) {
+                if (res.status === 20000) {
+                  mpvue.navigateBack()
+                  this.showToast('修改成功', 'success')
+                } else {
+                  this.showToast('修改失败', 'none')
+                }
+              }
+            })
+            console.log('提交！')
+          }, 500)
         }
       } else {
         if (this.$store.state.UserCenter.isEdited) {

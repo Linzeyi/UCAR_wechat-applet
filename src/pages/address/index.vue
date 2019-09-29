@@ -1,42 +1,47 @@
 <template>
   <div class="address-wrap">
-    <div class="address-list">
-      <div class="mo-box" v-for="(item, index) in addressList" :key="index">
-        <movable-area class="mo-area">
-          <movable-view 
-            class="mo-view" 
-            x="66" y="0" 
-            out-of-bounds="true" 
-            direction="horizontal" 
-            inertia="true" 
-            damping="100">
-            <div class="receiver-info">
-              <span class="receiver-name">{{ item.receiverName }}</span>
-              <span>{{ item.receiverPhone }}</span>
-              <p class="address">{{ item.region[0] + item.region[1] + item.region[2] + item.address}}</p>
-            </div>
-            <div class="info-edit">
-              <div class="default-address" @click="setDefault(index)">
-                <span>
-                  <i class="iconfont icon-select-no tick" v-if="!item.isDefault">&#xe656;</i>
-                  <i class="iconfont icon-select-fill tick" v-else>&#xe655;</i>
-                  默认地址
-                </span>
+    <BaseNavigationBar name="地址管理">
+      <i class="iconfont" @click="back">&#xe625;</i>
+    </BaseNavigationBar>
+    <BaseCustomBox>
+      <div class="address-list">
+        <div class="mo-box" v-for="(item, index) in addressList" :key="index">
+          <movable-area class="mo-area">
+            <movable-view 
+              class="mo-view" 
+              x="66" y="0" 
+              out-of-bounds="true" 
+              direction="horizontal" 
+              inertia="true" 
+              damping="100">
+              <div class="receiver-info">
+                <span class="receiver-name">{{ item.receiverName }}</span>
+                <span>{{ item.receiverPhone }}</span>
+                <p class="address">{{ item.region[0] + item.region[1] + item.region[2] + item.address}}</p>
+              </div>
+              <div class="info-edit">
+                <div class="default-address" @click="setDefault(index)">
+                  <span>
+                    <i class="iconfont icon-select-no tick" v-if="!item.isDefault">&#xe656;</i>
+                    <i class="iconfont icon-select-fill tick" v-else>&#xe655;</i>
+                    默认地址
+                  </span>
+                </div>
+              </div>
+            </movable-view>
+            <div class="action-box">
+              <div class="edit" @click="routeTo('modify', index)">
+                <i class="iconfont edit">&#xe66e;</i>
+              </div>
+              <div class="delete" @click="deleteAddress(index)">
+                <i class="iconfont delete">&#xe637;</i>
               </div>
             </div>
-          </movable-view>
-          <div class="action-box">
-            <div class="edit" @click="routeTo('modify', index)">
-              <i class="iconfont edit">&#xe66e;</i>
-            </div>
-            <div class="delete" @click="deleteAddress(index)">
-              <i class="iconfont delete">&#xe637;</i>
-            </div>
-          </div>
-        </movable-area>
+          </movable-area>
+        </div>
       </div>
-    </div>
-    <div class="add" @click="routeTo('add')">
+    </BaseCustomBox>
+    <div class="add" @click="routeTo('add')" @touchmove="hideAdd" v-if="!isHideAdd">
       <i class="iconfont">&#xe608;</i>
     </div>
     <message-toast v-if="hidden"></message-toast>
@@ -45,15 +50,20 @@
 
 <script>
 import messageToast from '@/components/message/messageToast'
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
+import BaseCustomBox from "@/components/base/BaseCustomBox"
 
 export default {
   components: {
-    messageToast
+    messageToast,
+    BaseNavigationBar,
+    BaseCustomBox
   },
   data () {
     return {
       currentDefault: 0,
-      editScoll: undefined
+      editScoll: undefined,
+      isHideAdd: false // 隐藏添加地址按钮标识
     }
   },
   onShow () {
@@ -69,6 +79,7 @@ export default {
         })
       }
     })
+    this.isHideAdd = false
   },
   computed: {
     addressList () {
@@ -165,6 +176,19 @@ export default {
         console.log(this.addressList[index].addressId, 'addressId')
         mpvue.navigateTo({ url: '/pages/modifyAddress/main?addressId=' + this.addressList[index].id })
       }
+    },
+
+    // 页面返回
+    back () {
+      mpvue.navigateBack()
+    },
+
+    // 隐藏添加地址按钮
+    hideAdd () {
+      this.isHideAdd = true
+      setTimeout(() => {
+        this.isHideAdd = false
+      }, 2500)
     }
   }
 }
@@ -176,13 +200,29 @@ export default {
 @baoWoFont: 'PingFangSC-Light';
 @sliderX: 60px;
 @orange: #ff6421;
+@keyframes showAdd {
+  0% {
+    position: fixed;
+    right: -30px;
+    bottom: 40px;
+    z-index: 9;
+  }
+  100% {
+    position: fixed;
+    right: 18px;
+    bottom: 40px;
+    z-index: 9;
+  }
+}
 .address-wrap {
   font-family: @baoWoFont;
   color: @baoWoBlack;
   background-color: #f3f3f3;
+  height: 100%;
   .address-list {
     padding-top: 2px;
     height: 100%;
+    background-color: #f3f3f3;
     .mo-box {
       overflow: hidden;
       margin: 10px 10px;
@@ -273,6 +313,7 @@ export default {
     right: 18px;
     bottom: 40px;
     z-index: 9;
+    animation: showAdd 1s ease;
     i {
       font-size: 1rem;
       color: @orange;

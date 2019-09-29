@@ -1,32 +1,39 @@
 <template>
   <div class="wallet-wrap" v-if="true">
-    <div class="recharge-content">
-      <p>充值金额</p>
-      <div class="amount">
-        <i class="iconfont">&#xe808;</i>
-        <input type="number" pattern="[0-9]*" class="weui-input" placeholder="输入金额" v-model="amount">
+    <BaseNavigationBar name="充值">
+      <i class="iconfont" @click="back">&#xe625;</i>
+    </BaseNavigationBar>
+    <BaseCustomBox>
+      <div class="recharge-content">
+        <p>充值金额</p>
+        <div class="amount">
+          <i class="iconfont">&#xe808;</i>
+          <input type="number" pattern="[0-9]*" class="weui-input" placeholder="输入金额" v-model="amount">
+        </div>
       </div>
-    </div>
-    <button 
-      class="weui-btn confirm" 
-      :disabled="!amount" 
-      @click="confirm"
-      :style="canConfirm ? 'opacity: 1' : 'opacity: 0.5'">确定</button>
+      <button 
+        class="weui-btn confirm" 
+        :disabled="!amount" 
+        @click="confirm"
+        :style="canConfirm ? 'opacity: 1' : 'opacity: 0.5'">确定</button>
+    </BaseCustomBox>
     <message-toast v-if="hidden"></message-toast>
   </div>
-  <base-no-result v-else>
-    <p>暂无商品…</p>
-  </base-no-result>
+  <base-no-result v-else></base-no-result>
 </template>
 
 <script>
 import baseNoResult from '@/components/base/BaseNoResult'
 import messageToast from '@/components/message/messageToast'
+import BaseNavigationBar from "@/components/base/BaseNavigationBar"
+import BaseCustomBox from "@/components/base/BaseCustomBox"
 
 export default {
   components: {
     baseNoResult,
-    messageToast
+    messageToast,
+    BaseNavigationBar,
+    BaseCustomBox
   },
   data () {
     return {
@@ -83,6 +90,11 @@ export default {
         icon: i || 'none',
         duration: dur || 1500
       })
+    },
+
+    // 页面返回
+    back () {
+      mpvue.navigateBack()
     }
   }
 }
