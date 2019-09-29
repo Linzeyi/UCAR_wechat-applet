@@ -1,26 +1,28 @@
 <template>
   <div class="goods-grids-wrap">
-    <div class="goods-grids" :style="'column-count: ' + col" v-if="goodsList.length !== 0">
-      <div v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex" class="grid-box">
-        <div class="content-box" @click="toGoodsDetail(goodsItem)">
-          <div class="img-box">
-            <image :src="goodsItem.pic ? goodsItem.pic : 'https://fs.zhenjiang365.cn/bbsimg/fcmb/image/nopic590.jpg'" :alt="goodsItem.goodsName" mode="widthFix"></image>
+    <div class="goods-grids" v-if="goodsList.length !== 0">
+      <div class="goods-col" v-for="item in col" :key="item" :style="'width: calc( 100% / ' + col + ' )' ">
+        <div v-for="(goodsItem, goodsIndex) in goodsList" :key="goodsIndex" class="grid-box" :class="{'no-show' : goodsIndex % col !== item}">
+          <div class="content-box" @click="toGoodsDetail(goodsItem)">
+            <div class="img-box">
+              <image :src="goodsItem.pic ? goodsItem.pic : 'https://fs.zhenjiang365.cn/bbsimg/fcmb/image/nopic590.jpg'" :alt="goodsItem.goodsName" mode="widthFix"></image>
+            </div>
+            <p class="title">
+              <span>{{goodsItem.goodsName}}</span>
+            </p>
+            <p class="label">
+              <span class="price" v-if="isIntegral">
+                {{goodsItem.minPrice === goodsItem.maxPrice ? goodsItem.minPrice : goodsItem.minPrice + '-' + goodsItem.maxPrice}} 分
+              </span>
+              <span class="price" v-else>
+                <span class="logo">¥</span>
+                {{goodsItem.minPrice === goodsItem.maxPrice ? goodsItem.minPrice : goodsItem.minPrice + '-' + goodsItem.maxPrice}}
+              </span>
+              <span class="right">
+                ...
+              </span>
+            </p>
           </div>
-          <p class="title">
-            <span>{{goodsItem.goodsName}}</span>
-          </p>
-          <p class="label">
-            <span class="price" v-if="isIntegral">
-              {{goodsItem.minPrice === goodsItem.maxPrice ? goodsItem.minPrice : goodsItem.minPrice + '-' + goodsItem.maxPrice}} 分
-            </span>
-            <span class="price" v-else>
-              <span class="logo">¥</span>
-              {{goodsItem.minPrice === goodsItem.maxPrice ? goodsItem.minPrice : goodsItem.minPrice + '-' + goodsItem.maxPrice}}
-            </span>
-            <span class="right">
-              ...
-            </span>
-          </p>
         </div>
       </div>
     </div>
@@ -77,13 +79,13 @@ export default {
     size: {
       type: Number,
       default () {
-        return 4
+        return 10
       }
     },
     pageSize: {
       type: Number,
       default () {
-        return 4
+        return 10
       }
     }
   },
@@ -166,12 +168,15 @@ export default {
     border: none;
     column-gap: 0;
     height: calc(100% - 75px);
+    display: flex;
     .grid-box {
       padding: 5px;
       break-inside: avoid;
-      // width: calc(100% / 3);
       border: none;
       box-sizing: border-box;
+      &.no-show {
+        display: none;
+      }
       .content-box {
         overflow: hidden;
         border-radius: 6px;
