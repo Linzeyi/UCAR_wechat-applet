@@ -7,13 +7,13 @@
       <div class="wrap">
         <scroll-view class="scroll-left" scroll-y scroll-with-animation :scroll-top="scrollTop">
           <div
-            v-for="(item, idx) in classList"
+            v-for="(_, idx) in classList"
             :class="{'class-item': true ,active: selectClassIndex === idx}"
             @click="clickItem(idx)"
             :key="idx"
           >
             <div class="high-light" v-show="selectClassIndex === idx"></div>
-            <p class="class-name">{{item}}</p>
+            <p>{{classSlice[idx]}}</p>
           </div>
         </scroll-view>
         <scroll-view
@@ -23,7 +23,7 @@
           @scrolltolower="scrollHandle"
         >
           <div class="scroll-right-title">
-            <span>{{classList[selectClassIndex]}}</span>
+            <span>{{classSlice[selectClassIndex]}}</span>
           </div>
           <div>
             <goods-grid-list
@@ -61,6 +61,7 @@ export default {
       scrollTop: 0,
       goodsList: [],
       classList: [],
+      classSlice: [],
       loadStatus: "",
       pageNum: 1,
       pageSize: 8,
@@ -100,6 +101,13 @@ export default {
         this.loadStatus = "loading";
         const result = await this.$http.post("/action/goods/getAllCategory");
         this.classList = result.data;
+        this.classSlice = result.data.map(item => {
+          if (item.length > 4) {
+            return item.slice(0, 4) + "...";
+          } else {
+            return item;
+          }
+        });
         this.loadStatus = "online";
       } catch (error) {
         this.loadStatus = "offline";
@@ -170,11 +178,6 @@ export default {
       float: left;
       transform: translateY(20rpx);
       background-color: #fc9156;
-    }
-    .class-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
   }
 }
