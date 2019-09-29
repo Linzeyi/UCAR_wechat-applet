@@ -26,7 +26,7 @@
               <div class="info-box lzy-flex-box" @click="toGoodsDetail(goodsItem)">
                 <div class="left-box">
                   <div class="img-box">
-                    <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片"></image>
+                    <image :src="goodsItem.property.picList[0] ? goodsItem.property.picList[0] : getDefaultImg" alt="商品图片" mode="aspectFit"></image>
                   </div>
                 </div>
                 <div class="content-box">
@@ -168,6 +168,7 @@
           </div>
         </div>
       </div>
+      <message-toast v-if="hidden"></message-toast>
     </base-custom-box>
   </div>
 </template>
@@ -175,10 +176,12 @@
 <script>
 import BaseCustomBox from "@/components/base/BaseCustomBox"
 import BaseNavigationBar from "@/components/base/BaseNavigationBar"
+import messageToast from '@/components/message/messageToast'
 export default {
   components: {
     BaseCustomBox,
-    BaseNavigationBar
+    BaseNavigationBar,
+    messageToast
   },
   data () {
     return {
@@ -214,6 +217,9 @@ export default {
     this.getOrder()
   },
   computed: {
+    hidden () {
+      return this.$store.getters['Message/showMessageToast']
+    },
     checkValid () {
       let flag = true
       this.order.shopGoodsList.map(item => {
