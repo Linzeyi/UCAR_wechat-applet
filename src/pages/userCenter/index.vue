@@ -20,7 +20,7 @@
           <div class="info">
             <div class="user-name">
               <p class="name" :class="{'long-name': nickname.length > 6}">{{ nickname }}</p>
-              <div class="grade" 
+              <div class="grade grade-position" 
                 :class="[{ bronze: grade === '青铜' }, { silver: grade === '白银' }, 
                 { gold: grade === '黄金' }, { platinum: grade === '白金' }, 
                 { platinumPlus:grade === '白金Plus' }, { diamond: grade === '钻石' },
@@ -311,8 +311,10 @@ export default {
             color: #6e2c10;
             white-space: nowrap;
           }
-          .grade {
+          .grade-position {
             position: relative;
+          }
+          .grade {
             display: inline-block;
             border: 0.5px solid #000000;
             border-radius:5px;
