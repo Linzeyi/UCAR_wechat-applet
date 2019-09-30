@@ -4,7 +4,7 @@
     <BaseCustomBox>
       <div class="not-logged" v-if="!isLogged">
         <div class="log-in">
-          <img src="../../../static/images/user.png" alt="我的头像" class="user-icon">
+          <img src="../../../static/images/user.png" alt="我的头像" class="user-icon" mode="aspectFill">
           <div class="btn-login" @click="login">登录</div>
         </div>
         <div class="ani-flow"></div>
@@ -29,9 +29,12 @@
                 @touchend="goTouchEnd">
                 {{ grade }}
                 <span 
-                  class="tips" 
+                  class="tips"
                   v-if="gradeTips && discount !== undefined && discount !== '1'"
-                  :class="{'long-tips': nickname.length > 6}">
+                  :class="[{ bronze: grade === '青铜' }, { silver: grade === '白银' }, 
+                  { gold: grade === '黄金' }, { platinum: grade === '白金' }, 
+                  { platinumPlus:grade === '白金Plus' }, { diamond: grade === '钻石' },
+                  {'long-tips': nickname.length > 6}]">
                   您可享受 {{ discount * 10 }} 折的购物优惠</span>
               </div>
             </div>
@@ -195,7 +198,9 @@ export default {
           mpvue.navigateTo({ url: '/pages/myOrders/main' })
           break
         case 'personalSettings':
-          mpvue.navigateTo({ url: '/pages/personalSettings/main' })
+          setTimeout(() => {
+            mpvue.navigateTo({ url: '/pages/personalSettings/main' })
+          }, 500)
           break
       }
     },

@@ -1,9 +1,7 @@
 <template>
   <div class="no-result-wrap">
-    <div v-for="(item, index) in imgSource" :key="index">
-      <img :src="imgSource[index]" alt="" v-if="imgIndex === index">
-    </div>
-    <p>暂无结果</p>
+    <img :src="imgSource[imgIndex]" alt="">
+    <img src="../../../static/images/noResult-icon/no-result.png" alt="" class="text">
   </div>
 </template>
 
@@ -12,21 +10,29 @@ export default {
   data () {
     return {
       imgSource: [
-        '../../../static/images/noResult-icon/one.png',
-        '../../../static/images/noResult-icon/two.png',
-        '../../../static/images/noResult-icon/three.png',
-        '../../../static/images/noResult-icon/four.png',
-        '../../../static/images/noResult-icon/five.png',
-        '../../../static/images/noResult-icon/six.png',
-        '../../../static/images/noResult-icon/seven.png'
+        '/../../../static/images/noResult-icon/one.svg',
+        '/../../../static/images/noResult-icon/two.svg',
+        '/../../../static/images/noResult-icon/three.svg',
+        '/../../../static/images/noResult-icon/four.svg',
+        '/../../../static/images/noResult-icon/five.svg',
+        '/../../../static/images/noResult-icon/six.svg',
+        '/../../../static/images/noResult-icon/seven.svg',
+        '/../../../static/images/noResult-icon/eight.svg'
       ],
-      imgIndex: 0
+      imgIndex: this.randomNum(0, 7)
     }
   },
-  onShow () {
-    setTimeout(() => {
-      this.imgIndex++
-    }, 2000)
+  methods: {
+    randomNum (minNum, maxNum) {
+      switch (arguments.length) {
+        case 1:
+          return parseInt(Math.random() * minNum + 1, 10)
+        case 2:
+          return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10)
+        default:
+          return 0
+      }
+    }
   }
 }
 </script>
@@ -36,17 +42,21 @@ export default {
 @orange: #ff6421;
 .no-result-wrap {
   display: flex;
-  height: 50%;
+  height: 70%;
   width: 100%;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #f3f3f3;
+  font-family: 'Umbrella Man DEMO';
   img {
-    width: 80%;
+    height: 200px;
+    width: 200px;
   }
-  slot {
-    display: block;
-    margin-top: 10px;
-    font-size: 30px;
+  .text {
+    margin-top: 7px;
+    height: 40px;
+    width: 218px;
   }
 }
 </style>

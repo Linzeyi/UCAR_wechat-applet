@@ -50,7 +50,8 @@
             <p>{{ item }}</p>
           </div>
         </div>
-        <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 155px;font-size: 18px;">暂无商品…</p>
+        <!-- <p v-if="noResult && goodsList.length === 0" style="position: fixed;top: 100px;left: 155px;font-size: 18px;">暂无商品…</p> -->
+        <base-no-result v-if="noResult && goodsList.length === 0"></base-no-result>
         <div class="goods-warp">
           <div class="goods-gird" v-if="goodsList && goodsList.length > 0">
             <goodsGridList 
@@ -75,6 +76,7 @@ import baseLoad from '@/components/base/BaseLoad'
 import messageToast from '@/components/message/messageToast'
 import BaseNavigationBar from "@/components/base/BaseNavigationBar"
 import BaseCustomBox from "@/components/base/BaseCustomBox"
+import BaseNoResult from '@/components/base/BaseNoResult'
 
 export default {
   components: {
@@ -82,7 +84,8 @@ export default {
     baseLoad,
     messageToast,
     BaseNavigationBar,
-    BaseCustomBox
+    BaseCustomBox,
+    BaseNoResult
   },
   data () {
     return {
