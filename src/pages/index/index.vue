@@ -116,13 +116,11 @@ export default {
     },
     toClassification (index) {
       this.$store.commit('Classification/SET_SELECTCLASSINDEX', index)
-      console.log(this.$store.getters['Classification/selectClassIndex'])
       mpvue.switchTab({ url: '/pages/classification/main' })
     },
     getCategory () {
       this.$http.post("/action/goods/getAllCategory").then(res => {
         if (res.data) {
-          console.log(res.data)
           this.categoryList = res.data
         }
       })
@@ -149,21 +147,16 @@ export default {
       this.imgList = arr
     },
     getRecommendGoodsList () {
-      let that = this
       this.$http.get('/action/goods/getRecommendGoodsList', {
         start: this.start,
         size: this.size
       }).then(res => {
-        console.log(res)
         if (res.data) {
           this.goodsList = res.data
           this.getRandomImgList()
           this.loadStatus = "online"
           this.getCategory()
         } else {
-          setTimeout(function () {
-            that.$refs['goods_grid_list_el'].loadErr()
-          }, 200)
           this.loadStatus = "offline"
         }
         wx.stopPullDownRefresh()
@@ -171,9 +164,6 @@ export default {
         console.log('err:' + err)
         wx.stopPullDownRefresh()
         this.loadStatus = "offline"
-        setTimeout(function () {
-          that.$refs['goods_grid_list_el'].loadErr()
-        }, 200)
       })
     }
   }
