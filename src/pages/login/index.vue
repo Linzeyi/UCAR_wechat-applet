@@ -5,7 +5,7 @@
         <img :src="avatarUrl" alt="头像" />
       </div>
       <div class="no-avatar">
-        <span>欢迎登陆XX</span>
+        <span>欢迎登陆神州商城</span>
       </div>
     </div>
     <div class="content">
