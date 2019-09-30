@@ -28,7 +28,8 @@
             maxlength="11"
           />
         </div>
-        <p class="phone-warn" :class="showPhoneWarn?'phone-warn-in':'phone-warn-out'">请输入有效的手机号码</p>
+        <p class="phone-warn" :class="showInvaildPhone?'phone-warn-in':'phone-warn-out'">请输入有效的手机号码</p>
+        <p class="phone-warn" :class="showUnregisterPhone?'phone-warn-in':'phone-warn-out'">该手机号未注册</p>
         <div class="gap"></div>
         <div class="form-item">
           <span
@@ -39,9 +40,29 @@
             v-show="form.password!==''&&selectInput==='password'"
             @touchstart="form.password=''"
           >&#xe65c;</i>
+          <i
+            class="iconfont"
+            v-if="form.password!==''&&showPassword===false"
+            @touchstart="showPassword=true"
+          >&#xe6b2;</i>
+          <i
+            class="iconfont"
+            v-if="form.password!==''&&showPassword===true"
+            @touchstart="showPassword=false"
+          >&#xe6b1;</i>
           <input
+            v-if="showPassword"
+            type="text"
             class="input-passowrd"
+            v-model="form.password"
+            @focus="selectInput='password'"
+            @blur="selectInput=''"
+            maxlength="20"
+          />
+          <input
+            v-else
             type="password"
+            class="input-passowrd"
             v-model="form.password"
             @focus="selectInput='password'"
             @blur="selectInput=''"
@@ -51,16 +72,24 @@
       </div>
     </div>
     <div class="text-box">
-      <span>创建账号</span>
-      <span>忘记密码</span>
+      <span @click="Utils.navigateTo('/pages/findPassword/main')">创建账号</span>
+      <span @click="Utils.navigateTo('/pages/register/main')">忘记密码</span>
     </div>
-    <div class="agreement">
-      <span>登录代表你已同意用户服务协议</span>
+    <div class="submit" @click="handleCheck">
+      <p>登录</p>
     </div>
+    <!-- <div class="agreement">
+      <p>
+        登录代表你已同意《
+        <span>用户服务协议</span>》
+      </p>
+    </div>-->
+    <base-toast></base-toast>
   </div>
 </template>
 
 <script>
+import BaseToast from "@/components/base/BaseToast";
 export default {
   onLoad() {
     this.handleInputDebounce = this.Utils.delayDebounce(this.checkPhone);
@@ -72,15 +101,27 @@ export default {
         password: ""
       },
       avatarUrl: "",
+      showPassword: false,
       showAvatar: false,
       selectInput: "",
       isValidPhone: false,
+      isRegisterPhone: undefined,
       handleInputDebounce: ""
     };
   },
+  components: {
+    BaseToast
+  },
   computed: {
-    showPhoneWarn() {
+    showInvaildPhone() {
       return !this.isValidPhone && this.form.phone !== "";
+    },
+    showUnregisterPhone() {
+      if (this.isRegisterPhone !== undefined) {
+        return !this.isRegisterPhone && this.isValidPhone;
+      } else {
+        return false;
+      }
     }
   },
   methods: {
@@ -90,10 +131,11 @@ export default {
       });
       if (result.data.avatarUrl) {
         this.avatarUrl = result.data.avatarUrl;
+        this.isRegisterPhone = true;
         this.showAvatar = true;
       } else {
         this.showAvatar = false;
-        this.isValidPhone = false
+        this.isRegisterPhone = false;
       }
     },
     checkPhone() {
@@ -104,6 +146,51 @@ export default {
       }
       this.isValidPhone = true;
       this.getAvatar();
+    },
+    async handleCheck() {
+      let flag = false;
+      flag = await this.$store.dispatch(
+        "BaseStore/checkPhone",
+        this.form.phone
+      );
+      if (!flag) {
+        return;
+      }
+      flag = await this.$store.dispatch(
+        "BaseStore/checkPassword",
+        this.form.password
+      );
+      if (!flag) {
+        return;
+      }
+      await this.login();
+      await this.getAddress();
+      mpvue.navigateBack();
+    },
+    async login() {
+      const result = await this.$http.post("/action/user/login", {
+        phone: this.form.phone,
+        password: this.form.password
+      });
+      if (result.status !== 20000) {
+        this.$store.commit("BaseStore/SHOW_TOAST", {
+          type: "error",
+          content: "账号或密码不正确"
+        });
+      }
+      const token = result.data.token;
+      if (token) {
+        wx.setStorageSync("token", token);
+      }
+    },
+    async getAddress() {
+      const result = await this.$http.get("/action/addr/list");
+      if (result.data.addressList) {
+        this.$store.commit(
+          "UserCenter/SET_ADDRESS_LIST",
+          result.data.addressList
+        );
+      }
     }
   },
   watch: {
@@ -125,32 +212,34 @@ export default {
 }
 
 .gap {
-  height: 50rpx;
+  height: 70rpx;
 }
+
 .wrap {
+  padding: 0 10rpx;
   box-sizing: border-box;
   height: 100%;
+  background-color: white;
   .header {
     height: 400rpx;
+    line-height: 400rpx;
     font-size: 50rpx;
     display: flex;
     .avatar {
       overflow: hidden;
       flex-shrink: 0;
       width: 0;
-      background-color: #fc9156;
       text-align: center;
-      line-height: 400rpx;
       transition: width 0.3s ease-in-out;
       img {
-        vertical-align: -60rpx;
+        vertical-align: -50rpx;
         height: 150rpx;
         width: 150rpx;
         border-radius: 50%;
       }
     }
     .no-avatar {
-      padding: 110rpx 80rpx 0;
+      padding: 0 80rpx;
       flex-grow: 1;
       white-space: nowrap;
       overflow: hidden;
@@ -160,7 +249,7 @@ export default {
     }
   }
   .content {
-    margin-top: 150rpx;
+    margin-top: 0;
     padding: 0 80rpx;
     .form {
       .form-item {
@@ -177,16 +266,38 @@ export default {
 
         i {
           position: absolute;
-          right: 0;
           color: rgb(138, 138, 138);
+          &:nth-of-type(1) {
+            right: 0;
+          }
+          &:nth-of-type(2) {
+            right: 50rpx;
+          }
         }
         input {
           height: 60rpx;
-          width: 500rpx;
+          width: 450rpx;
           min-height: 60rpx;
           line-height: 60rpx;
           font-size: 30rpx;
         }
+      }
+    }
+  }
+  .submit {
+    margin: 60rpx auto;
+    width: 570rpx;
+    height: 90rpx;
+    line-height: 90rpx;
+    border-radius: 45rpx;
+    background-color: #f88070;
+    text-align: center;
+    p {
+      color: white;
+      font-size: 36rpx;
+      font-weight: bold;
+      &:active {
+        transform: scale(0.9);
       }
     }
   }
@@ -196,7 +307,7 @@ export default {
     display: flex;
     justify-content: space-between;
     span {
-      color:#f88070;
+      color: #f88070;
     }
   }
 }
@@ -206,17 +317,18 @@ export default {
   color: #f88070;
   overflow: hidden;
   white-space: nowrap;
+  height: 0;
   width: 0;
-  transform: translateY(-30rpx);
-  transition: all 0.3s ease-in-out;
 }
 .phone-warn-in {
+  height: 38rpx;
   width: 100%;
-  transform: translateY(0);
+  transition: height 0.3s ease-in-out, width 0.3s ease-in-out 0.1s;
 }
 .phone-warn-out {
+  height: 0;
   width: 0;
-  transform: translateY(-10rpx);
+  transition: height 0.3s ease-in-out 0.1s, width 0.3s ease-in-out;
 }
 .placeholder {
   font-size: 25rpx;
