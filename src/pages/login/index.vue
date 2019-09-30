@@ -94,6 +94,10 @@ export default {
   onLoad() {
     this.handleInputDebounce = this.Utils.delayDebounce(this.checkPhone);
   },
+  onUnload() {
+    this.form.phone = "";
+    this.form.password = "";
+  },
   data() {
     return {
       form: {
