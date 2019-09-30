@@ -264,7 +264,7 @@ export default {
         span {
           position: absolute;
           left: 0;
-          color: #555;
+          color: rgb(138, 138, 138);
           transition: all 0.3s ease-in-out;
         }
 
