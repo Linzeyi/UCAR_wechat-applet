@@ -10,7 +10,7 @@ export default {};
 
 <style lang="less" scoped>
 .wrap {
-  color: rgb(26, 188, 156);
+  color: #f88070;
   font-size: 30rpx;
 }
 </style>

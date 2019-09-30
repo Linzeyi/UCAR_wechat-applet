@@ -153,7 +153,7 @@ export default {
 }
 .icon-select {
   border-radius: 50%;
-  color: rgb(26, 188, 156);
+  color: #f88070;
 }
 .wrap {
   height: 100%;
@@ -202,7 +202,7 @@ export default {
         display: inline-block;
         vertical-align: middle;
         span {
-          color: rgb(26, 188, 156);
+          color: #f88070;
         }
       }
     }
@@ -213,7 +213,7 @@ export default {
     height: 35px;
     line-height: 35px;
     border-radius: 10px;
-    background-color: rgb(26, 188, 156);
+    background-color: #f88070;
     text-align: center;
     margin-bottom: 10px;
 
