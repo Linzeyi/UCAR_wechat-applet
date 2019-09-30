@@ -2,7 +2,7 @@
   <div class="wrap">
     <div class="header">
       <div class="avatar" :class="{'shift-right': showAvatar}">
-        <img :src="avatarUrl" alt="头像" />
+        <img :src="avatarUrl" alt="头像" mode="aspectFill"/>
       </div>
       <div class="no-avatar">
         <span>欢迎登陆神州商城</span>
