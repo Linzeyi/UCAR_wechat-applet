@@ -1,69 +1,156 @@
 <template>
   <div class="wrap">
     <div class="header">
-      <img :src="avatarUrl" alt="头像" />
-    </div>
-    <div class="form">
-      <div class="input-item">
-        <span>账号</span>
-        <input type="number" placeholder="手机号" v-model="form.phone" />
+      <div class="avatar" :class="{'shift-right': showAvatar}">
+        <img :src="avatarUrl" alt="头像" mode="aspectFill"/>
       </div>
-      <div class="input-item">
-        <div class="switch-button">
-          <switch-button @click="showPassword = !showPassword"></switch-button>
+      <div class="no-avatar">
+        <span>欢迎登陆神州商城</span>
+      </div>
+    </div>
+    <div class="content">
+      <div class="form">
+        <div class="form-item">
+          <span
+            :class="form.phone!==''||selectInput==='phone'?'placeholder':'reverse-placeholder'"
+          >手机号</span>
+          <i
+            class="iconfont"
+            v-show="form.phone!==''&&selectInput==='phone'"
+            @touchstart="form.phone=''"
+          >&#xe65c;</i>
+          <input
+            class="input-phone"
+            type="number"
+            v-model="form.phone"
+            @focus="selectInput='phone'"
+            @blur="selectInput=''"
+            maxlength="11"
+          />
         </div>
-        <span>密码</span>
-        <input
-          v-if="showPassword"
-          type="text"
-          placeholder="密码"
-          v-model="form.password"
-          maxlength="20"
-        />
-        <input v-else type="password" placeholder="密码" v-model="form.password" maxlength="20" />
-      </div>
-      <div class="forget">
-        <base-text @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</base-text>
+        <p class="phone-warn" :class="showInvaildPhone?'phone-warn-in':'phone-warn-out'">请输入有效的手机号码</p>
+        <p class="phone-warn" :class="showUnregisterPhone?'phone-warn-in':'phone-warn-out'">该手机号未注册</p>
+        <div class="gap"></div>
+        <div class="form-item">
+          <span
+            :class="form.password!==''||selectInput==='password'?'placeholder':'reverse-placeholder'"
+          >密码</span>
+          <i
+            class="iconfont"
+            v-show="form.password!==''&&selectInput==='password'"
+            @touchstart="form.password=''"
+          >&#xe65c;</i>
+          <i
+            class="iconfont"
+            v-if="form.password!==''&&showPassword===false"
+            @touchstart="showPassword=true"
+          >&#xe6b2;</i>
+          <i
+            class="iconfont"
+            v-if="form.password!==''&&showPassword===true"
+            @touchstart="showPassword=false"
+          >&#xe6b1;</i>
+          <input
+            v-if="showPassword"
+            type="text"
+            class="input-passowrd"
+            v-model="form.password"
+            @focus="selectInput='password'"
+            @blur="selectInput=''"
+            maxlength="20"
+          />
+          <input
+            v-else
+            type="password"
+            class="input-passowrd"
+            v-model="form.password"
+            @focus="selectInput='password'"
+            @blur="selectInput=''"
+            maxlength="20"
+          />
+        </div>
       </div>
     </div>
-    <div class="footer">
-      <base-button @click="handleCheck">
-        <span>登录</span>
-      </base-button>
-      <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
+    <div class="text-box">
+      <span @click="Utils.navigateTo('/pages/register/main')">创建账号</span>
+      <span @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</span>
     </div>
+    <div class="submit" @click="handleCheck">
+      <p>登录</p>
+    </div>
+    <!-- <div class="agreement">
+      <p>
+        登录代表你已同意《
+        <span>用户服务协议</span>》
+      </p>
+    </div>-->
     <base-toast></base-toast>
   </div>
 </template>
 
 <script>
-import SwitchButton from "@/components/switchButton/SwitchButton";
-import BaseButton from "@/components/base/BaseButton";
-import BaseText from "@/components/base/BaseText";
 import BaseToast from "@/components/base/BaseToast";
 export default {
+  onLoad() {
+    this.handleInputDebounce = this.Utils.delayDebounce(this.checkPhone);
+  },
+  onUnload() {
+    this.form.phone = "";
+    this.form.password = "";
+  },
   data() {
     return {
       form: {
         phone: "",
         password: ""
       },
-      avatarUrl:
-        "http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg",
-      showPassword: false
+      avatarUrl: "",
+      showPassword: false,
+      showAvatar: false,
+      selectInput: "",
+      isValidPhone: false,
+      isRegisterPhone: undefined,
+      handleInputDebounce: ""
     };
   },
   components: {
-    SwitchButton,
-    BaseButton,
-    BaseText,
     BaseToast
   },
-  onUnload() {
-    this.form.phone = "";
-    this.form.password = "";
+  computed: {
+    showInvaildPhone() {
+      return !this.isValidPhone && this.form.phone !== "";
+    },
+    showUnregisterPhone() {
+      if (this.isRegisterPhone !== undefined) {
+        return !this.isRegisterPhone && this.isValidPhone;
+      } else {
+        return false;
+      }
+    }
   },
   methods: {
+    async getAvatar() {
+      const result = await this.$http.get("/action/user/getAvatarByPhone", {
+        phone: this.form.phone
+      });
+      if (result.data.avatarUrl) {
+        this.avatarUrl = result.data.avatarUrl;
+        this.isRegisterPhone = true;
+        this.showAvatar = true;
+      } else {
+        this.showAvatar = false;
+        this.isRegisterPhone = false;
+      }
+    },
+    checkPhone() {
+      if (!/^1[3456789]\d{9}$/.test(this.form.phone)) {
+        this.isValidPhone = false;
+        this.showAvatar = false;
+        return;
+      }
+      this.isValidPhone = true;
+      this.getAvatar();
+    },
     async handleCheck() {
       let flag = false;
       flag = await this.$store.dispatch(
@@ -109,67 +196,152 @@ export default {
         );
       }
     }
+  },
+  watch: {
+    "form.phone"() {
+      this.handleInputDebounce();
+    }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.switch-button {
-  position: fixed;
-  right: 0;
-  z-index: 3;
-  top: 8rpx;
+@keyframes shift-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(375px);
+  }
 }
+
+.gap {
+  height: 90rpx;
+}
+
 .wrap {
+  padding: 0 10rpx;
   box-sizing: border-box;
   height: 100%;
-  font-size: 30rpx;
-  padding: 60rpx 40rpx;
-  display: flex;
-  justify-content: space-around;
-  flex-direction: column;
-
+  background-color: white;
   .header {
-    text-align: center;
-    > img {
-      width: 160rpx;
-      height: 160rpx;
-      border-radius: 50%;
-    }
-  }
-
-  .form {
-    margin: 0 auto;
-    width: 85%;
-    .input-item {
-      transform: scale(1);
-      margin-bottom: 60rpx;
-      border-bottom: 2rpx solid rgb(228, 228, 228);
-      & > input {
-        display: inline-block;
-        vertical-align: middle;
-        padding-left: 50rpx;
-        height: 40rpx;
-        font-size: 30rpx;
-      }
-      & > span {
-        display: inline-block;
-        width: 100rpx;
-        line-height: 40rpx;
-        vertical-align: middle;
-      }
-    }
-  }
-
-  .footer {
-    height: 200rpx;
+    height: 400rpx;
+    line-height: 400rpx;
+    font-size: 50rpx;
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
+    .avatar {
+      overflow: hidden;
+      flex-shrink: 0;
+      width: 0;
+      text-align: center;
+      transition: width 0.3s ease-in-out;
+      img {
+        vertical-align: -50rpx;
+        height: 150rpx;
+        width: 150rpx;
+        border-radius: 50%;
+      }
+    }
+    .no-avatar {
+      padding: 0 80rpx;
+      flex-grow: 1;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .shift-right {
+      width: 100%;
+    }
   }
-  .forget {
-    text-align: right;
+  .content {
+    margin-top: 0;
+    padding: 0 80rpx;
+    .form {
+      .form-item {
+        height: 60rpx;
+        line-height: 60rpx;
+        position: relative;
+        border-bottom: 1px solid rgb(229, 229, 229);
+        span {
+          position: absolute;
+          left: 0;
+          color: rgb(138, 138, 138);
+          transition: all 0.3s ease-in-out;
+        }
+
+        i {
+          position: absolute;
+          color: rgb(138, 138, 138);
+          &:nth-of-type(1) {
+            right: 0;
+          }
+          &:nth-of-type(2) {
+            right: 50rpx;
+          }
+        }
+        input {
+          height: 60rpx;
+          width: 450rpx;
+          min-height: 60rpx;
+          line-height: 60rpx;
+          font-size: 30rpx;
+        }
+      }
+    }
+  }
+  .submit {
+    margin: 60rpx auto;
+    width: 570rpx;
+    height: 90rpx;
+    line-height: 90rpx;
+    border-radius: 45rpx;
+    background-color: #f88070;
+    text-align: center;
+    p {
+      color: white;
+      font-size: 36rpx;
+      font-weight: bold;
+      &:active {
+        transform: scale(0.9);
+      }
+    }
+  }
+  .text-box {
+    margin-top: 20rpx;
+    padding: 0 80rpx;
+    display: flex;
+    justify-content: space-between;
+    span {
+      color: #f88070;
+    }
   }
 }
+
+.phone-warn {
+  font-size: 25rpx;
+  color: #f88070;
+  overflow: hidden;
+  white-space: nowrap;
+  height: 0;
+  width: 0;
+}
+.phone-warn-in {
+  height: 38rpx;
+  width: 100%;
+  transition: height 0.3s ease-in-out, width 0.3s ease-in-out 0.1s;
+}
+.phone-warn-out {
+  height: 0;
+  width: 0;
+  transition: height 0.3s ease-in-out 0.1s, width 0.3s ease-in-out;
+}
+.placeholder {
+  font-size: 25rpx;
+  transform: translateY(-60rpx);
+}
+.reverse-placeholder {
+  font-size: 30rpx;
+  transform: translateY(0);
+}
 </style>
+
+

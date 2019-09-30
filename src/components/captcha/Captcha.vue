@@ -65,6 +65,6 @@ export default {
   font-size: 30rpx;
 }
 .captcha {
-  color: rgb(26, 188, 156);
+  color: #f88070;
 }
 </style>

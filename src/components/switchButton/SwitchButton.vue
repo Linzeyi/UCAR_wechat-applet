@@ -53,7 +53,7 @@ export default {
 }
 
 .checked.switch {
-  background-color: rgb(26, 188, 156);
+  background-color: #f88070;
   &::after {
     transform: translateX(40rpx);
   }

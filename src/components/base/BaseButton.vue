@@ -11,10 +11,10 @@ export default {};
 <style lang="less" scoped>
 .wrap {
   width: 570rpx;
-  height: 80rpx;
-  line-height: 80rpx;
-  border-radius: 40rpx;
-  background-color: rgb(26, 188, 156);
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 45rpx;
+  background-color: #f88070;
   text-align: center;
   color: white;
   font-size: 36rpx;

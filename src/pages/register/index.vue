@@ -1,6 +1,5 @@
 <template>
   <div class="wrap">
-    <img src="http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg" alt="头像" />
     <div class="form">
       <div class="input-item">
         <span>账号</span>
@@ -154,7 +153,7 @@ export default {
 }
 .icon-select {
   border-radius: 50%;
-  color: rgb(26, 188, 156);
+  color: #f88070;
 }
 .wrap {
   height: 100%;
@@ -163,15 +162,6 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 30rpx;
-
-  & > img {
-    display: block;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 70px;
-    border: 1px solid rgb(26, 188, 156);
-    border-radius: 50%;
-  }
 
   .form {
     width: 80%;
@@ -212,7 +202,7 @@ export default {
         display: inline-block;
         vertical-align: middle;
         span {
-          color: rgb(26, 188, 156);
+          color: #f88070;
         }
       }
     }
@@ -223,7 +213,7 @@ export default {
     height: 35px;
     line-height: 35px;
     border-radius: 10px;
-    background-color: rgb(26, 188, 156);
+    background-color: #f88070;
     text-align: center;
     margin-bottom: 10px;
 

@@ -1,66 +1,67 @@
 <template>
   <div class="wrap">
+    <div class="header">
+      <img :src="avatarUrl" alt="头像" />
+    </div>
     <div class="form">
       <div class="input-item">
         <span>账号</span>
-        <input type="number" placeholder="输入手机号码" v-model="form.phone" />
+        <input type="number" placeholder="手机号" v-model="form.phone" />
       </div>
       <div class="input-item">
-        <span>密码</span>
         <div class="switch-button">
           <switch-button @click="showPassword = !showPassword"></switch-button>
         </div>
+        <span>密码</span>
         <input
           v-if="showPassword"
           type="text"
-          placeholder="设置登录密码"
+          placeholder="密码"
           v-model="form.password"
           maxlength="20"
         />
-        <input v-else type="password" placeholder="设置登录密码" v-model="form.password" maxlength="20" />
+        <input v-else type="password" placeholder="密码" v-model="form.password" maxlength="20" />
       </div>
-      <div class="input-item">
-        <div class="captcha">
-          <captcha :phone="form.phone" :type="3"></captcha>
-        </div>
-        <span>验证码</span>
-        <input type="number" placeholder="短信验证码" maxlength="6" v-model="form.captcha" />
+      <div class="forget">
+        <base-text @click="Utils.navigateTo('/pages/findPassword/main')">忘记密码</base-text>
       </div>
     </div>
-    <base-button @click="handleCheck">
-      <span>确定</span>
-    </base-button>
+    <div class="footer">
+      <base-button @click="handleCheck">
+        <span>登录</span>
+      </base-button>
+      <base-text @click="Utils.navigateTo('/pages/register/main')">创建账号</base-text>
+    </div>
     <base-toast></base-toast>
   </div>
 </template>
 
 <script>
-import Captcha from "@/components/captcha/Captcha";
 import SwitchButton from "@/components/switchButton/SwitchButton";
 import BaseButton from "@/components/base/BaseButton";
+import BaseText from "@/components/base/BaseText";
 import BaseToast from "@/components/base/BaseToast";
 export default {
-  onUnload() {
-    this.form.phone = "";
-    this.form.captcha = "";
-    this.form.password = "";
-    this.showPassword = false;
-  },
   data() {
     return {
       form: {
         phone: "",
-        captcha: "",
         password: ""
       },
+      avatarUrl:
+        "http://ww1.sinaimg.cn/large/006KqXVSgy1g6nwc8htdrj30o00o0e81.jpg",
       showPassword: false
     };
   },
   components: {
-    Captcha,
     SwitchButton,
     BaseButton,
+    BaseText,
     BaseToast
+  },
+  onUnload() {
+    this.form.phone = "";
+    this.form.password = "";
   },
   methods: {
     async handleCheck() {
@@ -73,35 +74,40 @@ export default {
         return;
       }
       flag = await this.$store.dispatch(
-        "BaseStore/checkCaptcha",
-        this.form.captcha
-      );
-      if (!flag) {
-        return;
-      }
-      flag = await this.$store.dispatch(
         "BaseStore/checkPassword",
         this.form.password
       );
       if (!flag) {
         return;
       }
-      this.findPassword();
+      await this.login();
+      await this.getAddress();
+      mpvue.navigateBack();
     },
-    async findPassword() {
-      const result = await this.$http.post("/action/user/forgetPassword", {
+    async login() {
+      const result = await this.$http.post("/action/user/login", {
         phone: this.form.phone,
-        captcha: this.form.captcha,
         password: this.form.password
       });
       if (result.status !== 20000) {
         this.$store.commit("BaseStore/SHOW_TOAST", {
           type: "error",
-          content: "号码未注册或验证码错误"
+          content: "账号或密码不正确"
         });
-        return
       }
-      mpvue.navigateBack()
+      const token = result.data.token;
+      if (token) {
+        wx.setStorageSync("token", token);
+      }
+    },
+    async getAddress() {
+      const result = await this.$http.get("/action/addr/list");
+      if (result.data.addressList) {
+        this.$store.commit(
+          "UserCenter/SET_ADDRESS_LIST",
+          result.data.addressList
+        );
+      }
     }
   }
 };
@@ -114,45 +120,35 @@ export default {
   z-index: 3;
   top: 8rpx;
 }
-
-.captcha {
-  position: fixed;
-  right: 0;
-  z-index: 3;
-  top: 8rpx;
-}
 .wrap {
   box-sizing: border-box;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   font-size: 30rpx;
   padding: 60rpx 40rpx;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
 
-  & > img {
-    display: block;
-    width: 160rpx;
-    height: 160rpx;
-    border: 2rpx solid #f88070;
-    border-radius: 50%;
+  .header {
+    text-align: center;
+    > img {
+      width: 160rpx;
+      height: 160rpx;
+      border-radius: 50%;
+    }
   }
 
   .form {
-    width: 80%;
-    margin-bottom: 60rpx;
+    margin: 0 auto;
+    width: 85%;
     .input-item {
       transform: scale(1);
       margin-bottom: 60rpx;
       border-bottom: 2rpx solid rgb(228, 228, 228);
-
       & > input {
         display: inline-block;
         vertical-align: middle;
         padding-left: 50rpx;
-        line-height: 40rpx;
-        min-height: 40rpx;
         height: 40rpx;
         font-size: 30rpx;
       }
@@ -163,6 +159,17 @@ export default {
         vertical-align: middle;
       }
     }
+  }
+
+  .footer {
+    height: 200rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .forget {
+    text-align: right;
   }
 }
 </style>
