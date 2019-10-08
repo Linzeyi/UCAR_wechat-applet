@@ -14,11 +14,16 @@
           热门搜索
         </b>
         <div 
-          class="popular-list" 
+          class="popular-list"
+          :class="[{ 'no1': index === 0 }, { 'no2': index === 1}, { 'no3': index === 2 }]"
           v-for="(item, index) in popularSearch" 
           :key="index"
           @click="showSearchPage(item)">
-          <p>{{ item.tagName }}</p>
+          <p class="list-hd">{{ item.tagName }}</p>
+          <div class="list-bk">
+            <i class="iconfont" v-if="index === 0 || index === 1 || index === 2">&#xe605;</i>
+            <span>{{ item.tagScore }}</span>
+          </div>
         </div>
       </div>
       <div class="page search-page" v-else>
@@ -275,6 +280,36 @@ export default {
       background-color: #ffffff;
       border-radius: 5px;
       box-shadow: -1.5px 1.5px 1px @orange;
+      display: flex;
+      align-items: center;
+      position: relative;
+      .list-bk {
+        color: #b6b5b5;
+        margin-left: 32px;
+        position: absolute;
+        right: 21px;
+        span {
+          margin-left: 7px;
+        }
+      }
+    }
+    .no1 {
+      box-shadow: -1.8px 1.8px 1px #e41c1c;
+      .list-bk {
+        color: #f0d24e;
+      }
+    }
+    .no2 {
+      box-shadow: -1.8px 1.8px 1px #e44017;
+      .list-bk {
+        color: #a8a19e;
+      }
+    }
+    .no3 {
+      box-shadow: -1.8px 1.8px 1px #e76012;
+      .list-bk {
+        color: #b3a568;
+      }
     }
   }
   .search-page {
