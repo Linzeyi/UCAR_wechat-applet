@@ -7,7 +7,7 @@
       <div class="popular-page" v-if="!isShowSearchPage">
         <div class="weui-cell search-bar" @click="showSearchPage()">
           <i class="iconfont search-icon">&#xe60b;</i>
-          <p>{{ recommendSearch[0] }}</p>
+          <p>{{ placeholder }}</p>
         </div>
         <b class="popular-title">
           <img src="../../../static/images/heat.svg" class="icon-heat">
@@ -99,7 +99,7 @@ export default {
       isShowSearchResult: false, // 控制搜索结果显示，与显示推荐搜索互斥
       searchContent: '', // 搜索栏内容
       start: 0,
-      size: 6,
+      size: 7,
       pageSize: 3,
       goodsList: [],
       accum: 1, // 查询触底累加
@@ -130,8 +130,17 @@ export default {
     hidden () {
       return this.$store.getters['Message/showMessageToast']
     },
+    // 是否还有更多商品标识
     checkNoMoreShow () {
       return !this.isLoading && (this.goodsList.length < this.size * this.accum) && this.goodsList.length !== 0
+    },
+    // 搜索栏默认值
+    placeholder () {
+      if (this.popularSearch) {
+        return this.popularSearch[0].tagName
+      } else {
+        return '搜索'
+      }
     }
   },
   methods: {
@@ -285,7 +294,7 @@ export default {
       top: 0;
       z-index: 9;
       background-color: #f3f3f3;
-      padding: 10px 10px 10px 10px;
+      padding: 1px 10px 10px 10px;
       .search-bar__bd {
         border: 0.1px solid @orange;
         border-radius: 20px;

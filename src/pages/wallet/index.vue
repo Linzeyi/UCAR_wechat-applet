@@ -63,7 +63,8 @@ export default {
         } else {
           wx.showModal({
             title: '提示',
-            content: '请再次确认充值',
+            content: '请再次确认充值金额',
+            confirmText: '确认充值',
             success: res => {
               if (res.confirm) {
                 this.$http.post('/action/wallet/recharge', {balance: Number(this.amount)}).then(res => {

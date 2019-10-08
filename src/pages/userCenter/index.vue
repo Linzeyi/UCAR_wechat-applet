@@ -35,7 +35,8 @@
                   { gold: grade === '黄金' }, { platinum: grade === '白金' }, 
                   { platinumPlus:grade === '白金Plus' }, { diamond: grade === '钻石' },
                   {'long-tips': nickname.length > 6}]">
-                  您可享受 {{ discount * 10 }} 折的购物优惠</span>
+                  您可享受 {{ discount * 10 }} 折的购物优惠
+                </span>
               </div>
             </div>
             <p>积分：<span class="integral">{{ integral }}</span></p>
@@ -321,14 +322,14 @@ export default {
           }
           .grade {
             display: inline-block;
-            border: 0.5px solid #000000;
+            border: 0.5px solid #383838;
             border-radius:5px;
             background-color: rgb(255, 227, 201);
             padding: 0 5px;
             margin-left: 10px;
             font-size: 10px;
             align-self: center;
-            color: #000000;
+            color: #383838;
             line-height: inherit;
             z-index: 100;
             white-space: nowrap;
