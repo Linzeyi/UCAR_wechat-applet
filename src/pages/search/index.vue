@@ -313,9 +313,6 @@ export default {
   .goods-warp {
     padding: 0 5px;
     background: #f3f3f3;
-    .goods-gird {
-      margin-top: 50px;
-    }
   }
 }
 </style>
