@@ -63,6 +63,10 @@
               :isScroll="false">
             </goodsGridList>
           </div>
+          <div class="bottom-tips">
+            <p v-if="isLoading">加载中</p>
+            <p v-if="checkNoMoreShow">没有更多啦</p>
+          </div>
         </div>
       </div>
     </BaseCustomBox>
@@ -95,12 +99,13 @@ export default {
       isShowSearchResult: false, // 控制搜索结果显示，与显示推荐搜索互斥
       searchContent: '', // 搜索栏内容
       start: 0,
-      size: 13,
+      size: 6,
       pageSize: 3,
       goodsList: [],
       accum: 1, // 查询触底累加
       noResult: false, // 是否有查询结果
-      loadStatus: '' // loading图标
+      loadStatus: '', // loading图标
+      isLoading: false // 触底加载中
     }
   },
   onLoad () {
@@ -124,6 +129,9 @@ export default {
     // 新消息弹窗
     hidden () {
       return this.$store.getters['Message/showMessageToast']
+    },
+    checkNoMoreShow () {
+      return !this.isLoading && (this.goodsList.length < this.size * this.accum) && this.goodsList.length !== 0
     }
   },
   methods: {
@@ -162,6 +170,7 @@ export default {
     // 清空输入框
     clearInput() {
       this.searchContent = ''
+      this.goodsList = []
     },
     // 实时查询商品
     submitSearch () {
@@ -196,6 +205,7 @@ export default {
   // 商品列表触底事件
   async onReachBottom () {
     console.log('触底！')
+    this.isLoading = true
     this.$http.post('/action/goods/searchGoods', {
       tagNo: 0,
       tagName: this.searchContent,
@@ -204,6 +214,7 @@ export default {
         size: this.size * ++this.accum
       }
     }).then(res => {
+      this.isLoading = false
       if (res.data) {
         this.goodsList = res.data
       }
@@ -315,6 +326,11 @@ export default {
     background: #f3f3f3;
     .goods-gird {
       padding-top: 60px;
+    }
+    .bottom-tips {
+      text-align: center;
+      font-size: 13px;
+      padding: 20px 0;
     }
   }
 }
