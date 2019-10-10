@@ -10,14 +10,14 @@ export default {
   data () {
     return {
       imgSource: [
-        '/../../../static/images/noResult-icon/one.svg',
-        '/../../../static/images/noResult-icon/two.svg',
-        '/../../../static/images/noResult-icon/three.svg',
-        '/../../../static/images/noResult-icon/four.svg',
-        '/../../../static/images/noResult-icon/five.svg',
-        '/../../../static/images/noResult-icon/six.svg',
-        '/../../../static/images/noResult-icon/seven.svg',
-        '/../../../static/images/noResult-icon/eight.svg'
+        '/static/images/noResult-icon/one.svg',
+        '/static/images/noResult-icon/two.svg',
+        '/static/images/noResult-icon/three.svg',
+        '/static/images/noResult-icon/four.svg',
+        '/static/images/noResult-icon/five.svg',
+        '/static/images/noResult-icon/six.svg',
+        '/static/images/noResult-icon/seven.svg',
+        '/static/images/noResult-icon/eight.svg'
       ],
       imgIndex: this.randomNum(0, 7)
     }
